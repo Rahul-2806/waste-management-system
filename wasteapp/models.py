@@ -54,4 +54,10 @@ class Customer(models.Model):
         return self.Name
 
         
+class Login(models.Model):
+    Uname = models.CharField(max_length=100)
+    Upass = models.CharField(max_length=100)
+
+    class Meta:
+        db_table = "login"
         

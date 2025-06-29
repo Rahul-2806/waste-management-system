@@ -54,10 +54,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'wastemanagement.wsgi.application'
 
-# ✅ Supabase PostgreSQL database via dj_database_url
+# ✅ PostgreSQL from Neon or Supabase
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if not DATABASE_URL:
+    raise Exception("DATABASE_URL not set in Render environment")
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),  # Must be set in Render environment
+        default=DATABASE_URL,
         conn_max_age=600,
         ssl_require=True
     )
@@ -82,12 +86,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'wasteapp/static')]
 
-ADMIN_MEDIA_PREFIX = '/static/admin/'
-
 MEDIA_URL = '/uploads/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 
-# Static files discovery
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
