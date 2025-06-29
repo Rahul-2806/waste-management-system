@@ -27,7 +27,9 @@ SECRET_KEY = 'django-insecure-yxwm-o-kg!bc%**g_-2t&5aby2zoax92@%m=11i7!6yp+)xs+$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['waste-management-system-ofq4.onrender.com']
+import os
+
+ALLOWED_HOSTS = [os.environ.get('RENDER_EXTERNAL_HOSTNAME', '127.0.0.1')]
 
 
 
