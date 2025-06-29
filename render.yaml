@@ -3,7 +3,7 @@ services:
     name: waste-management-system
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: bash -c "python manage.py migrate && gunicorn wastemanagement.wsgi"
+    startCommand: bash -c "python manage.py makemigrations && python manage.py migrate && gunicorn wastemanagement.wsgi"
     envVars:
       - key: DATABASE_URL
         value: postgresql://neondb_owner:npg_uKZkpzUl8vw2@ep-fancy-credit-a1ty9bbn-pooler.ap-southeast-1.aws.neon.tech/wm?sslmode=require&channel_binding=require
