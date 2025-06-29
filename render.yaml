@@ -3,14 +3,13 @@ services:
     name: waste-management-system
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: bash -c "python manage.py migrate && gunicorn wastemanagement.wsgi"
+    startCommand: bash -c "python manage.py collectstatic --noinput && gunicorn wastemanagement.wsgi"
     envVars:
       - key: DATABASE_URL
-        fromDatabase:
-          name: wm
-          property: connectionString
+        value: postgresql://postgres:Rahul%402806@db.nxdgqsvooakdnuozstjh.supabase.co:5432/postgres
     autoDeploy: true
     plan: free
     buildFilter:
       paths:
         - "*"
+    postDeployCommand: python manage.py migrate

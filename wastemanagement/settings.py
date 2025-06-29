@@ -4,7 +4,6 @@ import dj_database_url
 
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
-TEMPLATES_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
 
 # SECURITY WARNING: keep the secret key used in production!
 SECRET_KEY = 'django-insecure-yxwm-o-kg!bc%**g_-2t&5aby2zoax92@%m=11i7!6yp+)xs+$'
@@ -40,7 +39,7 @@ ROOT_URLCONF = 'wastemanagement.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'wasteapp/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -55,11 +54,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'wastemanagement.wsgi.application'
 
-# ✅ PostgreSQL on Render using dj_database_url
+# ✅ Supabase PostgreSQL database via dj_database_url
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600
+        default=os.environ.get('DATABASE_URL'),  # Must be set in Render environment
+        conn_max_age=600,
+        ssl_require=True
     )
 }
 
@@ -81,6 +81,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'wasteapp/static')]
+
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 MEDIA_URL = '/uploads/'
