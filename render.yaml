@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: waste-management-system
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wastemanagement.wsgi
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: wm
+          property: connectionString
+    autoDeploy: true
+    plan: free
+    buildFilter:
+      paths:
+        - "*"
+    postDeployCommand: python manage.py migrate
