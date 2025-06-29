@@ -3,7 +3,7 @@ services:
     name: waste-management-system
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn wastemanagement.wsgi
+    startCommand: bash -c "python manage.py migrate && gunicorn wastemanagement.wsgi"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
