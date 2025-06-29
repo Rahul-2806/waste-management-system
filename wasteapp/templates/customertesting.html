@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Portal</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary: #6b48ff;
+            --secondary: #00ddeb;
+            --accent: #ff6b81;
+            --dark: #1a1b2e;
+            --light: #f5f7fa;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+            background: linear-gradient(45deg, #f5f7fa 0%, #e4e9f0 100%);
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-logo i {
+            font-size: 1.8rem;
+            color: var(--primary);
+            animation: spin 4s linear infinite;
+        }
+
+        .nav-logo span {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-icon {
+            position: relative;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-icon i {
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+
+        .nav-icon:hover {
+            transform: scale(1.1);
+            color: var(--primary);
+        }
+
+        .badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            animation: pulse 2s infinite;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            z-index: 2;
+            animation: slideUp 1s ease-out;
+        }
+
+        .hero-greeting {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+            max-width: 80%;
+        }
+
+        .hero-btn {
+            display: inline-flex;
+            padding: 1rem 2.5rem;
+            background: var(--gradient);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(107, 72, 255, 0.3);
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(107, 72, 255, 0.4);
+        }
+
+        .hero-bg {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 60%;
+            height: 100%;
+            background: var(--gradient);
+            clip-path: polygon(30% 0%, 100% 0%, 100% 100%, 0% 100%);
+            z-index: 1;
+            animation: wave 8s ease-in-out infinite;
+        }
+
+        /* Dashboard Cards */
+        .dashboard {
+            padding: 5rem 5%;
+            position: relative;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            animation: floatIn 1s ease-out;
+            animation-fill-mode: backwards;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-btn {
+            background: transparent;
+            border: 2px solid var(--primary);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .card-btn:hover {
+            background: var(--gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes floatIn {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes wave {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-bg {
+                width: 100%;
+                clip-path: none;
+                opacity: 0.1;
+            }
+
+            .hero {
+                padding: 120px 5% 5rem;
+            }
+
+            .nav-bar {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-logo">
+            <i class="fas fa-rocket"></i>
+            <span>Customer Portal</span>
+        </div>
+        <div class="nav-actions">
+            <div class="nav-icon" onclick="openNotifications()">
+                <i class="fas fa-bell"></i>
+                <span class="badge">3</span>
+            </div>
+            <div class="nav-icon" onclick="goToCart()">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-badge" class="badge">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-greeting">Hello, <span id="user-name">Customer</span>!</div>
+            <h1 class="hero-title">Your Personal Dashboard</h1>
+            <p class="hero-subtitle">Access your services, track orders, and manage your account with ease.</p>
+            <a href="#dashboard" class="hero-btn">Explore Now</a>
+        </div>
+        <div class="hero-bg"></div>
+    </section>
+
+    <section class="dashboard" id="dashboard">
+        <div class="cards-grid">
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>Applications</h3>
+                <p>Submit new applications or check existing ones</p>
+                <a href="/applications" class="card-btn">Manage Applications</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <h3>Shopping</h3>
+                <p>Browse and purchase our products</p>
+                <a href="/shop" class="card-btn">Start Shopping</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <h3>Services</h3>
+                <p>Schedule services and track status</p>
+                <a href="/services" class="card-btn">View Services</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCartCount();
+            loadUserData();
+
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'cartItems') updateCartCount();
+            });
+        });
+
+        function updateCartCount() {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const cartBadge = document.getElementById('cart-badge');
+            cartBadge.textContent = cartItems.length;
+            cartBadge.style.display = cartItems.length > 0 ? 'flex' : 'none';
+        }
+
+        function loadUserData() {
+            const savedData = JSON.parse(localStorage.getItem('userData'));
+            if (savedData && savedData.name) {
+                document.getElementById('user-name').textContent = savedData.name.split(' ')[0];
+            }
+        }
+
+        function goToCart() {
+            window.location.href = '/viewcart';
+        }
+
+        function openNotifications() {
+            // Add notification modal logic here
+            alert('Notifications feature coming soon!');
+        }
+    </script>
+</body>
+</html>

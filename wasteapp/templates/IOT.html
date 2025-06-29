@@ -1,0 +1,3724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSmart - Advanced Waste Management Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-color: #2E8B57;
+            --primary-light: #3CB371;
+            --primary-dark: #1e5631;
+            --primary-gradient: linear-gradient(135deg, #2E8B57 0%, #43A047 100%);
+            --secondary-color: #546E7A;
+            --accent-color: #4CAF50;
+            --success-color: #4CAF50;
+            --warning-color: #FF9800;
+            --danger-color: #F44336;
+            --info-color: #2196F3;
+            --background-color: #FBFCFF;
+            --surface-color: #FFFFFF;
+            --card-bg: #FFFFFF;
+            --text-primary: #263238;
+            --text-secondary: #546E7A;
+            --text-tertiary: #78909C;
+            --border-radius-sm: 8px;
+            --border-radius: 16px;
+            --border-radius-lg: 24px;
+            --box-shadow: 0 10px 20px rgba(0,0,0,0.05), 0 6px 6px rgba(0,0,0,0.07);
+            --box-shadow-hover: 0 14px 28px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.07);
+            --transition-fast: 0.2s ease;
+            --transition: 0.3s ease;
+            --transition-slow: 0.5s ease;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        /* DARK MODE VARIABLES */
+        .dark-mode {
+            --primary-color: #43A047;
+            --primary-light: #66BB6A;
+            --primary-dark: #2E7D32;
+            --primary-gradient: linear-gradient(135deg, #388E3C 0%, #43A047 100%);
+            --secondary-color: #78909C;
+            --background-color: #121212;
+            --surface-color: #1E1E1E;
+            --card-bg: #252525;
+            --text-primary: #ECEFF1;
+            --text-secondary: #B0BEC5;
+            --text-tertiary: #78909C;
+            --box-shadow: 0 10px 20px rgba(0,0,0,0.2), 0 6px 6px rgba(0,0,0,0.15);
+            --box-shadow-hover: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.15);
+        }
+
+        /* GLOBAL STYLES */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: background-color var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            transition: color var(--transition);
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        a:hover {
+            color: var(--primary-light);
+        }
+
+        /* LAYOUT */
+        .app-container {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            grid-template-rows: 70px 1fr;
+            grid-template-areas:
+                "sidebar header"
+                "sidebar main";
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            grid-area: sidebar;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1.5rem;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform var(--transition);
+            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            grid-area: header;
+            background-color: var(--surface-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 50;
+            transition: background-color var(--transition);
+        }
+
+        .main-content {
+            grid-area: main;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background-color: var(--background-color);
+            transition: background-color var(--transition);
+        }
+
+        /* SIDEBAR */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+            padding: 0.75rem;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 12px;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .nav-items {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius-sm);
+            color: rgba(255,255,255,0.9);
+            font-weight: 500;
+            transition: background-color var(--transition-fast), color var(--transition-fast);
+            cursor: pointer;
+        }
+
+        .nav-link i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .nav-link.active {
+            background-color: rgba(255,255,255,0.15);
+            color: white;
+        }
+
+        .nav-link.active i {
+            color: white;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 1.5rem;
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        /* HEADER */
+        .search-bar {
+            position: relative;
+            width: 40%;
+            max-width: 500px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.75rem;
+            background-color: rgba(0,0,0,0.03);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+            outline: none;
+        }
+
+        .dark-mode .search-input {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 1rem;
+            pointer-events: none;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mode-toggle {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .mode-toggle:hover {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--primary-color);
+            transform: rotate(15deg);
+        }
+
+        .dark-mode .mode-toggle:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color var(--transition-fast), color var(--transition-fast);
+        }
+
+        .notification-btn:hover {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--primary-color);
+        }
+
+        .dark-mode .notification-btn:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 18px;
+            height: 18px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+        }
+
+        .user-menu:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .dark-mode .user-menu:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        /* DASHBOARD CONTENT */
+        .welcome-section {
+            margin-bottom: 2rem;
+            background-color: var(--surface-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+            transition: background-color var(--transition), box-shadow var(--transition);
+        }
+
+        .welcome-background {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background-image: url('/api/placeholder/300/200');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 5;
+        }
+
+        .welcome-title {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            max-width: 600px;
+        }
+
+        .welcome-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius-sm);
+            font-weight: 500;
+            transition: background-color var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .welcome-cta:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .welcome-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            padding: 1rem;
+            border-radius: var(--border-radius-sm);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow-hover);
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        .stat-growth {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .growth-positive {
+            color: var(--success-color);
+        }
+
+        .growth-negative {
+            color: var(--danger-color);
+        }
+
+        /* MAIN DASHBOARD GRID */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .dashboard-card {
+            background-color: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card:hover {
+            box-shadow: var(--box-shadow-hover);
+        }
+
+        .card-lg {
+            grid-column: span 8;
+        }
+
+        .card-md {
+            grid-column: span 6;
+        }
+
+        .card-sm {
+            grid-column: span 4;
+        }
+
+        .card-xs {
+            grid-column: span 3;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title i {
+            color: var(--primary-color);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .card-action-btn {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0.35rem;
+            border-radius: 8px;
+            transition: background-color var(--transition-fast), color var(--transition-fast);
+        }
+
+        .card-action-btn:hover {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--primary-color);
+        }
+
+        .dark-mode .card-action-btn:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        /* BIN MONITORING */
+        .bin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .bin-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition);
+            border-top: 5px solid var(--primary-color);
+            position: relative;
+        }
+
+        .bin-card.warning {
+            border-top-color: var(--warning-color);
+        }
+
+        .bin-card.danger {
+            border-top-color: var(--danger-color);
+        }
+
+        .bin-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--box-shadow-hover);
+        }
+
+        .bin-card-header {
+            padding: 1.25rem 1.25rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .bin-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bin-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .bin-location {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        .bin-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--success-color);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .bin-status.warning {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: var(--warning-color);
+        }
+
+        .bin-status.danger {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: var(--danger-color);
+        }
+
+        .bin-card-body {
+            padding: 1.25rem;
+        }
+
+        .fill-level-container {
+            margin-bottom: 1.25rem;
+        }
+
+        .fill-level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .fill-level-title {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .fill-level-value {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: rgba(0,0,0,0.05);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .dark-mode .progress-bar {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .progress-value {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            width: 0;
+            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .progress-value.warning {
+            background-color: var(--warning-color);
+        }
+
+        .progress-value.danger {
+            background-color: var(--danger-color);
+        }
+
+        .bin-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .bin-metric {
+            background-color: rgba(0,0,0,0.03);
+            padding: 0.75rem;
+            border-radius: var(--border-radius-sm);
+            transition: transform var(--transition-fast);
+        }
+
+        .dark-mode .bin-metric {
+            background-color: rgba(255,255,255,0.03);
+        }
+
+        .bin-metric:hover {
+            transform: scale(1.05);
+        }
+
+        .metric-label {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .bin-card-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .bin-action-btn {
+            flex: 1;
+            padding: 0.75rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            transition: background-color var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .bin-action-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .bin-action-btn.secondary {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--text-primary);
+        }
+
+        .dark-mode .bin-action-btn.secondary {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .bin-action-btn.secondary:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        .dark-mode .bin-action-btn.secondary:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        /* MAP SECTION */
+        .map-container {
+            height: 400px;
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .map {
+            width: 100%;
+            height: 100%;
+            background-image: url('/api/placeholder/1400/400');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .map-control {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            border: none;
+            transition: background-color var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .map-control:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .bin-marker {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            border: 3px solid white;
+            cursor: pointer;
+            transition: transform var(--transition-fast);
+            z-index: 3;
+        }
+
+        .bin-marker:hover {
+            transform: scale(1.2);
+        }
+
+        .bin-marker.warning {
+            background-color: var(--warning-color);
+        }
+
+        .bin-marker.danger {
+            background-color: var(--danger-color);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        .map-tooltip {
+            position: absolute;
+            z-index: 10;
+            background-color: white;
+            border-radius: 8px;
+            padding: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            min-width: 200px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-fast);
+        }
+
+        .map-tooltip.visible {
+            opacity: 1;
+        }
+
+        .tooltip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .tooltip-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .tooltip-tag {
+            padding: 0.2rem 0.5rem;
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--success-color);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .tooltip-tag.warning {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: var(--warning-color);
+        }
+
+        .tooltip-tag.danger {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: var(--danger-color);
+        }
+
+        .tooltip-content {
+            font-size: 0.8rem;
+        }
+
+        .tooltip-metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.3rem;
+        }
+
+        .tooltip-label {
+            color: var(--text-tertiary);
+        }
+
+        .tooltip-value {
+            font-weight: 500;
+        }
+
+        .tooltip-actions {
+            margin-top: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .tooltip-action {
+            font-size: 0.75rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .tooltip-action:hover {
+            text-decoration: underline;
+        }
+
+        /* CHARTS */
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            background-color: rgba(0,0,0,0.02);
+            border-radius: var(--border-radius-sm);
+            color: var(--text-tertiary);
+        }
+
+        .dark-mode .chart-placeholder {
+            background-color: rgba(255,255,255,0.02);
+        }
+
+        .chart-placeholder i {
+            font-size: 2.5rem;
+            opacity: 0.5;
+        }
+
+        /* WASTE COMPOSITION */
+        .waste-composition {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .waste-type {
+            background-color: rgba(0,0,0,0.03);
+            border-radius: var(--border-radius-sm);
+            padding: 1rem;
+            text-align: center;
+            transition: transform var(--transition-fast);
+        }
+
+        .dark-mode .waste-type {
+            background-color: rgba(255,255,255,0.03);
+        }
+
+        .waste-type:hover {
+            transform: translateY(-5px);
+        }
+
+        .waste-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+        }
+
+        .waste-type.plastic .waste-icon { background-color: rgba(33, 150, 243, 0.1); color: #2196F3; }
+        .waste-type.paper .waste-icon { background-color: rgba(121, 85, 72, 0.1); color: #795548; }
+        .waste-type.glass .waste-icon { background-color: rgba(0, 188, 212, 0.1); color: #00BCD4; }
+        .waste-type.metal .waste-icon { background-color: rgba(158, 158, 158, 0.1); color: #9E9E9E; }
+        .waste-type.organic .waste-icon { background-color: rgba(139, 195, 74, 0.1); color: #8BC34A; }
+
+        .waste-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .waste-amount {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .waste-percentage {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        /* ROUTE OPTIMIZATION */
+        .route-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .optimization-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .optimization-control {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .optimization-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .optimization-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid rgba(0,0,0,0.1);
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23546E7A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .dark-mode .optimization-select {
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .optimization-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(46, 139, 87, 0.2);
+        }
+
+        .route-map {
+            height: 350px;
+            background-image: url('/api/placeholder/1400/350');
+            background-size: cover;
+            background-position: center;
+            border-radius: var(--border-radius);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .route-stop {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: white;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            z-index: 3;
+            border: 3px solid var(--primary-color);
+        }
+
+        .route-line {
+            position: absolute;
+            height: 4px;
+            background-color: var(--primary-color);
+            z-index: 2;
+            opacity: 0.75;
+            transform-origin: 0 0;
+        }
+
+        .route-details {
+            margin-top: 1.5rem;
+        }
+
+        .route-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .route-table th, .route-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .dark-mode .route-table th, .dark-mode .route-table td {
+            border-bottom-color: rgba(255,255,255,0.05);
+        }
+
+        .route-table th {
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .route-table tr:hover td {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        .dark-mode .route-table tr:hover td {
+            background-color: rgba(255,255,255,0.02);
+        }
+
+        .route-table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .table-action-btn {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 0.35rem;
+            border-radius: 6px;
+            transition: background-color var(--transition-fast), color var(--transition-fast);
+        }
+
+        .table-action-btn:hover {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--primary-color);
+        }
+
+        .dark-mode .table-action-btn:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        /* ANALYTICS */
+        .analytics-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .analytics-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .analytics-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--box-shadow-hover);
+        }
+
+        .analytics-icon {
+            font-size: 2rem;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--primary-color);
+        }
+
+        .analytics-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .analytics-label {
+            font-size: 0.9rem;
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+        }
+
+        .analytics-subtext {
+            font-size: 0.8rem;
+            color: var(--success-color);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .analytics-subtext.negative {
+            color: var(--danger-color);
+        }
+
+        /* SUSTAINABILITY GOALS */
+        .goals-section {
+            margin-top: 1.5rem;
+        }
+
+        .goal-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .goal-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .goal-progress {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+
+        .goal-percentage {
+            font-weight: 600;
+        }
+
+        .goal-target {
+            color: var(--text-tertiary);
+        }
+
+        .goal-bar {
+            height: 10px;
+            background-color: rgba(0,0,0,0.05);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .dark-mode .goal-bar {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .goal-value {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            width: 0;
+            transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* NEW FEATURES */
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--box-shadow-hover);
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--primary-color);
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.25rem;
+            flex-grow: 1;
+        }
+
+        .feature-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: gap var(--transition-fast);
+        }
+
+        .feature-link:hover {
+            gap: 0.75rem;
+        }
+
+        /* AI INSIGHTS */
+        .ai-insight {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            display: flex;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: transform var(--transition-fast);
+        }
+
+        .ai-insight:hover {
+            transform: translateY(-5px);
+        }
+
+        .insight-icon {
+            width: 60px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .insight-content {
+            padding: 1rem 1.25rem;
+            flex-grow: 1;
+        }
+
+        .insight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .insight-time {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .insight-message {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .insight-actions {
+            margin-top: 0.75rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .insight-action {
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .insight-action:hover {
+            text-decoration: underline;
+        }
+
+        /* COMMUNITY ENGAGEMENT */
+        .community-leaderboard {
+            margin-top: 1rem;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 0.75rem;
+            transition: background-color var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .leaderboard-item:hover {
+            background-color: rgba(0,0,0,0.03);
+            transform: translateX(5px);
+        }
+
+        .dark-mode .leaderboard-item:hover {
+            background-color: rgba(255,255,255,0.03);
+        }
+
+        .leaderboard-rank {
+            font-size: 1.2rem;
+            font-weight: 700;
+            width: 40px;
+            color: var(--text-tertiary);
+        }
+
+        .rank-1 {
+            color: gold;
+        }
+
+        .rank-2 {
+            color: silver;
+        }
+
+        .rank-3 {
+            color: #cd7f32; /* bronze */
+        }
+
+        .leaderboard-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex: 1;
+        }
+
+        .user-avatar-sm {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name-sm {
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .user-location {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .leaderboard-score {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .score-points {
+            color: var(--primary-color);
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .animate-slideUp {
+            animation: slideUp 0.5s ease forwards;
+        }
+
+        .animate-scaleIn {
+            animation: scaleIn 0.5s ease forwards;
+        }
+
+        .animate-slideInRight {
+            animation: slideInRight 0.5s ease forwards;
+        }
+
+        .animate-delay-100 { animation-delay: 0.1s; }
+        .animate-delay-200 { animation-delay: 0.2s; }
+        .animate-delay-300 { animation-delay: 0.3s; }
+        .animate-delay-400 { animation-delay: 0.4s; }
+        .animate-delay-500 { animation-delay: 0.5s; }
+
+        /* NOTIFICATION SYSTEM */
+        .notifications-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 350px;
+        }
+
+        .notification-toast {
+            background-color: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            padding: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            transform: translateX(120%);
+            animation: slideInNotification 0.5s forwards, fadeOutNotification 0.5s 4.5s forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notification-toast::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background-color: var(--primary-color);
+        }
+
+        .notification-toast.warning::before {
+            background-color: var(--warning-color);
+        }
+
+        .notification-toast.danger::before {
+            background-color: var(--danger-color);
+        }
+
+        .notification-toast.info::before {
+            background-color: var(--info-color);
+        }
+
+        .notification-icon {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+        }
+
+        .notification-toast.warning .notification-icon {
+            color: var(--warning-color);
+        }
+
+        .notification-toast.danger .notification-icon {
+            color: var(--danger-color);
+        }
+
+        .notification-toast.info .notification-icon {
+            color: var(--info-color);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-message {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .notification-close {
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 50%;
+            transition: background-color var(--transition-fast), color var(--transition-fast);
+        }
+
+        .notification-close:hover {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--text-primary);
+        }
+
+        .dark-mode .notification-close:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .notification-timer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .dark-mode .notification-timer {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .notification-timer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--primary-color);
+            animation: timerProgress 5s linear forwards;
+        }
+
+        .notification-toast.warning .notification-timer::before {
+            background-color: var(--warning-color);
+        }
+
+        .notification-toast.danger .notification-timer::before {
+            background-color: var(--danger-color);
+        }
+
+        .notification-toast.info .notification-timer::before {
+            background-color: var(--info-color);
+        }
+
+        @keyframes slideInNotification {
+            to { transform: translateX(0); }
+        }
+
+        @keyframes fadeOutNotification {
+            to { opacity: 0; transform: translateY(20px); }
+        }
+
+        @keyframes timerProgress {
+            to { width: 0; }
+        }
+
+        /* LOADING SCREEN */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--background-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .loading-logo-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+
+        .loading-logo-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(76, 175, 80, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .loading-progress {
+            width: 200px;
+            height: 6px;
+            background-color: rgba(0,0,0,0.05);
+            border-radius: 3px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .dark-mode .loading-progress {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .loading-progress-value {
+            height: 100%;
+            width: 0;
+            background-color: var(--primary-color);
+            border-radius: 3px;
+            animation: progressIncrease 2.5s ease-out forwards;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes progressIncrease {
+            0% { width: 0; }
+            20% { width: 20%; }
+            50% { width: 60%; }
+            80% { width: 85%; }
+            100% { width: 100%; }
+        }
+
+        /* NEW FEATURES */
+        .ai-chatbot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 900;
+        }
+
+        .chatbot-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: transform var(--transition-fast), background-color var(--transition-fast);
+            position: relative;
+        }
+
+        .chatbot-button:hover {
+            transform: scale(1.1);
+            background-color: var(--primary-dark);
+        }
+
+        .chatbot-button.active {
+            transform: scale(1.1);
+        }
+
+        .chatbot-window {
+            position: absolute;
+            bottom: 75px;
+            right: 0;
+            width: 350px;
+            background-color: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+            overflow: hidden;
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity var(--transition), transform var(--transition);
+        }
+
+        .chatbot-window.active {
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chatbot-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chatbot-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+        }
+
+        .chatbot-close {
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform var(--transition-fast);
+        }
+
+        .chatbot-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .chatbot-messages {
+            padding: 1rem;
+            flex-grow: 1;
+            height: 300px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chatbot-message {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .chatbot-message.bot {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--text-primary);
+            border-top-left-radius: 4px;
+            align-self: flex-start;
+        }
+
+        .dark-mode .chatbot-message.bot {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .chatbot-message.user {
+            background-color: var(--primary-color);
+            color: white;
+            border-top-right-radius: 4px;
+            align-self: flex-end;
+        }
+
+        .chatbot-input {
+            padding: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .dark-mode .chatbot-input {
+            border-top-color: rgba(255,255,255,0.05);
+        }
+
+        .chatbot-input-field {
+            flex-grow: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        .dark-mode .chatbot-input-field {
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .chatbot-input-field:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(46, 139, 87, 0.2);
+        }
+
+        .chatbot-send {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .chatbot-send:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* AIR QUALITY MODULE */
+        .air-quality-module {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .air-quality-summary {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .aqi-indicator {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            background: conic-gradient(#4CAF50 0% 60%, #FFC107 60% 80%, #F44336 80% 100%);
+            position: relative;
+        }
+
+        .aqi-indicator::before {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--card-bg);
+        }
+
+        .aqi-value {
+            position: relative;
+            z-index: 1;
+            font-size: 1.75rem;
+            line-height: 1;
+        }
+
+        .aqi-label {
+            position: relative;
+            z-index: 1;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .air-quality-details {
+            flex-grow: 1;
+        }
+
+        .air-quality-status {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .air-quality-good {
+            color: var(--success-color);
+        }
+
+        .air-quality-moderate {
+            color: var(--warning-color);
+        }
+
+        .air-quality-poor {
+            color: var(--danger-color);
+        }
+
+        .air-quality-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .pollutant-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .pollutant-item {
+            background-color: rgba(0,0,0,0.03);
+            padding: 0.75rem;
+            border-radius: var(--border-radius-sm);
+            text-align: center;
+        }
+
+        .dark-mode .pollutant-item {
+            background-color: rgba(255,255,255,0.03);
+        }
+
+        .pollutant-name {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-bottom: 0.5rem;
+        }
+
+        .pollutant-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .pollutant-unit {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+        }
+
+        /* SMART SORTING GUIDANCE */
+        .sorting-guidance {
+            margin-top: 1rem;
+        }
+
+        .sorting-item {
+            padding: 1rem;
+            border-radius: var(--border-radius-sm);
+            background-color: rgba(0,0,0,0.02);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform var(--transition-fast), background-color var(--transition-fast);
+        }
+
+        .dark-mode .sorting-item {
+            background-color: rgba(255,255,255,0.02);
+        }
+
+        .sorting-item:hover {
+            transform: translateY(-3px);
+            background-color: rgba(0,0,0,0.03);
+        }
+
+        .dark-mode .sorting-item:hover {
+            background-color: rgba(255,255,255,0.03);
+        }
+
+        .waste-image {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--border-radius-sm);
+            background-color: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--text-tertiary);
+        }
+
+        .sorting-info {
+            flex-grow: 1;
+        }
+
+        .waste-item-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .sorting-instruction {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .bin-suggestion {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        /* GAMIFICATION */
+        .user-profile-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem;
+            border-radius: var(--border-radius);
+            background-color: var(--card-bg);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .user-profile-info {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .user-avatar-lg {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .user-identity {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name-lg {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-title {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-level-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.75rem;
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .user-stat {
+            text-align: center;
+        }
+
+        .stat-value-lg {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: var(--primary-color);
+        }
+
+        .stat-label-lg {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        .rewards-section {
+            margin-top: 1.5rem;
+        }
+
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .badge-item {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            transition: transform var(--transition-fast);
+            position: relative;
+        }
+
+        .badge-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .badge-item.locked {
+            opacity: 0.6;
+        }
+
+        .badge-item.locked::after {
+            content: '\f023';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .badge-icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .badge-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .badge-description {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1200px) {
+            .card-lg {
+                grid-column: span 12;
+            }
+
+            .card-md {
+                grid-column: span 6;
+            }
+
+            .card-sm {
+                grid-column: span 6;
+            }
+
+            .card-xs {
+                grid-column: span 6;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .app-container {
+                grid-template-areas:
+                    "header header"
+                    "sidebar main";
+                grid-template-rows: 70px 1fr;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                height: 100%;
+                top: 0;
+                left: 0;
+                z-index: 200;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .card-md {
+                grid-column: span 12;
+            }
+
+            .card-sm {
+                grid-column: span 6;
+            }
+
+            .card-xs {
+                grid-column: span 6;
+            }
+
+            .header {
+                padding: 0 1rem;
+            }
+
+            .search-bar {
+                width: 60%;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                gap: 1rem;
+            }
+
+            .card-sm {
+                grid-column: span 12;
+            }
+
+            .card-xs {
+                grid-column: span 6;
+            }
+
+            .bin-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-bar {
+                display: none;
+            }
+
+            .user-profile-summary {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .user-stats {
+                width: 100%;
+                justify-content: space-around;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "header"
+                    "main";
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .welcome-section {
+                padding: 1rem;
+            }
+
+            .welcome-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .card-xs {
+                grid-column: span 12;
+            }
+
+            .dashboard-card {
+                padding: 1rem;
+            }
+
+            .user-profile-info {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 0.75rem;
+            }
+
+            .badge-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+
+            .air-quality-summary {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        /* ADDITIONAL MENU TOGGLE FOR MOBILE */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background-color var(--transition-fast), color var(--transition-fast);
+        }
+
+        .menu-toggle:hover {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--primary-color);
+        }
+
+        .dark-mode .menu-toggle:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        @media (max-width: 992px) {
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* SIDEBAR OVERLAY */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 150;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition), visibility var(--transition);
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-logo">
+            <i class="fas fa-recycle loading-logo-icon"></i>
+            <div class="loading-logo-text">EcoSmart</div>
+        </div>
+        <div class="loading-spinner"></div>
+        <div class="loading-progress">
+            <div class="loading-progress-value"></div>
+        </div>
+        <div class="loading-text">Loading system data...</div>
+    </div>
+
+    <!-- Main Application Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <span class="logo-icon"><i class="fas fa-recycle"></i></span>
+                <span class="logo-text">EcoSmart</span>
+            </div>
+
+            <div class="nav-section">
+                <h5 class="nav-section-title">Main</h5>
+                <ul class="nav-items">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="dashboard-link">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="analytics-link">
+                            <i class="fas fa-chart-line"></i> Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="planning-link">
+                            <i class="fas fa-route"></i> Route Planning
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="bins-link">
+                            <i class="fas fa-trash-alt"></i> Bin Management
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <h5 class="nav-section-title">Features</h5>
+                <ul class="nav-items">
+                    <li class="nav-item">
+                        <a class="nav-link" id="predictive-link">
+                            <i class="fas fa-brain"></i> Predictive Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="sorting-link">
+                            <i class="fas fa-filter"></i> Smart Sorting
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="community-link">
+                            <i class="fas fa-users"></i> Community Hub
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="rewards-link">
+                            <i class="fas fa-trophy"></i> Rewards & Badges
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="air-link">
+                            <i class="fas fa-wind"></i> Air Quality
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <h5 class="nav-section-title">System</h5>
+                <ul class="nav-items">
+                    <li class="nav-item">
+                        <a class="nav-link" id="reports-link">
+                            <i class="fas fa-file-alt"></i> Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="devices-link">
+                            <i class="fas fa-microchip"></i> IoT Devices
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="settings-link">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="help-link">
+                            <i class="fas fa-question-circle"></i> Help & Support
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-footer">
+                <p>EcoSmart Waste Management v2.5</p>
+                <p>© 2025 EcoSmart Technologies</p>
+            </div>
+        </aside>
+
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- Header -->
+        <header class="header">
+            <button class="menu-toggle" id="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search bins, routes, reports...">
+            </div>
+
+            <div class="header-actions">
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count">3</span>
+                </button>
+
+                <button class="mode-toggle" id="mode-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+
+                <div class="user-menu">
+                    <div class="user-avatar">JS</div>
+                    <div class="user-info">
+                        <div class="user-name">John Smith</div>
+                        <div class="user-role">Administrator</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content" id="main-content">
+            <!-- Dashboard Welcome Section -->
+            <section class="welcome-section animate-fadeIn">
+                <div class="welcome-background"></div>
+                <div class="welcome-content">
+                    <h1 class="welcome-title">Welcome back, John!</h1>
+                    <p class="welcome-subtitle">Here's your waste management system overview for Monday, March 17, 2025.</p>
+                    <a href="#" class="welcome-cta">Generate Weekly Report <i class="fas fa-arrow-right"></i></a>
+
+                    <div class="welcome-stats">
+                        <div class="stat-card animate-slideUp animate-delay-100">
+                            <div class="stat-value">45,632</div>
+                            <div class="stat-label">Total Waste Collected (kg)</div>
+                            <div class="stat-growth growth-positive">
+                                <i class="fas fa-arrow-up"></i> 12.4%
+                            </div>
+                        </div>
+                        <div class="stat-card animate-slideUp animate-delay-200">
+                            <div class="stat-value">78.3%</div>
+                            <div class="stat-label">Recycling Rate</div>
+                            <div class="stat-growth growth-positive">
+                                <i class="fas fa-arrow-up"></i> 5.2%
+                            </div>
+                        </div>
+                        <div class="stat-card animate-slideUp animate-delay-300">
+                            <div class="stat-value">12,450</div>
+                            <div class="stat-label">CO2 Reduction (kg)</div>
+                            <div class="stat-growth growth-positive">
+                                <i class="fas fa-arrow-up"></i> 8.7%
+                            </div>
+                        </div>
+                        <div class="stat-card animate-slideUp animate-delay-400">
+                            <div class="stat-value">$5,280</div>
+                            <div class="stat-label">Operational Savings</div>
+                            <div class="stat-growth growth-positive">
+                                <i class="fas fa-arrow-up"></i> 15.3%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Map and Bin Locations Section -->
+            <section class="dashboard-card animate-fadeIn animate-delay-400">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-map-marker-alt"></i> Bin Locations</h2>
+                    <div class="card-actions">
+                        <button class="card-action-btn"><i class="fas fa-expand-alt"></i></button>
+                        <button class="card-action-btn"><i class="fas fa-filter"></i></button>
+                        <button class="card-action-btn"><i class="fas fa-ellipsis-v"></i></button>
+                    </div>
+                </div>
+
+                <div class="map-container">
+                    <div class="map" id="waste-bin-map">
+                        <!-- Bin markers will be dynamically added here -->
+                        <div class="bin-marker" style="left: 25%; top: 30%;" data-bin-id="1">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                        <div class="bin-marker warning" style="left: 40%; top: 15%;" data-bin-id="2">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                        <div class="bin-marker" style="left: 65%; top: 25%;" data-bin-id="3">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                        <div class="bin-marker danger" style="left: 75%; top: 60%;" data-bin-id="4">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                        <div class="bin-marker" style="left: 30%; top: 70%;" data-bin-id="5">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                        <div class="bin-marker warning" style="left: 55%; top: 45%;" data-bin-id="6">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                    </div>
+
+                    <div class="map-tooltip" id="map-tooltip">
+                        <div class="tooltip-header">
+                            <div class="tooltip-title">City Center #1</div>
+                            <div class="tooltip-tag danger">Critical</div>
+                        </div>
+                        <div class="tooltip-content">
+                            <div class="tooltip-metric">
+                                <div class="tooltip-label">Fill Level:</div>
+                                <div class="tooltip-value">92%</div>
+                            </div>
+                            <div class="tooltip-metric">
+                                <div class="tooltip-label">Battery:</div>
+                                <div class="tooltip-value">68%</div>
+                            </div>
+                            <div class="tooltip-metric">
+                                <div class="tooltip-label">Last Collection:</div>
+                                <div class="tooltip-value">2 days ago</div>
+                            </div>
+                        </div>
+                        <div class="tooltip-actions">
+                            <span class="tooltip-action"><i class="fas fa-route"></i> Navigate</span>
+                            <span class="tooltip-action"><i class="fas fa-info-circle"></i> Details</span>
+                        </div>
+                    </div>
+
+                    <div class="map-controls">
+                        <button class="map-control"><i class="fas fa-plus"></i></button>
+                        <button class="map-control"><i class="fas fa-minus"></i></button>
+                        <button class="map-control"><i class="fas fa-location-arrow"></i></button>
+                        <button class="map-control"><i class="fas fa-layer-group"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bin Monitoring Section -->
+            <section class="animate-fadeIn animate-delay-500">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-trash-alt"></i> Bin Monitoring</h2>
+                        <div class="card-actions">
+                            <button class="card-action-btn"><i class="fas fa-filter"></i></button>
+                            <button class="card-action-btn"><i class="fas fa-sort-amount-down"></i></button>
+                            <button class="card-action-btn"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="bin-grid" id="bin-grid">
+                        <!-- Bin cards will be dynamically added here -->
+                        <div class="bin-card danger">
+                            <div class="bin-card-header">
+                                <div class="bin-info">
+                                    <div class="bin-name">City Center #1</div>
+                                    <div class="bin-location"><i class="fas fa-map-marker-alt"></i> Central Plaza</div>
+                                </div>
+                                <div class="bin-status danger">
+                                    <i class="fas fa-exclamation-circle"></i> Critical
+                                </div>
+                            </div>
+                            <div class="bin-card-body">
+                                <div class="fill-level-container">
+                                    <div class="fill-level-header">
+                                        <div class="fill-level-title">Fill Level</div>
+                                        <div class="fill-level-value">92%</div>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-value danger" style="width: 92%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="bin-metrics">
+                                    <div class="bin-metric">
+                                        <div class="metric-label"><i class="fas fa-battery-three-quarters"></i> Battery</div>
+                                        <div class="metric-value">68%</div>
+                                    </div>
+                                    <div class="bin-metric">
+                                        <div class="metric-label"><i class="fas fa-thermometer-half"></i> Temperature</div>
+                                        <div class="metric-value">22°C</div>
+                                    </div>
+                                    <div class="bin-metric">
+                                        <div class="metric-label"><i class="fas fa-tint"></i> Humidity</div>
+                                        <div class="metric-value">45%</div>
+                                    </div>
+                                    <div class="bin-metric">
+                                        <div class="metric-label"><i class="fas fa-calendar-alt"></i> Last Collection</div>
+                                        <div class="metric-value">Mar 15</div>
+                                    </div>
+                                </div>
+
+                                <div class="bin-card-actions">
+                                    <button class="bin-action-btn"><i class="fas fa-truck"></i> Collect Now</button>
+                                    <button class="bin-action-btn secondary"><i class="fas fa-chart-line"></i> History</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bin-card warning">
+                            <div class="bin-card-header">
+                                <div class="bin-info">
+                                    <div class="bin-name">North Park #3</div>
+                                    <div class="bin-location"><i class="fas fa-map-marker-alt"></i> North Park</div>
+                                </div>
+                                <div class="bin-status warning">
+                                    <i class="fas fa-exclamation-triangle"></i> Warning
+                                </div>
+                            </div>
+                            <div class="bin-card-body">
+                                <div class="fill-level-container">
+                                    <div class="fill-level-header">
+                                        <div class="fill-level-title">Fill Level</div>
+                                        <div class="fill-level-value">76%</div>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-value warning" style="width: 76%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="bin-metrics">
+                                    <div class="bin-metric">
+                                        <div class="metric-label"><i class="fas fa-battery-three-quarters"></i> Battery</div>
+                                        <div class="metric-value">82%</div>
+                                    </div>
+                                    <div class="bin-metric">
+                                        <div class="metric-label"><i class="fas fa-thermometer-half"></i> Temperature</div>
+                                        <div class="metric-value">24°C</div>
+                                    </div>
+                                    <div class="bin-metric">
+                                        <div class="metric-label"><i class="fas fa-tint"></i> Humidity</div>
+                                        <div class="metric-value">40%</div>
+                                    </div>
+                                    <div class="bin-metric">
+                                        <div class="metric-label"><i class="fas fa-calendar-alt"></i> Last Collection</div>
+                                        <div class="metric-value">Mar 14</div>
+                                    </div>
+                                </div>
+
+                                <div class="bin-card-actions">
+                                    <button class="bin-action-btn"><i class="fas fa-truck"></i> Schedule</button>
+                                    <button class="bin-action-btn secondary"><i class="fas fa-chart-line"></i> History</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bin-card">
+                            <div class="bin-card-header">
+                                <div class="bin-info">
+                                    <div class="bin-name">East Square #2</div>
+                                    <div class="bin-location"><i class="fas fa-map-marker-alt"></i> East Square</div>
+                                </div>
+                                <div class="bin-status">
+                                    <i class="fas fa-check-circle"></i> Normal
+                                </div>
+                            </div>
+                            <div class="bin-card-body">
+                                <div class="fill-level-container">
+                                    <div class="fill-level-header">
+                                        <div class="fill-level-title">Fill Level</div>
+                                        <div class="fill-level-value">45%</div>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-value" style="width: 45%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="bin-metrics">
+                                    <div class="bin-metric">
+                                        <div class="metric-label"><i class="fas fa-battery-three-quarters"></i> Battery</div>
+                                        <div class="metric-value">93%</div>
+                                    </div>
+                                    <div class="bin-metric">
+                                        <div class="metric-label"><i class="fas fa-thermometer-half"></i> Temperature</div>
+                                        <div class="metric-value">23°C</div>
+                                    </div>
+                                    <div class="bin-metric">
+                                        <div class="metric-label"><i class="fas fa-tint"></i> Humidity</div>
+                                        <div class="metric-value">38%</div>
+                                    </div>
+                                    <div class="bin-metric">
+                                        <div class="metric-label"><i class="fas fa-calendar-alt"></i> Last Collection</div>
+                                        <div class="metric-value">Mar 16</div>
+                                    </div>
+                                </div>
+
+                                <div class="bin-card-actions">
+                                    <button class="bin-action-btn"><i class="fas fa-truck"></i> Schedule</button>
+                                    <button class="bin-action-btn secondary"><i class="fas fa-chart-line"></i> History</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- New Features Section -->
+            <section class="animate-fadeIn animate-delay-600">
+                <h2 class="section-title"><i class="fas fa-star"></i> New Features</h2>
+                <div class="feature-cards">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3 class="feature-title">AI-Powered Waste Analysis</h3>
+                        <p class="feature-description">
+                            Our new AI system automatically identifies trends in waste composition and suggests optimization strategies for collection routes and bin allocation.
+                        </p>
+                        <a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <h3 class="feature-title">Visual Waste Recognition</h3>
+                        <p class="feature-description">
+                            Smart cameras now identify waste types in real-time, improving sorting accuracy by 35% and reducing contamination in recycling streams.
+                        </p>
+                        <a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h3 class="feature-title">Community Gamification</h3>
+                        <p class="feature-description">
+                            Engage residents with challenges, leaderboards, and rewards for proper waste disposal and recycling habits.
+                        </p>
+                        <a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-wind"></i>
+                        </div>
+                        <h3 class="feature-title">Air Quality Monitoring</h3>
+                        <p class="feature-description">
+                            New integrated air quality sensors around waste management facilities help monitor environmental impact and community health.
+                        </p>
+                        <a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Insights Section -->
+            <section class="dashboard-grid animate-scaleIn animate-delay-200">
+                <div class="dashboard-card card-lg">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-brain"></i> AI Insights</h2>
+                        <div class="card-actions">
+                            <button class="card-action-btn"><i class="fas fa-sync-alt"></i></button>
+                            <button class="card-action-btn"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="ai-insight">
+                        <div class="insight-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="insight-content">
+                            <div class="insight-header">
+                                <div class="insight-title">
+                                    <i class="fas fa-robot"></i> Maintenance Alert
+                                </div>
+                                <div class="insight-time">Just now</div>
+                            </div>
+                            <div class="insight-message">
+                                Bin #8 at East Plaza has reported low battery levels consistently over the past 48 hours. Schedule maintenance to prevent sensor downtime.
+                            </div>
+                            <div class="insight-actions">
+                                <a href="#" class="insight-action"><i class="fas fa-wrench"></i> Schedule Maintenance</a>
+                                <a href="#" class="insight-action"><i class="fas fa-eye"></i> View Details</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-insight">
+                        <div class="insight-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="insight-content">
+                            <div class="insight-header">
+                                <div class="insight-title">
+                                    <i class="fas fa-robot"></i> Optimization Opportunity
+                                </div>
+                                <div class="insight-time">2 hours ago</div>
+                            </div>
+                            <div class="insight-message">
+                                Analysis of collection patterns suggests changing North District pickup from Mondays to Wednesdays could reduce fuel usage by 18% due to lower traffic congestion.
+                            </div>
+                            <div class="insight-actions">
+                                <a href="#" class="insight-action"><i class="fas fa-check"></i> Apply Change</a>
+                                <a href="#" class="insight-action"><i class="fas fa-chart-line"></i> View Analysis</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-insight">
+                        <div class="insight-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="insight-content">
+                            <div class="insight-header">
+                                <div class="insight-title">
+                                    <i class="fas fa-robot"></i> Waste Composition Shift
+                                </div>
+                                <div class="insight-time">Yesterday</div>
+                            </div>
+                            <div class="insight-message">
+                                Detected a 27% increase in plastic waste in the Downtown sector over the past 2 weeks. This may require adjusting bin capacity allocation.
+                            </div>
+                            <div class="insight-actions">
+                                <a href="#" class="insight-action"><i class="fas fa-exchange-alt"></i> Adjust Capacity</a>
+                                <a href="#" class="insight-action"><i class="fas fa-chart-bar"></i> View Trends</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card card-sm">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-chart-pie"></i> Waste Composition</h2>
+                        <div class="card-actions">
+                            <button class="card-action-btn"><i class="fas fa-expand-alt"></i></button>
+                            <button class="card-action-btn"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-pie"></i>
+                            <p>Waste composition breakdown by type</p>
+                        </div>
+                    </div>
+
+                    <div class="waste-composition">
+                        <div class="waste-type plastic">
+                            <div class="waste-icon"><i class="fas fa-wine-bottle"></i></div>
+                            <div class="waste-name">Plastic</div>
+                            <div class="waste-amount">11,450 kg</div>
+                            <div class="waste-percentage">25.1%</div>
+                        </div>
+                        <div class="waste-type paper">
+                            <div class="waste-icon"><i class="fas fa-newspaper"></i></div>
+                            <div class="waste-name">Paper</div>
+                            <div class="waste-amount">13,280 kg</div>
+                            <div class="waste-percentage">29.1%</div>
+                        </div>
+                        <div class="waste-type glass">
+                            <div class="waste-icon"><i class="fas fa-wine-glass-alt"></i></div>
+                            <div class="waste-name">Glass</div>
+                            <div class="waste-amount">6,340 kg</div>
+                            <div class="waste-percentage">13.9%</div>
+                        </div>
+                        <div class="waste-type metal">
+                            <div class="waste-icon"><i class="fas fa-utensils"></i></div>
+                            <div class="waste-name">Metal</div>
+                            <div class="waste-amount">5,120 kg</div>
+                            <div class="waste-percentage">11.2%</div>
+                        </div>
+                        <div class="waste-type organic">
+                            <div class="waste-icon"><i class="fas fa-apple-alt"></i></div>
+                            <div class="waste-name">Organic</div>
+                            <div class="waste-amount">9,442 kg</div>
+                            <div class="waste-percentage">20.7%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card card-sm animate-scaleIn animate-delay-300">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-leaf"></i> Sustainability Goals</h2>
+                        <div class="card-actions">
+                            <button class="card-action-btn"><i class="fas fa-sync-alt"></i></button>
+                            <button class="card-action-btn"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="goals-section">
+                        <div class="goal-item">
+                            <div class="goal-header">
+                                <div class="goal-title">Recycling Rate</div>
+                                <div class="goal-progress">
+                                    <span class="goal-percentage">78%</span>
+                                    <span class="goal-target">/ 85%</span>
+                                </div>
+                            </div>
+                            <div class="goal-bar">
+                                <div class="goal-value" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="goal-item">
+                            <div class="goal-header">
+                                <div class="goal-title">Landfill Diversion</div>
+                                <div class="goal-progress">
+                                    <span class="goal-percentage">82%</span>
+                                    <span class="goal-target">/ 90%</span>
+                                </div>
+                            </div>
+                            <div class="goal-bar">
+                                <div class="goal-value" style="width: 82%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="goal-item">
+                            <div class="goal-header">
+                                <div class="goal-title">Carbon Footprint Reduction</div>
+                                <div class="goal-progress">
+                                    <span class="goal-percentage">65%</span>
+                                    <span class="goal-target">/ 75%</span>
+                                </div>
+                            </div>
+                            <div class="goal-bar">
+                                <div class="goal-value" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="goal-item">
+                            <div class="goal-header">
+                                <div class="goal-title">Operational Efficiency</div>
+                                <div class="goal-progress">
+                                    <span class="goal-percentage">92%</span>
+                                    <span class="goal-target">/ 95%</span>
+                                </div>
+                            </div>
+                            <div class="goal-bar">
+                                <div class="goal-value" style="width: 92%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card card-sm animate-scaleIn animate-delay-300">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-wind"></i> Air Quality</h2>
+                        <div class="card-actions">
+                            <button class="card-action-btn"><i class="fas fa-sync-alt"></i></button>
+                            <button class="card-action-btn"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="air-quality-module">
+                        <div class="air-quality-summary">
+                            <div class="aqi-indicator">
+                                <div class="aqi-value">38</div>
+                                <div class="aqi-label">AQI</div>
+                            </div>
+                            <div class="air-quality-details">
+                                <div class="air-quality-status air-quality-good">Good</div>
+                                <div class="air-quality-description">
+                                    Air quality is satisfactory, and air pollution poses little or no risk to public health.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pollutant-metrics">
+                            <div class="pollutant-item">
+                                <div class="pollutant-name">PM2.5</div>
+                                <div class="pollutant-value">12.3</div>
+                                <div class="pollutant-unit">µg/m³</div>
+                            </div>
+                            <div class="pollutant-item">
+                                <div class="pollutant-name">PM10</div>
+                                <div class="pollutant-value">25.8</div>
+                                <div class="pollutant-unit">µg/m³</div>
+                            </div>
+                            <div class="pollutant-item">
+                                <div class="pollutant-name">NO2</div>
+                                <div class="pollutant-value">18.4</div>
+                                <div class="pollutant-unit">ppb</div>
+                            </div>
+                            <div class="pollutant-item">
+                                <div class="pollutant-name">O3</div>
+                                <div class="pollutant-value">42.1</div>
+                                <div class="pollutant-unit">ppb</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Community Engagement Section -->
+            <section class="dashboard-grid animate-scaleIn animate-delay-400">
+                <div class="dashboard-card card-md">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-trophy"></i> Community Leaderboard</h2>
+                        <div class="card-actions">
+                            <button class="card-action-btn"><i class="fas fa-filter"></i></button>
+                            <button class="card-action-btn"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="community-leaderboard">
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank rank-1">1</div>
+                            <div class="leaderboard-user">
+                                <div class="user-avatar-sm">AR</div>
+                                <div class="user-details">
+                                    <div class="user-name-sm">Alex Reynolds</div>
+                                    <div class="user-location">North District</div>
+                                </div>
+                            </div>
+                            <div class="leaderboard-score">
+                                <i class="fas fa-star"></i>
+                                <span class="score-points">12,850</span>
+                            </div>
+                        </div>
+
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank rank-2">2</div>
+                            <div class="leaderboard-user">
+                                <div class="user-avatar-sm">ML</div>
+                                <div class="user-details">
+                                    <div class="user-name-sm">Maria Lee</div>
+                                    <div class="user-location">Central District</div>
+                                </div>
+                            </div>
+                            <div class="leaderboard-score">
+                                <i class="fas fa-star"></i>
+                                <span class="score-points">11,620</span>
+                            </div>
+                        </div>
+
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank rank-3">3</div>
+                            <div class="leaderboard-user">
+                                <div class="user-avatar-sm">JD</div>
+                                <div class="user-details">
+                                    <div class="user-name-sm">James Davis</div>
+                                    <div class="user-location">East District</div>
+                                </div>
+                            </div>
+                            <div class="leaderboard-score">
+                                <i class="fas fa-star"></i>
+                                <span class="score-points">10,540</span>
+                            </div>
+                        </div>
+
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank">4</div>
+                            <div class="leaderboard-user">
+                                <div class="user-avatar-sm">SK</div>
+                                <div class="user-details">
+                                    <div class="user-name-sm">Sarah Kim</div>
+                                    <div class="user-location">West District</div>
+                                </div>
+                            </div>
+                            <div class="leaderboard-score">
+                                <i class="fas fa-star"></i>
+                                <span class="score-points">9,880</span>
+                            </div>
+                        </div>
+
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank">5</div>
+                            <div class="leaderboard-user">
+                                <div class="user-avatar-sm">DP</div>
+                                <div class="user-details">
+                                    <div class="user-name-sm">David Park</div>
+                                    <div class="user-location">South District</div>
+                                </div>
+                            </div>
+                            <div class="leaderboard-score">
+                                <i class="fas fa-star"></i>
+                                <span class="score-points">8,720</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card card-md">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-filter"></i> Smart Sorting Guidance</h2>
+                        <div class="card-actions">
+                            <button class="card-action-btn"><i class="fas fa-plus"></i></button>
+                            <button class="card-action-btn"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="sorting-guidance">
+                        <div class="sorting-item">
+                            <div class="waste-image">
+                                <i class="fas fa-pizza-slice"></i>
+                            </div>
+                            <div class="sorting-info">
+                                <div class="waste-item-name">Pizza Box</div>
+                                <div class="sorting-instruction">Food-stained pizza boxes cannot be recycled. Clean parts can be torn off and recycled.</div>
+                            </div>
+                            <div class="bin-suggestion">
+                                <i class="fas fa-trash-alt"></i> Compost
+                            </div>
+                        </div>
+
+                        <div class="sorting-item">
+                            <div class="waste-image">
+                                <i class="fas fa-coffee"></i>
+                            </div>
+                            <div class="sorting-info">
+                                <div class="waste-item-name">Coffee Cups</div>
+                                <div class="sorting-instruction">Most to-go cups have a plastic lining that prevents recycling. Use reusable cups when possible.</div>
+                            </div>
+                            <div class="bin-suggestion">
+                                <i class="fas fa-trash-alt"></i> Landfill
+                            </div>
+                        </div>
+
+                        <div class="sorting-item">
+                            <div class="waste-image">
+                                <i class="fas fa-prescription-bottle"></i>
+                            </div>
+                            <div class="sorting-info">
+                                <div class="waste-item-name">Medication Bottles</div>
+                                <div class="sorting-instruction">Empty plastic medication bottles can be recycled. Remove labels if possible.</div>
+                            </div>
+                            <div class="bin-suggestion">
+                                <i class="fas fa-recycle"></i> Plastics
+                            </div>
+                        </div>
+
+                        <div class="sorting-item">
+                            <div class="waste-image">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <div class="sorting-info">
+                                <div class="waste-item-name">Light Bulbs</div>
+                                <div class="sorting-instruction">LED and CFL bulbs contain electronic components and may require special handling.</div>
+                            </div>
+                            <div class="bin-suggestion">
+                                <i class="fas fa-bolt"></i> E-Waste
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Route Optimization Section -->
+            <section class="dashboard-card animate-scaleIn animate-delay-500">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-route"></i> Route Optimization</h2>
+                    <div class="card-actions">
+                        <button class="card-action-btn"><i class="fas fa-print"></i></button>
+                        <button class="card-action-btn"><i class="fas fa-download"></i></button>
+                        <button class="card-action-btn"><i class="fas fa-ellipsis-v"></i></button>
+                    </div>
+                </div>
+
+                <div class="route-summary">
+                    <div class="stat-card">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Collection Routes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">45</div>
+                        <div class="stat-label">Bins Serviced</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">68 km</div>
+                        <div class="stat-label">Total Distance</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">4h 15m</div>
+                        <div class="stat-label">Est. Duration</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">28L</div>
+                        <div class="stat-label">Fuel Usage</div>
+                    </div>
+                </div>
+
+                <div class="optimization-controls">
+                    <div class="optimization-control">
+                        <label class="optimization-label">Optimization Priority</label>
+                        <select class="optimization-select">
+                            <option value="balanced">Balanced</option>
+                            <option value="distance">Minimize Distance</option>
+                            <option value="time">Minimize Time</option>
+                            <option value="fuel">Minimize Fuel</option>
+                            <option value="urgency">Prioritize Urgent Bins</option>
+                        </select>
+                    </div>
+                    <div class="optimization-control">
+                        <label class="optimization-label">Vehicle Type</label>
+                        <select class="optimization-select">
+                            <option value="all">All Vehicles</option>
+                            <option value="truck-large">Large Truck (Capacity: 8 tons)</option>
+                            <option value="truck-medium">Medium Truck (Capacity: 5 tons)</option>
+                            <option value="truck-small">Small Truck (Capacity: 2 tons)</option>
+                            <option value="electric">Electric Vehicle (Capacity: 3 tons)</option>
+                        </select>
+                    </div>
+                    <div class="optimization-control">
+                        <label class="optimization-label">Time Window</label>
+                        <select class="optimization-select">
+                            <option value="today">Today (Mar 17, 2025)</option>
+                            <option value="tomorrow">Tomorrow (Mar 18, 2025)</option>
+                            <option value="week">This Week</option>
+                            <option value="custom">Custom Date Range</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="route-map">
+                    <!-- Route stops and lines will be dynamically added -->
+                    <div class="route-stop" style="left: 25%; top: 30%;">1</div>
+                    <div class="route-stop" style="left: 40%; top: 15%;">2</div>
+                    <div class="route-stop" style="left: 65%; top: 25%;">3</div>
+                    <div class="route-stop" style="left: 75%; top: 60%;">4</div>
+                    <div class="route-stop" style="left: 30%; top: 70%;">5</div>
+                    <div class="route-stop" style="left: 55%; top: 45%;">6</div>
+
+                    <!-- Route lines between stops -->
+                    <div class="route-line" style="left: 25%; top: 30%; width: 17%; transform: rotate(315deg);"></div>
+                    <div class="route-line" style="left: 40%; top: 15%; width: 28%; transform: rotate(25deg);"></div>
+                    <div class="route-line" style="left: 65%; top: 25%; width: 36%; transform: rotate(65deg);"></div>
+                    <div class="route-line" style="left: 75%; top: 60%; width: 45%; transform: rotate(215deg);"></div>
+                    <div class="route-line" style="left: 30%; top: 70%; width: 28%; transform: rotate(325deg);"></div>
+                </div>
+
+                <div class="route-details">
+                    <table class="route-table">
+                        <thead>
+                            <tr>
+                                <th>Stop #</th>
+                                <th>Bin ID</th>
+                                <th>Location</th>
+                                <th>Fill Level</th>
+                                <th>Est. Arrival</th>
+                                <th>Priority</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>BIN-10045</td>
+                                <td>Central Plaza</td>
+                                <td>92%</td>
+                                <td>08:15 AM</td>
+                                <td>High</td>
+                                <td>
+                                    <div class="route-table-actions">
+                                        <button class="table-action-btn"><i class="fas fa-eye"></i></button>
+                                        <button class="table-action-btn"><i class="fas fa-arrow-up"></i></button>
+                                        <button class="table-action-btn"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>BIN-10028</td>
+                                <td>North Park</td>
+                                <td>76%</td>
+                                <td>08:35 AM</td>
+                                <td>Medium</td>
+                                <td>
+                                    <div class="route-table-actions">
+                                        <button class="table-action-btn"><i class="fas fa-eye"></i></button>
+                                        <button class="table-action-btn"><i class="fas fa-arrow-up"></i></button>
+                                        <button class="table-action-btn"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>BIN-10073</td>
+                                <td>East Square</td>
+                                <td>45%</td>
+                                <td>09:10 AM</td>
+                                <td>Low</td>
+                                <td>
+                                    <div class="route-table-actions">
+                                        <button class="table-action-btn"><i class="fas fa-eye"></i></button>
+                                        <button class="table-action-btn"><i class="fas fa-arrow-up"></i></button>
+                                        <button class="table-action-btn"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>BIN-10062</td>
+                                <td>South Market</td>
+                                <td>88%</td>
+                                <td>09:45 AM</td>
+                                <td>High</td>
+                                <td>
+                                    <div class="route-table-actions">
+                                        <button class="table-action-btn"><i class="fas fa-eye"></i></button>
+                                        <button class="table-action-btn"><i class="fas fa-arrow-up"></i></button>
+                                        <button class="table-action-btn"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>BIN-10037</td>
+                                <td>West Plaza</td>
+                                <td>67%</td>
+                                <td>10:20 AM</td>
+                                <td>Medium</td>
+                                <td>
+                                    <div class="route-table-actions">
+                                        <button class="table-action-btn"><i class="fas fa-eye"></i></button>
+                                        <button class="table-action-btn"><i class="fas fa-arrow-up"></i></button>
+                                        <button class="table-action-btn"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- AI Chatbot -->
+    <div class="ai-chatbot">
+        <div class="chatbot-button" id="chatbot-button">
+            <i class="fas fa-comment-dots"></i>
+        </div>
+        <div class="chatbot-window" id="chatbot-window">
+            <div class="chatbot-header">
+                <div class="chatbot-title">
+                    <i class="fas fa-robot"></i> EcoSmart Assistant
+                </div>
+                <div class="chatbot-close" id="chatbot-close">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chatbot-message bot">
+                    Hello! I'm your EcoSmart Assistant. How can I help you with waste management today?
+                </div>
+                <div class="chatbot-message user">
+                    What's the status of Central Plaza bin?
+                </div>
+                <div class="chatbot-message bot">
+                    The bin at Central Plaza (BIN-10045) is currently at 92% capacity and requires immediate collection. It's scheduled for collection today at 08:15 AM as the first stop on the route.
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" class="chatbot-input-field" placeholder="Type your message..." id="chatbot-input-field">
+                <button class="chatbot-send" id="chatbot-send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toasts -->
+    <div class="notifications-panel" id="notifications-panel">
+        <!-- Notification toasts will be dynamically added here -->
+    </div>
+
+    <script>
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate loading screen
+            setTimeout(function() {
+                document.getElementById('loading-screen').style.opacity = '0';
+                setTimeout(function() {
+                    document.getElementById('loading-screen').style.display = 'none';
+                }, 500);
+            }, 2500);
+
+            // Mobile sidebar toggle
+            document.getElementById('menu-toggle').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.add('active');
+                document.getElementById('sidebar-overlay').classList.add('active');
+            });
+
+            document.getElementById('sidebar-overlay').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.remove('active');
+                document.getElementById('sidebar-overlay').classList.remove('active');
+            });
+
+            // Dark mode toggle
+            document.getElementById('mode-toggle').addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                const icon = this.querySelector('i');
+                if (document.body.classList.contains('dark-mode')) {
+                    icon.className = 'fas fa-sun';
+                } else {
+                    icon.className = 'fas fa-moon';
+                }
+            });
+
+            // Initialize progress bars for fill levels
+            const progressBars = document.querySelectorAll('.progress-value');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 500);
+            });
+
+            // Initialize goal progress bars
+            const goalBars = document.querySelectorAll('.goal-value');
+            goalBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 1000);
+            });
+
+            // Map tooltip interaction
+            const binMarkers = document.querySelectorAll('.bin-marker');
+            const mapTooltip = document.getElementById('map-tooltip');
+            
+            binMarkers.forEach(marker => {
+                marker.addEventListener('mouseenter', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    mapTooltip.style.left = `${rect.right + 10}px`;
+                    mapTooltip.style.top = `${rect.top - 70}px`;
+                    mapTooltip.classList.add('visible');
+                });
+                
+                marker.addEventListener('mouseleave', function() {
+                    mapTooltip.classList.remove('visible');
+                });
+            });
+
+            // Chatbot toggle
+            document.getElementById('chatbot-button').addEventListener('click', function() {
+                document.getElementById('chatbot-window').classList.toggle('active');
+                this.classList.toggle('active');
+            });
+            
+            document.getElementById('chatbot-close').addEventListener('click', function() {
+                document.getElementById('chatbot-window').classList.remove('active');
+                document.getElementById('chatbot-button').classList.remove('active');
+            });
+
+            // Chatbot send message
+            document.getElementById('chatbot-send').addEventListener('click', sendChatMessage);
+            document.getElementById('chatbot-input-field').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
+                }
+            });
+
+            function sendChatMessage() {
+                const input = document.getElementById('chatbot-input-field');
+                const message = input.value.trim();
+                
+                if (message) {
+                    // Add user message
+                    const messagesContainer = document.getElementById('chatbot-messages');
+                    const userMessage = document.createElement('div');
+                    userMessage.className = 'chatbot-message user';
+                    userMessage.textContent = message;
+                    messagesContainer.appendChild(userMessage);
+                    
+                    // Clear input
+                    input.value = '';
+                    
+                    // Scroll to bottom
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    
+                    // Simulate bot response (in a real application, this would be an API call)
+                    setTimeout(() => {
+                        const botMessage = document.createElement('div');
+                        botMessage.className = 'chatbot-message bot';
+                        botMessage.textContent = "I'm processing your request about '" + message + "'. Please wait a moment...";
+                        messagesContainer.appendChild(botMessage);
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    }, 500);
+                }
+            }
+
+            // Simulate notifications
+            setTimeout(showNotification, 5000);
+
+            function showNotification() {
+                const notificationsPanel = document.getElementById('notifications-panel');
+                const notification = document.createElement('div');
+                notification.className = 'notification-toast';
+                
+                notification.innerHTML = `
+                    <i class="notification-icon fas fa-exclamation-triangle"></i>
+                    <div class="notification-content">
+                        <div class="notification-title">Bin Alert</div>
+                        <div class="notification-message">BIN-10062 at South Market has reached 88% capacity and requires collection.</div>
+                    </div>
+                    <i class="notification-close fas fa-times"></i>
+                    <div class="notification-timer"></div>
+                `;
+                
+                notificationsPanel.appendChild(notification);
+                
+                notification.querySelector('.notification-close').addEventListener('click', function() {
+                    notification.style.animation = 'fadeOutNotification 0.5s forwards';
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 500);
+                });
+                
+                setTimeout(() => {
+                    notification.style.animation = 'fadeOutNotification 0.5s forwards';
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 500);
+                }, 5000);
+            }
+
+            // Navigation links (for a single-page demo, just prevent default)
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // For mobile, close sidebar when a link is clicked
+                    if (window.innerWidth < 992) {
+                        document.getElementById('sidebar').classList.remove('active');
+                        document.getElementById('sidebar-overlay').classList.remove('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSmart - Waste Collection Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2D9D5A;
+            --primary-light: #4EB97C;
+            --primary-dark: #1B7A41;
+            --secondary: #34495E;
+            --accent: #F39C12;
+            --light: #ECF0F1;
+            --dark: #2C3E50;
+            --success: #27AE60;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            --info: #3498DB;
+        }
+        
+        /* Base styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA;
+            overflow-x: hidden;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideInLeft {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes moveGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes ripple {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        
+        /* Button hover effect */
+        .btn-hover {
+            position: relative;
+            overflow: hidden;
+            transform: translate3d(0, 0, 0);
+        }
+        
+        .btn-hover:after {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+            background-repeat: no-repeat;
+            background-position: 50%;
+            transform: scale(10, 10);
+            opacity: 0;
+            transition: transform .5s, opacity 1s;
+        }
+        
+        .btn-hover:active:after {
+            transform: scale(0, 0);
+            opacity: .3;
+            transition: 0s;
+        }
+        
+        /* Apply animations */
+        .animate-fadeIn { animation: fadeIn 0.8s ease forwards; }
+        .animate-slideInRight { animation: slideInRight 0.5s ease-out forwards; }
+        .animate-slideInLeft { animation: slideInLeft 0.5s ease-out forwards; }
+        .animate-slideInUp { animation: slideInUp 0.5s ease-out forwards; }
+        .animate-pulse { animation: pulse 2s infinite; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-spin { animation: spin 20s linear infinite; }
+        
+        /* Staggered animations */
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+        .stagger-5 { animation-delay: 0.5s; }
+        
+        /* Gradient backgrounds */
+        .eco-gradient {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        }
+        
+        .eco-gradient-animated {
+            background: linear-gradient(270deg, var(--primary-dark), var(--primary), var(--primary-light));
+            background-size: 200% 200%;
+            animation: moveGradient 10s ease infinite;
+        }
+        
+        /* Card styles */
+        .eco-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .eco-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Map styles */
+        .map-container {
+            height: 500px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            position: relative;
+            background-color: #f0f0f0;
+        }
+        
+        .map-marker {
+            width: 12px;
+            height: 12px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+        }
+        
+        .map-marker::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(45,157,90, 0.4);
+            border-radius: 50%;
+            animation: ripple 2s infinite;
+        }
+        
+        .truck-marker {
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .truck-marker i {
+            color: var(--primary);
+            font-size: 12px;
+        }
+        
+        /* Route path */
+        .route-path {
+            position: absolute;
+            height: 4px;
+            background-color: rgba(45,157,90, 0.5);
+            z-index: 1;
+        }
+        
+        /* Smart bin styles */
+        .smart-bin {
+            position: relative;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .smart-bin:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+        
+        .bin-level-indicator {
+            height: 120px;
+            width: 80px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        .bin-level-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            transition: height 1s ease-in-out;
+        }
+        
+        /* Status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-online {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success);
+        }
+        
+        .status-offline {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+        
+        .status-maintenance {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+        
+        /* Navbar */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        
+        /* Progress bar */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        /* Notification badge */
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translate(25%, -25%);
+            height: 18px;
+            width: 18px;
+            background-color: var(--danger);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar fixed w-full py-3 px-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <a href="/" class="flex items-center">
+                    <i class="fas fa-leaf text-2xl text-green-500 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">EcoSmart</span>
+                </a>
+                
+                <div class="hidden md:flex space-x-6 ml-10">
+                    <a href="/dashboard" class="text-gray-500 hover:text-gray-800 transition-colors">Dashboard</a>
+                    <a href="/waste-collection" class="text-green-600 font-medium">Collection</a>
+                    <a href="/biogas" class="text-gray-500 hover:text-gray-800 transition-colors">Biogas</a>
+                    <a href="/analytics" class="text-gray-500 hover:text-gray-800 transition-colors">Analytics</a>
+                    <a href="/reports" class="text-gray-500 hover:text-gray-800 transition-colors">Reports</a>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-bell text-gray-600"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                </div>
+                
+                <div class="flex items-center">
+                    <img src="/api/placeholder/40/40" alt="User Avatar" class="h-10 w-10 rounded-full object-cover">
+                    <span class="ml-2 hidden md:block font-medium text-gray-700">John Doe</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="pt-20 pb-10 px-6">
+        <div class="max-w-7xl mx-auto">
+            <!-- Page Header -->
+            <div class="mb-8 opacity-0 animate-fadeIn" style="animation-delay: 0.1s;">
+                <h1 class="text-3xl font-bold text-gray-800">Waste Collection Management</h1>
+                <p class="text-gray-600 mt-2">Monitor and manage your waste collection operations in real-time</p>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Active Routes -->
+                <div class="eco-card p-6 opacity-0 animate-slideInUp stagger-1">
+                    <div class="flex items-center">
+                        <div class="rounded-full w-12 h-12 eco-gradient-animated flex items-center justify-center mr-4">
+                            <i class="fas fa-route text-white"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">Active Routes</p>
+                            <h3 class="text-2xl font-bold">12</h3>
+                            <div class="flex items-center text-xs text-green-600">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                <span>On schedule</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Vehicles -->
+                <div class="eco-card p-6 opacity-0 animate-slideInUp stagger-2">
+                    <div class="flex items-center">
+                        <div class="rounded-full w-12 h-12 eco-gradient-animated flex items-center justify-center mr-4">
+                            <i class="fas fa-truck text-white"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">Active Vehicles</p>
+                            <h3 class="text-2xl font-bold">18/24</h3>
+                            <div class="flex items-center text-xs text-yellow-600">
+                                <i class="fas fa-exclamation-circle mr-1"></i>
+                                <span>2 in maintenance</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bins Collected -->
+                <div class="eco-card p-6 opacity-0 animate-slideInUp stagger-3">
+                    <div class="flex items-center">
+                        <div class="rounded-full w-12 h-12 eco-gradient-animated flex items-center justify-center mr-4">
+                            <i class="fas fa-dumpster text-white"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">Bins Collected Today</p>
+                            <h3 class="text-2xl font-bold">387</h3>
+                            <div class="flex items-center text-xs text-green-600">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                                <span>18% more than yesterday</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Waste Collected -->
+                <div class="eco-card p-6 opacity-0 animate-slideInUp stagger-4">
+                    <div class="flex items-center">
+                        <div class="rounded-full w-12 h-12 eco-gradient-animated flex items-center justify-center mr-4">
+                            <i class="fas fa-weight-hanging text-white"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">Waste Collected</p>
+                            <h3 class="text-2xl font-bold">14.6 tons</h3>
+                            <div class="flex items-center text-xs text-green-600">
+                                <i class="fas fa-recycle mr-1"></i>
+                                <span>8.2 tons recyclable</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Sections -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Collection Map (8 columns) -->
+                <div class="lg:col-span-8 opacity-0 animate-fadeIn" style="animation-delay: 0.3s;">
+                    <div class="eco-card">
+                        <div class="flex justify-between items-center px-6 py-4 border-b">
+                            <div>
+                                <h3 class="font-medium text-gray-800">Collection Routes Map</h3>
+                                <p class="text-sm text-gray-500">Live tracking of vehicles and collection points</p>
+                            </div>
+                            <div class="flex">
+                                <button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors">
+                                    <i class="fas fa-sync-alt mr-1"></i> Refresh
+                                </button>
+                                <button class="ml-3 px-3 py-1 text-sm font-medium bg-green-50 text-green-600 rounded-md hover:bg-green-100 transition-colors">
+                                    <i class="fas fa-filter mr-1"></i> Filter
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="map-container">
+                                <!-- Map background placeholder -->
+                                <div class="absolute inset-0" style="background: url('/api/placeholder/800/500') center/cover; opacity: 0.6; filter: grayscale(30%);"></div>
+                                
+                                <!-- Route paths -->
+                                <div class="route-path" style="top: 30%; left: 30%; width: 100px; transform: rotate(45deg);"></div>
+                                <div class="route-path" style="top: 40%; left: 35%; width: 120px; transform: rotate(10deg);"></div>
+                                <div class="route-path" style="top: 45%; left: 45%; width: 80px; transform: rotate(-20deg);"></div>
+                                <div class="route-path" style="top: 55%; left: 50%; width: 150px; transform: rotate(30deg);"></div>
+                                <div class="route-path" style="top: 60%; left: 60%; width: 130px; transform: rotate(-10deg);"></div>
+                                
+                                <!-- Smart bin markers -->
+                                <div class="map-marker" style="top: 30%; left: 30%;"></div>
+                                <div class="map-marker" style="top: 40%; left: 35%;"></div>
+                                <div class="map-marker" style="top: 45%; left: 45%;"></div>
+                                <div class="map-marker" style="top: 55%; left: 50%;"></div>
+                                <div class="map-marker" style="top: 60%; left: 60%;"></div>
+                                <div class="map-marker" style="top: 35%; left: 65%;"></div>
+                                <div class="map-marker" style="top: 50%; left: 70%;"></div>
+                                <div class="map-marker" style="top: 65%; left: 30%;"></div>
+                                <div class="map-marker" style="top: 25%; left: 40%;"></div>
+                                <div class="map-marker" style="top: 70%; left: 55%;"></div>
+                                
+                                <!-- Truck markers -->
+                                <div class="truck-marker animate-pulse" style="top: 37%; left: 33%;">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                                <div class="truck-marker animate-pulse" style="top: 48%; left: 47%;">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                                <div class="truck-marker animate-pulse" style="top: 59%; left: 57%;">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
+                                <div class="text-sm flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                                    <span class="text-gray-600">Completed</span>
+                                </div>
+                                <div class="text-sm flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                                    <span class="text-gray-600">In Progress</span>
+                                </div>
+                                <div class="text-sm flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+                                    <span class="text-gray-600">Scheduled</span>
+                                </div>
+                                <div class="text-sm flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                                    <span class="text-gray-600">Alert</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Collection Schedule -->
+                    <div class="eco-card mt-8 opacity-0 animate-fadeIn" style="animation-delay: 0.4s;">
+                        <div class="flex justify-between items-center px-6 py-4 border-b">
+                            <div>
+                                <h3 class="font-medium text-gray-800">Today's Collection Schedule</h3>
+                                <p class="text-sm text-gray-500">Route assignments and progress</p>
+                            </div>
+                            <button class="px-4 py-2 rounded eco-gradient text-white text-sm font-medium hover:shadow-md transition-shadow btn-hover">
+                                <i class="fas fa-plus mr-1"></i> Add Route
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Schedule</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="font-medium text-gray-800">Route #R-104</div>
+                                            <div class="text-xs text-gray-500">North District Zone A</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="font-medium text-gray-800">TRK-082</div>
+                                            <div class="text-xs text-gray-500">Compactor - 8 tons</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <img src="/api/placeholder/30/30" alt="Driver" class="h-8 w-8 rounded-full mr-2">
+                                                <div>
+                                                    <div class="font-medium text-gray-800">Michael Chen</div>
+                                                    <div class="text-xs text-gray-500">ID: DRV-245</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="font-medium text-gray-800">08:00 - 12:30</div>
+                                            <div class="text-xs text-gray-500">4.5 hours</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge status-online">
+                                                <i class="fas fa-circle text-xs mr-1"></i> In Progress
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-700 mb-1">76% Complete</div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar bg-green-500" style="width: 76%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="font-medium text-gray-800">Route #R-107</div>
+                                            <div class="text-xs text-gray-500">East District Zone C</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="font-medium text-gray-800">TRK-043</div>
+                                            <div class="text-xs text-gray-500">Recycling - 6 tons</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <img src="/api/placeholder/30/30" alt="Driver" class="h-8 w-8 rounded-full mr-2">
+                                                <div>
+                                                    <div class="font-medium text-gray-800">Sarah Johnson</div>
+                                                    <div class="text-xs text-gray-500">ID: DRV-118</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="font-medium text-gray-800">09:30 - 14:00</div>
+                                            <div class="text-xs text-gray-500">4.5 hours</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge status-online">
+                                                <i class="fas fa-circle text-xs mr-1"></i> In Progress
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-700 mb-1">42% Complete</div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar bg-green-500" style="width: 42%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="font-medium text-gray-800">Route #R-109</div>
+                                            <div class="text-xs text-gray-500">South District Zone B</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="font-medium text-gray-800">TRK-067</div>
+                                            <div class="text-xs text-gray-500">Compactor - 10 tons</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <img src="/api/placeholder/30/30" alt="Driver" class="h-8 w-8 rounded-full mr-2">
+                                                <div>
+                                                    <div class="font-medium text-gray-800">Robert Garcia</div>
+                                                    <div class="text-xs text-gray-500">ID: DRV-182</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="font-medium text-gray-800">10
+
+                                                <div class="font-medium text-gray-800">10:00 - 15:30</div>
+                                            <div class="text-xs text-gray-500">5.5 hours</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge status-online">
+                                                <i class="fas fa-circle text-xs mr-1"></i> In Progress
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-700 mb-1">28% Complete</div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar bg-green-500" style="width: 28%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="font-medium text-gray-800">Route #R-112</div>
+                                            <div class="text-xs text-gray-500">West District Zone D</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="font-medium text-gray-800">TRK-035</div>
+                                            <div class="text-xs text-gray-500">Compactor - 7 tons</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <img src="/api/placeholder/30/30" alt="Driver" class="h-8 w-8 rounded-full mr-2">
+                                                <div>
+                                                    <div class="font-medium text-gray-800">Emma Wilson</div>
+                                                    <div class="text-xs text-gray-500">ID: DRV-093</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="font-medium text-gray-800">13:00 - 17:30</div>
+                                            <div class="text-xs text-gray-500">4.5 hours</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="status-badge status-maintenance">
+                                                <i class="fas fa-clock text-xs mr-1"></i> Scheduled
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-700 mb-1">Not Started</div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar bg-gray-300" style="width: 0%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="px-6 py-4 border-t">
+                            <a href="#" class="text-sm text-green-600 hover:text-green-800 transition-colors font-medium">
+                                View all routes <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sidebar Content (4 columns) -->
+                <div class="lg:col-span-4">
+                    <!-- Smart Bin Status -->
+                    <div class="eco-card opacity-0 animate-slideInRight" style="animation-delay: 0.4s;">
+                        <div class="flex justify-between items-center px-6 py-4 border-b">
+                            <div>
+                                <h3 class="font-medium text-gray-800">Smart Bin Status</h3>
+                                <p class="text-sm text-gray-500">Critical bins requiring attention</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="space-y-6">
+                                <!-- Bin 1 -->
+                                <div class="smart-bin animate-fadeIn" style="animation-delay: 0.5s;">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex-1">
+                                            <div class="flex items-center">
+                                                <span class="font-medium text-gray-800">Bin #SB-2034</span>
+                                                <span class="ml-2 px-2 py-0.5 text-xs bg-red-100 text-red-600 rounded-full animate-pulse">Critical</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 mt-1">North District - Commercial Area</p>
+                                            <div class="mt-2 flex items-center text-xs text-red-600">
+                                                <i class="fas fa-exclamation-circle mr-1"></i>
+                                                <span>Requires immediate collection</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bin-level-indicator">
+                                            <div class="bin-level-fill bg-red-500" style="height: 92%;"></div>
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <span class="text-lg font-bold text-white">92%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex justify-between text-sm">
+                                        <div class="flex-1">
+                                            <div class="text-gray-500">Last Updated</div>
+                                            <div class="font-medium">10 min ago</div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="text-gray-500">Waste Type</div>
+                                            <div class="font-medium">General</div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="text-gray-500">Assigned To</div>
+                                            <div class="font-medium">Route #107</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-4">
+                                        <button class="w-full py-2 rounded eco-gradient text-white text-sm font-medium hover:shadow-md transition-shadow btn-hover">
+                                            <i class="fas fa-truck mr-1"></i> Dispatch Now
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bin 2 -->
+                                <div class="smart-bin animate-fadeIn" style="animation-delay: 0.6s;">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex-1">
+                                            <div class="flex items-center">
+                                                <span class="font-medium text-gray-800">Bin #SB-1847</span>
+                                                <span class="ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-600 rounded-full">Warning</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 mt-1">East District - Residential Area</p>
+                                            <div class="mt-2 flex items-center text-xs text-yellow-600">
+                                                <i class="fas fa-clock mr-1"></i>
+                                                <span>Schedule collection within 4 hours</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bin-level-indicator">
+                                            <div class="bin-level-fill bg-yellow-500" style="height: 76%;"></div>
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <span class="text-lg font-bold text-white">76%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex justify-between text-sm">
+                                        <div class="flex-1">
+                                            <div class="text-gray-500">Last Updated</div>
+                                            <div class="font-medium">25 min ago</div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="text-gray-500">Waste Type</div>
+                                            <div class="font-medium">Recyclable</div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="text-gray-500">Assigned To</div>
+                                            <div class="font-medium">Route #109</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-4">
+                                        <button class="w-full py-2 rounded border border-green-500 text-green-600 text-sm font-medium hover:bg-green-50 transition-colors">
+                                            <i class="fas fa-check mr-1"></i> Already Scheduled
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bin 3 -->
+                                <div class="smart-bin animate-fadeIn" style="animation-delay: 0.7s;">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex-1">
+                                            <div class="flex items-center">
+                                                <span class="font-medium text-gray-800">Bin #SB-2156</span>
+                                                <span class="ml-2 px-2 py-0.5 text-xs bg-green-100 text-green-600 rounded-full">Good</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 mt-1">South District - Park Area</p>
+                                            <div class="mt-2 flex items-center text-xs text-green-600">
+                                                <i class="fas fa-check-circle mr-1"></i>
+                                                <span>Normal collection schedule</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bin-level-indicator">
+                                            <div class="bin-level-fill bg-green-500" style="height: 42%;"></div>
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <span class="text-lg font-bold text-white">42%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex justify-between text-sm">
+                                        <div class="flex-1">
+                                            <div class="text-gray-500">Last Updated</div>
+                                            <div class="font-medium">5 min ago</div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="text-gray-500">Waste Type</div>
+                                            <div class="font-medium">Organic</div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="text-gray-500">Assigned To</div>
+                                            <div class="font-medium">Route #112</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-4">
+                                        <button class="w-full py-2 rounded bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition-colors">
+                                            <i class="fas fa-calendar-alt mr-1"></i> View Schedule
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 pt-4 border-t border-gray-100">
+                                <a href="#" class="text-sm text-green-600 hover:text-green-800 transition-colors font-medium">
+                                    View all bins <i class="fas fa-arrow-right ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Vehicle Fleet Status -->
+                    <div class="eco-card mt-8 opacity-0 animate-slideInRight" style="animation-delay: 0.5s;">
+                        <div class="flex justify-between items-center px-6 py-4 border-b">
+                            <div>
+                                <h3 class="font-medium text-gray-800">Fleet Status</h3>
+                                <p class="text-sm text-gray-500">Vehicle availability overview</p>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 rounded-full bg-green-500 mr-1"></div>
+                                <span class="text-xs text-gray-500">Updated 2 min ago</span>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="flex justify-between mb-3">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                                    <span class="text-sm text-gray-700">Active</span>
+                                </div>
+                                <span class="text-lg font-semibold">18</span>
+                            </div>
+                            <div class="flex justify-between mb-3">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+                                    <span class="text-sm text-gray-700">Maintenance</span>
+                                </div>
+                                <span class="text-lg font-semibold">4</span>
+                            </div>
+                            <div class="flex justify-between mb-3">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                                    <span class="text-sm text-gray-700">Out of Service</span>
+                                </div>
+                                <span class="text-lg font-semibold">2</span>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <p class="text-sm text-gray-600 mb-2">Fleet Capacity Utilization</p>
+                                <div class="progress-container" style="height: 12px;">
+                                    <div class="progress-bar bg-green-500" style="width: 75%;"></div>
+                                </div>
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>0%</span>
+                                    <span>75% Current Usage</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8 grid grid-cols-2 gap-4">
+                                <button class="py-2 rounded eco-gradient text-white text-sm font-medium hover:shadow-md transition-shadow btn-hover">
+                                    <i class="fas fa-truck mr-1"></i> Manage Fleet
+                                </button>
+                                <button class="py-2 rounded border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors">
+                                    <i class="fas fa-wrench mr-1"></i> Schedule Maintenance
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Collection Efficiency -->
+                    <div class="eco-card mt-8 opacity-0 animate-slideInRight" style="animation-delay: 0.6s;">
+                        <div class="px-6 py-4 border-b">
+                            <h3 class="font-medium text-gray-800">Collection Efficiency</h3>
+                            <p class="text-sm text-gray-500">Performance metrics</p>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="space-y-5">
+                                <!-- Time Efficiency -->
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm font-medium text-gray-700">Time Efficiency</span>
+                                        <span class="text-sm font-medium text-gray-700">92%</span>
+                                    </div>
+                                    <div class="h-2 bg-gray-200 rounded-full">
+                                        <div class="h-2 bg-green-500 rounded-full" style="width: 92%"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Route Optimization -->
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm font-medium text-gray-700">Route Optimization</span>
+                                        <span class="text-sm font-medium text-gray-700">87%</span>
+                                    </div>
+                                    <div class="h-2 bg-gray-200 rounded-full">
+                                        <div class="h-2 bg-blue-500 rounded-full" style="width: 87%"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Fuel Efficiency -->
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm font-medium text-gray-700">Fuel Efficiency</span>
+                                        <span class="text-sm font-medium text-gray-700">78%</span>
+                                    </div>
+                                    <div class="h-2 bg-gray-200 rounded-full">
+                                        <div class="h-2 bg-yellow-500 rounded-full" style="width: 78%"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Staff Productivity -->
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm font-medium text-gray-700">Staff Productivity</span>
+                                        <span class="text-sm font-medium text-gray-700">94%</span>
+                                    </div>
+                                    <div class="h-2 bg-gray-200 rounded-full">
+                                        <div class="h-2 bg-purple-500 rounded-full" style="width: 94%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8 flex justify-between items-center">
+                                <div>
+                                    <span class="block text-lg font-semibold text-gray-800">87.5%</span>
+                                    <span class="text-sm text-gray-500">Overall Efficiency</span>
+                                </div>
+                                <div class="rounded-full bg-green-100 text-green-600 text-xs py-1 px-2 flex items-center">
+                                    <i class="fas fa-arrow-up mr-1"></i> 4.2% vs last week
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="mt-8 opacity-0 animate-fadeIn" style="animation-delay: 0.7s;">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                    <a href="#" class="eco-card p-4 hover:scale-105 transition-transform flex flex-col items-center justify-center text-center">
+                        <div class="w-12 h-12 rounded-full eco-gradient flex items-center justify-center mb-3">
+                            <i class="fas fa-route text-white text-lg"></i>
+                        </div>
+                        <span class="text-sm font-medium text-gray-700">Add New Route</span>
+                    </a>
+                    <a href="#" class="eco-card p-4 hover:scale-105 transition-transform flex flex-col items-center justify-center text-center">
+                        <div class="w-12 h-12 rounded-full eco-gradient flex items-center justify-center mb-3">
+                            <i class="fas fa-truck-loading text-white text-lg"></i>
+                        </div>
+                        <span class="text-sm font-medium text-gray-700">Schedule Pickup</span>
+                    </a>
+                    <a href="#" class="eco-card p-4 hover:scale-105 transition-transform flex flex-col items-center justify-center text-center">
+                        <div class="w-12 h-12 rounded-full eco-gradient flex items-center justify-center mb-3">
+                            <i class="fas fa-dumpster text-white text-lg"></i>
+                        </div>
+                        <span class="text-sm font-medium text-gray-700">Manage Bins</span>
+                    </a>
+                    <a href="#" class="eco-card p-4 hover:scale-105 transition-transform flex flex-col items-center justify-center text-center">
+                        <div class="w-12 h-12 rounded-full eco-gradient flex items-center justify-center mb-3">
+                            <i class="fas fa-users-cog text-white text-lg"></i>
+                        </div>
+                        <span class="text-sm font-medium text-gray-700">Assign Staff</span>
+                    </a>
+                    <a href="#" class="eco-card p-4 hover:scale-105 transition-transform flex flex-col items-center justify-center text-center">
+                        <div class="w-12 h-12 rounded-full eco-gradient flex items-center justify-center mb-3">
+                            <i class="fas fa-chart-line text-white text-lg"></i>
+                        </div>
+                        <span class="text-sm font-medium text-gray-700">View Reports</span>
+                    </a>
+                    <a href="#" class="eco-card p-4 hover:scale-105 transition-transform flex flex-col items-center justify-center text-center">
+                        <div class="w-12 h-12 rounded-full eco-gradient flex items-center justify-center mb-3">
+                            <i class="fas fa-bell text-white text-lg"></i>
+                        </div>
+                        <span class="text-sm font-medium text-gray-700">Alerts Settings</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Notification Panel (Hidden by default) -->
+    <div id="notification-panel" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="absolute right-0 top-0 h-full w-80 max-w-full bg-white shadow-lg transform transition-transform duration-300">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h3 class="font-bold text-gray-800">Notifications</h3>
+                <button id="close-notifications" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="overflow-y-auto h-full pb-20">
+                <div class="p-4 border-b hover:bg-gray-50 transition-colors">
+                    <div class="flex">
+                        <div class="flex-shrink-0 rounded-full bg-red-100 p-2 mr-3">
+                            <i class="fas fa-exclamation-triangle text-red-500"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800">Bin #SB-2034 reached critical level</p>
+                            <p class="text-xs text-gray-500 mt-1">10 minutes ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 border-b hover:bg-gray-50 transition-colors">
+                    <div class="flex">
+                        <div class="flex-shrink-0 rounded-full bg-yellow-100 p-2 mr-3">
+                            <i class="fas fa-truck text-yellow-500"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800">Vehicle #TRK-043 maintenance required</p>
+                            <p class="text-xs text-gray-500 mt-1">25 minutes ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 border-b hover:bg-gray-50 transition-colors">
+                    <div class="flex">
+                        <div class="flex-shrink-0 rounded-full bg-green-100 p-2 mr-3">
+                            <i class="fas fa-check-circle text-green-500"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800">Route #R-104 completed successfully</p>
+                            <p class="text-xs text-gray-500 mt-1">1 hour ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 border-b hover:bg-gray-50 transition-colors">
+                    <div class="flex">
+                        <div class="flex-shrink-0 rounded-full bg-blue-100 p-2 mr-3">
+                            <i class="fas fa-user text-blue-500"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800">Staff assignment updated for tomorrow</p>
+                            <p class="text-xs text-gray-500 mt-1">2 hours ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 border-b hover:bg-gray-50 transition-colors">
+                    <div class="flex">
+                        <div class="flex-shrink-0 rounded-full bg-purple-100 p-2 mr-3">
+                            <i class="fas fa-chart-bar text-purple-500"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800">Weekly efficiency report available</p>
+                            <p class="text-xs text-gray-500 mt-1">Yesterday</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Alert Toast (Example) -->
+    <div id="toast-alert" class="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 flex items-start max-w-sm opacity-0 transform translate-y-10 transition-all duration-300">
+        <div class="rounded-full bg-green-100 p-2 mr-3 mt-0.5">
+            <i class="fas fa-check text-green-500"></i>
+        </div>
+        <div class="flex-1">
+            <h4 class="font-medium text-gray-800">Success</h4>
+            <p class="text-sm text-gray-600">Route assignment has been updated successfully.</p>
+        </div>
+        <button class="ml-4 text-gray-400 hover:text-gray-600">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <script>
+        // Initialize animations and interactive elements on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAnimations();
+            simulateBinUpdates();
+            setTimeout(showWelcomeToast, 2000);
+            setupNotificationPanel();
+        });
+        
+        // Initialize staggered animations
+        function initializeAnimations() {
+            // Make all initially hidden elements visible with animations
+            document.querySelectorAll('.opacity-0').forEach(element => {
+                element.classList.remove('opacity-0');
+            });
+            
+            // Animate map markers
+            animateMapMarkers();
+            
+            // Animate truck movement
+            animateTrucks();
+        }
+        
+        // Simulate bin level updates
+        function simulateBinUpdates() {
+            setInterval(() => {
+                // Select a random bin to update
+                const bins = document.querySelectorAll('.bin-level-fill');
+                if (bins.length === 0) return;
+                
+                const randomBin = bins[Math.floor(Math.random() * bins.length)];
+                const currentHeight = parseInt(randomBin.style.height);
+                
+                // Apply a small random change
+                const change = Math.random() > 0.5 ? 
+                    Math.min(5, 100 - currentHeight) : 
+                    Math.min(2, currentHeight);
+                
+                const newHeight = currentHeight + (Math.random() > 0.7 ? change : -change);
+                
+                // Update the height
+                randomBin.style.height = `${newHeight}%`;
+                
+                // Update the percentage display
+                const percentageDisplay = randomBin.parentElement.querySelector('.font-bold');
+                if (percentageDisplay) {
+                    percentageDisplay.textContent = `${Math.round(newHeight)}%`;
+                }
+                
+                // Update status colors if thresholds are crossed
+                updateBinStatus(randomBin, newHeight);
+            }, 5000);
+        }
+        
+        // Update bin status based on fill level
+        function updateBinStatus(binElement, fillLevel) {
+            const binContainer = binElement.closest('.smart-bin');
+            if (!binContainer) return;
+            
+            const statusBadge = binContainer.querySelector('.rounded-full');
+            const statusText = binContainer.querySelector('.text-xs:not(.text-gray-500)');
+            
+            if (fillLevel > 85) {
+                binElement.className = 'bin-level-fill bg-red-500';
+                if (statusBadge) {
+                    statusBadge.className = 'ml-2 px-2 py-0.5 text-xs bg-red-100 text-red-600 rounded-full animate-pulse';
+                    statusBadge.textContent = 'Critical';
+                }
+                if (statusText) {
+                    statusText.className = 'mt-2 flex items-center text-xs text-red-600';
+                    statusText.innerHTML = '<i class="fas fa-exclamation-circle mr-1"></i><span>Requires immediate collection</span>';
+                }
+            } else if (fillLevel > 70) {
+                binElement.className = 'bin-level-fill bg-yellow-500';
+                if (statusBadge) {
+                    statusBadge.className = 'ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-600 rounded-full';
+                    statusBadge.textContent = 'Warning';
+                }
+                if (statusText) {
+                    statusText.className = 'mt-2 flex items-center text-xs text-yellow-600';
+                    statusText.innerHTML = '<i class="fas fa-clock mr-1"></i><span>Schedule collection within 4 hours</span>';
+                }
+            } else {
+                binElement.className = 'bin-level-fill bg-green-500';
+                if (statusBadge) {
+                    statusBadge.className = 'ml-2 px-2 py-0.5 text-xs bg-green-100 text-green-600 rounded-full';
+                    statusBadge.textContent = 'Good';
+                }
+                if (statusText) {
+                    statusText.className = 'mt-2 flex items-center text-xs text-green-600';
+                    statusText.innerHTML = '<i class="fas fa-check-circle mr-1"></i><span>Normal collection schedule</span>';
+                }
+            }
+        }
+        
+        // Animate map markers
+        function animateMapMarkers() {
+            const markers = document.querySelectorAll('.map-marker');
+            markers.forEach(marker => {
+                // Add slight random movement
+                setInterval(() => {
+                    const currentTop = parseFloat(marker.style.top);
+                    const currentLeft = parseFloat(marker.style.left);
+                    
+                    const newTop = currentTop + (Math.random() * 0.2 - 0.1);
+                    const newLeft = currentLeft + (Math.random() * 0.2 - 0.1);
+                    
+                    marker.style.top = `${newTop}%`;
+                    marker.style.left = `${newLeft}%`;
+                }, 2000 + Math.random() * 1000);
+            });
+        }
+        
+        // Animate truck markers
+        function animateTrucks() {
+            const trucks = document.querySelectorAll('.truck-marker');
+            
+            // Define waypoints for each truck to follow
+            const waypoints = [
+                // Truck 1 waypoints
+                [
+                    { top: 37, left: 33 },
+                    { top: 38, left: 37 },
+                    { top: 42, left: 39 },
+                    { top: 40, left: 42 }
+                ],
+                // Truck 2 waypoints
+                [
+                    { top: 48, left: 47 },
+                    { top: 51, left: 50 },
+                    { top: 53, left: 53 },
+                    { top: 52, left: 57 }
+                ],
+                // Truck 3 waypoints
+                [
+                    { top: 59, left: 57 },
+                    { top: 62, left: 55 },
+                    { top: 65, left: 59 },
+                    { top: 67, left: 62 }
+                ]
+            ];
+            
+            trucks.forEach((truck, index) => {
+                let waypointIndex = 0;
+                const truckWaypoints = waypoints[index] || waypoints[0];
+                
+                // Move truck along waypoints
+                function moveTruck() {
+                    const nextWaypoint = truckWaypoints[waypointIndex];
+                    const currentTop = parseFloat(truck.style.top);
+                    const currentLeft = parseFloat(truck.style.left);
+                    
+                    // Calculate step towards next waypoint
+                    const stepTop = (nextWaypoint.top - currentTop) / 20;
+                    const stepLeft = (nextWaypoint.left - currentLeft) / 20;
+                    
+                    // Move truck
+                    truck.style.top = `${currentTop + stepTop}%`;
+                    truck.style.left = `${currentLeft + stepLeft}%`;
+                    
+                    // Check if waypoint reached
+                    const distance = Math.sqrt(
+                        Math.pow(nextWaypoint.top - parseFloat(truck.style.top), 2) +
+                        Math.pow(nextWaypoint.left - parseFloat(truck.style.left), 2)
+                    );
+                    
+                    if (distance < 0.5) {
+                        waypointIndex = (waypointIndex + 1) % truckWaypoints.length;
+                    }
+                }
+                
+                // Update truck position every 200ms
+                setInterval(moveTruck, 200);
+            });
+        }
+        
+        // Show welcome toast
+        function showWelcomeToast() {
+            const toast = document.getElementById('toast-alert');
+            
+            // Update toast content
+            toast.querySelector('h4').textContent = 'Welcome to EcoSmart';
+            toast.querySelector('p').textContent = 'Waste Collection Management System is now active.';
+            toast.querySelector('.rounded-full').className = 'rounded-full bg-blue-100 p-2 mr-3 mt-0.5';
+            toast.querySelector('.fas').className = 'fas fa-info text-blue-500';
+            
+            // Show toast
+            toast.classList.remove('opacity-0', 'translate-y-10');
+            
+            // Hide toast after 5 seconds
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-10');
+            }, 5000);
+            
+            // Add click handler to close button
+            toast.querySelector('button').addEventListener('click', () => {
+                toast.classList.add('opacity-0', 'translate-y-10');
+            });
+        }
+        
+        // Setup notification panel
+        function setupNotificationPanel() {
+            const notificationButton = document.querySelector('.fa-bell').closest('button');
+            const notificationPanel = document.getElementById('notification-panel');
+            const closeButton = document.getElementById('close-notifications');
+            
+            notificationButton.addEventListener('click', () => {
+                notificationPanel.classList.remove('hidden');
+                notificationPanel.querySelector('.transform').classList.add('translate-x-0');
+                notificationPanel.querySelector('.transform').classList.remove('translate-x-full');
+            });
+            
+            closeButton.addEventListener('click', () => {
+                notificationPanel.querySelector('.transform').classList.remove('translate-x-0');
+                notificationPanel.querySelector('.transform').classList.add('translate-x-full');
+                setTimeout(() => {
+                    notificationPanel.classList.add('hidden');
+                }, 300);
+            });
+        }
+        
+        // Function to show a toast notification
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast-alert');
+            const iconMap = {
+                'success': '<i class="fas fa-check text-green-500"></i>',
+                'error': '<i class="fas fa-exclamation-circle text-red-500"></i>',
+                'warning': '<i class="fas fa-exclamation-triangle text-yellow-500"></i>',
+                'info': '<i class="fas fa-info text-blue-500"></i>'
+            };
+            
+            const bgColorMap = {
+                'success': 'bg-green-100',
+                'error': 'bg-red-100',
+                'warning': 'bg-yellow-100',
+                'info': 'bg-blue-100'
+            };
+            
+            // Update toast content
+            toast.querySelector('h4').textContent = title;
+            toast.querySelector('p').textContent = message;
+            toast.querySelector('.rounded-full').className = `rounded-full ${bgColorMap[type]} p-2 mr-3 mt-0.5`;
+            toast.querySelector('.fas').outerHTML = iconMap[type];
+            
+            // Show toast
+            toast.classList.remove('opacity-0', 'translate-y-10');
+            
+            // Hide toast after 5 seconds
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-10');
+            }, 5000);
+        }
+        
+        // Add event listeners to action buttons (for demo purposes)
+        document.querySelectorAll('button').forEach(button => {
+            if (button.textContent.trim() === 'Dispatch Now') {
+                button.addEventListener('click', function() {
+                    showToast('Vehicle Dispatched', 'Emergency vehicle dispatched to collect bin #SB-2034', 'success');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

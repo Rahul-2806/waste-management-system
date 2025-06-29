@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biogas Energy Production Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --secondary: #4caf50;
+            --danger: #e53935;
+            --warning: #ff9800;
+            --info: #26a69a;
+            --light: #e8f5e9;
+            --dark: #1b5e20;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f1f8e9;
+            color: #2e7d32;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(46, 125, 50, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+            color: var(--primary);
+            background-color: #e8f5e9;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--info);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(46, 125, 50, 0.1);
+            padding: 20px;
+            height: 100%;
+            transition: transform 0.3s ease;
+            border-left: 3px solid var(--secondary);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(46, 125, 50, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .card-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .card-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+
+        .card-trend.up {
+            color: #28a745;
+        }
+
+        .card-trend.down {
+            color: #dc3545;
+        }
+
+        .big-card {
+            grid-column: span 3;
+            height: 400px;
+        }
+
+        .medium-card {
+            grid-column: span 1;
+            height: 300px;
+        }
+
+        .process-container {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .digester {
+            position: absolute;
+            width: 120px;
+            height: 180px;
+            background-color: #a5d6a7;
+            border-radius: 10px;
+            bottom: 60px;
+            left: 30%;
+            transform: translateX(-50%);
+            overflow: hidden;
+            border: 2px solid #2e7d32;
+        }
+
+        .digester-content {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 70%;
+            background-color: #66bb6a;
+            transition: height 0.5s ease;
+        }
+
+        .digester-bubbles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .bubble {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: bubble-rise 3s infinite ease-in;
+        }
+
+        @keyframes bubble-rise {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        .gas-holder {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #c8e6c9;
+            top: 50px;
+            left: 60%;
+            transform: translateX(-50%);
+            overflow: hidden;
+            border: 2px solid #2e7d32;
+        }
+
+        .gas-content {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 70%;
+            background-color: #81c784;
+            transition: height 0.5s ease;
+            opacity: 0.8;
+        }
+
+        .pipe {
+            position: absolute;
+            height: 10px;
+            background-color: #81c784;
+            top: 100px;
+            border: 1px solid #2e7d32;
+        }
+
+        .pipe-1 {
+            width: 80px;
+            left: 35%;
+            transform: rotate(-30deg);
+        }
+
+        .pipe-2 {
+            width: 60px;
+            left: 48%;
+            transform: rotate(30deg);
+        }
+
+        .generator {
+            position: absolute;
+            width: 80px;
+            height: 60px;
+            background-color: #43a047;
+            border-radius: 5px;
+            top: 150px;
+            right: 30%;
+            transform: translateX(50%);
+            border: 2px solid #2e7d32;
+        }
+
+        .generator-light {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ffeb3b;
+            top: 10px;
+            right: 10px;
+            animation: blink 1s infinite;
+            box-shadow: 0 0 5px #ffeb3b;
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .electricity {
+            position: absolute;
+            top: 130px;
+            right: 20%;
+            font-size: 24px;
+            color: #ffeb3b;
+            text-shadow: 0 0 5px #ffeb3b;
+        }
+
+        .zap {
+            animation: zap 0.5s infinite;
+        }
+
+        @keyframes zap {
+            0%, 100% {
+                transform: rotate(-10deg);
+            }
+            50% {
+                transform: rotate(10deg);
+            }
+        }
+
+        .alert-container {
+            margin-top: 20px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-danger {
+            background-color: rgba(229, 57, 53, 0.1);
+            border-left: 5px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .alert-warning {
+            background-color: rgba(255, 152, 0, 0.1);
+            border-left: 5px solid var(--warning);
+            color: var(--warning);
+        }
+
+        .alert-info {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-left: 5px solid var(--secondary);
+            color: var(--primary);
+        }
+
+        .progress-container {
+            margin-top: 10px;
+        }
+
+        .progress-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar-outer {
+            height: 8px;
+            background-color: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-inner {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .temp-progress .progress-bar-inner {
+            background-color: #66bb6a;
+            background-image: linear-gradient(to right, #66bb6a, #43a047);
+        }
+
+        .pressure-progress .progress-bar-inner {
+            background-color: #81c784;
+            background-image: linear-gradient(to right, #81c784, #66bb6a);
+        }
+
+        .ph-progress .progress-bar-inner {
+            background-color: #a5d6a7;
+            background-image: linear-gradient(to right, #a5d6a7, #81c784);
+        }
+
+        .methane-progress .progress-bar-inner {
+            background-color: #4caf50;
+            background-image: linear-gradient(to right, #4caf50, #2e7d32);
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .control-btn {
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: none;
+            background-color: var(--secondary);
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-btn:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-btn.warning {
+            background-color: var(--warning);
+        }
+
+        .control-btn.warning:hover {
+            background-color: #f57c00;
+        }
+
+        .control-btn.danger {
+            background-color: var(--danger);
+        }
+
+        .control-btn.danger:hover {
+            background-color: #c62828;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(46, 125, 50, 0.3);
+            transform: translateX(200%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            border-left: 4px solid var(--secondary);
+            font-weight: 500;
+        }
+
+        #feedStock-chart, #energy-chart, #efficiency-chart {
+            height: 100%;
+            width: 100%;
+        }
+
+        .panel {
+            grid-column: span 3;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(46, 125, 50, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 3px solid var(--secondary);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 20px;
+            border-bottom: 1px solid rgba(46, 125, 50, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 0;
+            cursor: pointer;
+            position: relative;
+            font-weight: 500;
+            color: #66bb6a;
+            transition: color 0.3s ease;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .panel-content {
+            display: none;
+        }
+
+        .panel-content.active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            font-weight: 600;
+            color: #555;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge.active {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #2e7d32;
+        }
+
+        .status-badge.maintenance {
+            background-color: rgba(255, 152, 0, 0.2);
+            color: #ef6c00;
+        }
+
+        .status-badge.inactive {
+            background-color: rgba(229, 57, 53, 0.2);
+            color: #c62828;
+        }
+        
+        .status-badge.warning {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: #ff8f00;
+        }
+        
+        .status-badge.danger {
+            background-color: rgba(229, 57, 53, 0.2);
+            color: #d50000;
+        }
+
+        .kpi-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-card {
+            flex: 1;
+            min-width: 200px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(46, 125, 50, 0.1);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border-top: 3px solid var(--secondary);
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .kpi-title {
+            font-size: 14px;
+            color: #66bb6a;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .kpi-subtitle {
+            font-size: 12px;
+            color: #81c784;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .big-card {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .big-card, .medium-card {
+                grid-column: span 1;
+            }
+
+            .process-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <h1>BioPower  Dashboard</h1>
+            </div>
+            <div class="user-info">
+                <div class="avatar">A</div>
+                <!-- <div>
+                    <div>Admin User</div>
+                    <small>Plant Manager</small>
+                </div> -->
+            </div>
+        </header>
+
+        <div class="kpi-container">
+            <div class="kpi-card">
+                <div class="kpi-title">TOTAL ENERGY</div>
+                <div class="kpi-value">1,245 kWh</div>
+                <div class="kpi-subtitle">Today's Production</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">METHANE CONTENT</div>
+                <div class="kpi-value">68.5%</div>
+                <div class="kpi-subtitle">Current Level</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">FEEDSTOCK</div>
+                <div class="kpi-value">4.8 tons</div>
+                <div class="kpi-subtitle">Processed Today</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">EFFICIENCY</div>
+                <div class="kpi-value">92.3%</div>
+                <div class="kpi-subtitle">System Performance</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dashboard-card big-card">
+                <div class="card-header">
+                    <div class="card-title">Energy Production (Last 24 Hours)</div>
+                </div>
+                <canvas id="energy-chart"></canvas>
+            </div>
+
+            <div class="dashboard-card medium-card">
+                <div class="card-header">
+                    <div class="card-title">Current Status</div>
+                </div>
+                <div class="process-container">
+                    <div class="digester">
+                        <div class="digester-content"></div>
+                        <div class="digester-bubbles" id="bubbles-container"></div>
+                    </div>
+                    <div class="pipe pipe-1"></div>
+                    <div class="gas-holder">
+                        <div class="gas-content"></div>
+                    </div>
+                    <div class="pipe pipe-2"></div>
+                    <div class="generator">
+                        <div class="generator-light"></div>
+                    </div>
+                    <div class="electricity">
+                        <span class="zap">⚡</span>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="control-btn" id="feed-btn">Add Feedstock</button>
+                    <button class="control-btn" id="mix-btn">Mix Digester</button>
+                    <button class="control-btn warning" id="maintenance-btn">Maintenance Mode</button>
+                    <button class="control-btn danger" id="emergency-btn">Emergency Stop</button>
+                </div>
+            </div>
+
+            <div class="dashboard-card medium-card">
+                <div class="card-header">
+                    <div class="card-title">System Parameters</div>
+                </div>
+                <div class="progress-container temp-progress">
+                    <div class="progress-bar-label">
+                        <span>Temperature</span>
+                        <span id="temp-value">37.5°C</span>
+                    </div>
+                    <div class="progress-bar-outer">
+                        <div class="progress-bar-inner" style="width: 75%;"></div>
+                    </div>
+                </div>
+                <div class="progress-container pressure-progress">
+                    <div class="progress-bar-label">
+                        <span>Pressure</span>
+                        <span id="pressure-value">1.2 bar</span>
+                    </div>
+                    <div class="progress-bar-outer">
+                        <div class="progress-bar-inner" style="width: 60%;"></div>
+                    </div>
+                </div>
+                <div class="progress-container ph-progress">
+                    <div class="progress-bar-label">
+                        <span>pH Level</span>
+                        <span id="ph-value">7.2</span>
+                    </div>
+                    <div class="progress-bar-outer">
+                        <div class="progress-bar-inner" style="width: 85%;"></div>
+                    </div>
+                </div>
+                <div class="progress-container methane-progress">
+                    <div class="progress-bar-label">
+                        <span>Methane Content</span>
+                        <span id="methane-value">68.5%</span>
+                    </div>
+                    <div class="progress-bar-outer">
+                        <div class="progress-bar-inner" style="width: 68.5%;"></div>
+                    </div>
+                </div>
+                <div class="alert-container">
+                    <div class="alert alert-info">
+                        <span>ℹ️</span> System operating normally
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-card medium-card">
+                <div class="card-header">
+                    <div class="card-title">Feedstock Consumption</div>
+                </div>
+                <canvas id="feedStock-chart"></canvas>
+            </div>
+
+            <div class="dashboard-card medium-card">
+                <div class="card-header">
+                    <div class="card-title">System Efficiency</div>
+                </div>
+                <canvas id="efficiency-chart"></canvas>
+            </div>
+
+            <div class="dashboard-card medium-card">
+                <div class="card-header">
+                    <div class="card-title">Quick Stats</div>
+                </div>
+                <div class="card-value">68.5%</div>
+                <div>Current Methane Content</div>
+                <div class="card-trend up">
+                    <span>↑</span> 2.3% from yesterday
+                </div>
+                <hr style="margin: 15px 0; border: none; border-top: 1px solid #eee;">
+                <div class="card-value">1,245 kWh</div>
+                <div>Energy Generated Today</div>
+                <div class="card-trend up">
+                    <span>↑</span> 5.7% from yesterday
+                </div>
+                <hr style="margin: 15px 0; border: none; border-top: 1px solid #eee;">
+                <div class="card-value">4.8 tons</div>
+                <div>Feedstock Processed</div>
+                <div class="card-trend down">
+                    <span>↓</span> 1.2% from yesterday
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="tabs">
+                <div class="tab active" data-tab="digesters">Digesters</div>
+                <div class="tab" data-tab="generators">Generators</div>
+                <div class="tab" data-tab="storage">Gas Storage</div>
+                <div class="tab" data-tab="maintenance">Maintenance</div>
+            </div>
+            <div class="panel-content active" id="digesters-panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Digester ID</th>
+                            <th>Temperature</th>
+                            <th>pH Level</th>
+                            <th>Fill Level</th>
+                            <th>Status</th>
+                            <th>Last Maintained</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Digester-01</td>
+                            <td>37.5°C</td>
+                            <td>7.2</td>
+                            <td>85%</td>
+                            <td><span class="status-badge active">Active</span></td>
+                            <td>2025-03-10</td>
+                        </tr>
+                        <tr>
+                            <td>Digester-02</td>
+                            <td>38.1°C</td>
+                            <td>7.0</td>
+                            <td>72%</td>
+                            <td><span class="status-badge active">Active</span></td>
+                            <td>2025-03-12</td>
+                        </tr>
+                        <tr>
+                            <td>Digester-03</td>
+                            <td>36.8°C</td>
+                            <td>7.3</td>
+                            <td>91%</td>
+                            <td><span class="status-badge maintenance">Maintenance</span></td>
+                            <td>2025-03-18</td>
+                        </tr>
+                        <tr>
+                            <td>Digester-04</td>
+                            <td>0.0°C</td>
+                            <td>0.0</td>
+                            <td>0%</td>
+                            <td><span class="status-badge inactive">Inactive</span></td>
+                            <td>2025-03-01</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-content" id="generators-panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Generator ID</th>
+                            <th>Power Output</th>
+                            <th>Efficiency</th>
+                            <th>Runtime</th>
+                            <th>Status</th>
+                            <th>Last Maintained</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Gen-01</td>
+                            <td>280 kW</td>
+                            <td>92%</td>
+                            <td>1,872 hrs</td>
+                            <td><span class="status-badge active">Active</span></td>
+                            <td>2025-02-15</td>
+                        </tr>
+                        <tr>
+                            <td>Gen-02</td>
+                            <td>215 kW</td>
+                            <td>89%</td>
+                            <td>2,140 hrs</td>
+                            <td><span class="status-badge active">Active</span></td>
+                            <td>2025-02-10</td>
+                        </tr>
+                        <tr>
+                            <td>Gen-03</td>
+                            <td>0 kW</td>
+                            <td>0%</td>
+                            <td>1,560 hrs</td>
+                            <td><span class="status-badge maintenance">Maintenance</span></td>
+                            <td>2025-03-18</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-content" id="storage-panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tank ID</th>
+                            <th>Capacity</th>
+                            <th>Current Level</th>
+                            <th>Pressure</th>
+                            <th>Methane Content</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tank-01</td>
+                            <td>500 m³</td>
+                            <td>382 m³ (76%)</td>
+                            <td>1.2 bar</td>
+                            <td>68.5%</td>
+                            <td><span class="status-badge active">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>Tank-02</td>
+                            <td>500 m³</td>
+                            <td>195 m³ (39%)</td>
+                            <td>1.0 bar</td>
+                            <td>67.8%</td>
+                            <td><span class="status-badge active">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>Tank-03</td>
+                            <td>250 m³</td>
+                            <td>0 m³ (0%)</td>
+                            <td>0.0 bar</td>
+                            <td>0.0%</td>
+                            <td><span class="status-badge inactive">Inactive</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-content" id="maintenance-panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Equipment ID</th>
+                            <th>Type</th>
+                            <th>Last Maintenance</th>
+                            <th>Next Scheduled</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Digester-03</td>
+                            <td>Digester</td>
+                            <td>2025-03-18</td>
+                            <td>2025-06-18</td>
+                            <td><span class="status-badge maintenance">In Progress</span></td>
+                            <td>Mixer replacement</td>
+                        </tr>
+                        <tr>
+                            <td>Gen-03</td>
+                            <td>Generator</td>
+                            <td>2025-03-18</td>
+                            <td>2025-06-18</td>
+                            <td><span class="status-badge maintenance">In Progress</span></td>
+                            <td>Oil change, spark plug replacement</td>
+                        </tr>
+                        <tr>
+                            <td>Pump-02</td>
+                            <td>Slurry Pump</td>
+                            <td>2025-02-20</td>
+                            <td>2025-03-20</td>
+                            <td><span class="status-badge warning">Due</span></td>
+                            <td>Regular inspection</td>
+                        </tr>
+                        <tr>
+                            <td>Filter-01</td>
+                            <td>Gas Filter</td>
+                            <td>2025-02-15</td>
+                            <td>2025-03-15</td>
+                            <td><span class="status-badge danger">Overdue</span></td>
+                            <td>Filter replacement</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        System notification message
+    </div>
+
+    <script>
+        // Generate random bubbles
+        function createBubbles() {
+            const bubblesContainer = document.getElementById('bubbles-container');
+            for (let i = 0; i < 15; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                bubble.style.width = Math.random() * 10 + 5 + 'px';
+                bubble.style.height = bubble.style.width;
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.bottom = Math.random() * 100 + '%';
+                bubble.style.animationDelay = Math.random() * 3 + 's';
+                bubblesContainer.appendChild(bubble);
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.transform = 'translateX(0)';
+            setTimeout(() => {
+                notification.style.transform = 'translateX(200%)';
+            }, 3000);
+        }
+
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and panels
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding panel
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}-panel`).classList.add('active');
+            });
+        });
+
+        // Button click handlers
+        document.getElementById('feed-btn').addEventListener('click', () => {
+            showNotification('Adding feedstock to digester...');
+            const digesterContent = document.querySelector('.digester-content');
+            digesterContent.style.height = '85%';
+            updateSystemParameters();
+        });
+
+        document.getElementById('mix-btn').addEventListener('click', () => {
+            showNotification('Mixing digester contents...');
+            // Create more bubbles for mixing effect
+            const bubblesContainer = document.getElementById('bubbles-container');
+            bubblesContainer.innerHTML = '';
+            for (let i = 0; i < 30; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                bubble.style.width = Math.random() * 15 + 5 + 'px';
+                bubble.style.height = bubble.style.width;
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.bottom = Math.random() * 100 + '%';
+                bubble.style.animationDelay = Math.random() * 2 + 's';
+                bubble.style.animationDuration = '2s';
+                bubblesContainer.appendChild(bubble);
+            }
+            
+            setTimeout(() => {
+                bubblesContainer.innerHTML = '';
+                createBubbles();
+                updateSystemParameters();
+            }, 5000);
+        });
+
+        document.getElementById('maintenance-btn').addEventListener('click', () => {
+            showNotification('System entering maintenance mode...');
+            document.querySelector('.alert-container').innerHTML = `
+                <div class="alert alert-warning">
+                    <span>⚠️</span> System in maintenance mode
+                </div>
+            `;
+            document.querySelector('.generator-light').style.animationPlayState = 'paused';
+            document.querySelector('.zap').style.animationPlayState = 'paused';
+            document.querySelector('.zap').style.opacity = '0.3';
+        });
+
+        document.getElementById('emergency-btn').addEventListener('click', () => {
+            showNotification('EMERGENCY STOP ACTIVATED!');
+            document.querySelector('.alert-container').innerHTML = `
+                <div class="alert alert-danger">
+                    <span>🚨</span> Emergency stop activated
+                </div>
+            `;
+            document.querySelector('.generator-light').style.animationPlayState = 'paused';
+            document.querySelector('.generator-light').style.opacity = '0.3';
+            document.querySelector('.zap').style.animationPlayState = 'paused';
+            document.querySelector('.zap').style.opacity = '0';
+            document.querySelector('.gas-content').style.height = '0%';
+            document.querySelector('.digester-content').style.height = '70%';
+            
+            // Disable buttons
+            document.querySelectorAll('.control-btn').forEach(btn => {
+                if (btn.id !== 'emergency-btn') {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                }
+            });
+        });
+
+        // Update system parameters randomly to simulate changes
+        function updateSystemParameters() {
+            // Temperature
+            const tempValue = (37 + Math.random() * 1.5).toFixed(1);
+            document.getElementById('temp-value').textContent = `${tempValue}°C`;
+            document.querySelector('.temp-progress .progress-bar-inner').style.width = `${tempValue * 100 / 50}%`;
+            
+            // Pressure
+            const pressureValue = (1 + Math.random() * 0.5).toFixed(1);
+            document.getElementById('pressure-value').textContent = `${pressureValue} bar`;
+            document.querySelector('.pressure-progress .progress-bar-inner').style.width = `${pressureValue * 100 / 2}%`;
+            
+            // pH
+            const phValue = (7 + Math.random() * 0.5).toFixed(1);
+            document.getElementById('ph-value').textContent = phValue;
+            document.querySelector('.ph-progress .progress-bar-inner').style.width = `${phValue * 100 / 14}%`;
+            
+            // Methane
+            const methaneValue = (65 + Math.random() * 5).toFixed(1);
+            document.getElementById('methane-value').textContent = `${methaneValue}%`;
+            document.querySelector('.methane-progress .progress-bar-inner').style.width = `${methaneValue}%`;
+        }
+
+        // Animate gas holder level based on digester level
+        function updateGasHolderLevel() {
+            const gasContent = document.querySelector('.gas-content');
+            const currentHeight = parseFloat(gasContent.style.height) || 70;
+            const newHeight = 40 + Math.random() * 50;
+            
+            gsap.to(gasContent, {
+                height: `${newHeight}%`,
+                duration: 2,
+                ease: "power2.inOut"
+            });
+        }
+
+        // Initialize charts
+        function initCharts() {
+            // Generate random time labels for the past 24 hours
+            const timeLabels = Array.from({ length: 24 }, (_, i) => {
+                const hour = moment().subtract(23 - i, 'hours').format('HH:00');
+                return hour;
+            });
+
+            // Energy Production Chart
+            const energyCtx = document.getElementById('energy-chart').getContext('2d');
+            const energyData = Array.from({ length: 24 }, () => Math.floor(40 + Math.random() * 30));
+            const energyChart = new Chart(energyCtx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [{
+                        label: 'Energy Production (kWh)',
+                        data: energyData,
+                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                        borderColor: 'rgba(46, 125, 50, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 30,
+                            title: {
+                                display: true,
+                                text: 'kWh'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Feedstock Chart
+            const feedstockCtx = document.getElementById('feedStock-chart').getContext('2d');
+            const feedstockChart = new Chart(feedstockCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Food Waste', 'Agricultural', 'Sewage', 'Industrial', 'Other'],
+                    datasets: [{
+                        label: 'Feedstock (tons)',
+                        data: [2.1, 1.5, 0.7, 0.3, 0.2],
+                        backgroundColor: [
+                            'rgba(46, 204, 113, 0.7)',
+                            'rgba(241, 196, 15, 0.7)',
+                            'rgba(52, 152, 219, 0.7)',
+                            'rgba(155, 89, 182, 0.7)',
+                            'rgba(149, 165, 166, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(241, 196, 15, 1)',
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(155, 89, 182, 1)',
+                            'rgba(149, 165, 166, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Tons'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Efficiency Chart
+            const efficiencyCtx = document.getElementById('efficiency-chart').getContext('2d');
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const efficiencyData = days.map(() => 85 + Math.random() * 10);
+            const efficiencyChart = new Chart(efficiencyCtx, {
+                type: 'line',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: 'System Efficiency (%)',
+                        data: efficiencyData,
+                        backgroundColor: 'rgba(129, 199, 132, 0.2)',
+                        borderColor: 'rgba(67, 160, 71, 1)',
+                        borderWidth: 2,
+                        tension: 0.2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 80,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Efficiency %'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize dashboard
+        function init() {
+            createBubbles();
+            initCharts();
+            
+            // Set initial values
+            document.querySelector('.digester-content').style.height = '70%';
+            document.querySelector('.gas-content').style.height = '70%';
+            
+            // Set up recurring animations and updates
+            setInterval(updateGasHolderLevel, 5000);
+            setInterval(updateSystemParameters, 15000);
+            
+            // Show welcome notification
+            setTimeout(() => {
+                showNotification('Welcome to BioPower Admin Dashboard');
+            }, 1000);
+        }
+
+        // Start the dashboard
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

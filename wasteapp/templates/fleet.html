@@ -1,0 +1,2534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ernakulam Waste Management Fleet Tracker</title>
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-light: #81C784;
+            --primary-dark: #388E3C;
+            --accent: #8BC34A;
+            --light: #F1F8E9;
+            --dark: #2C3E50;
+            --danger: #F44336;
+            --warning: #FFC107;
+            --info: #2196F3;
+            --success: #4CAF50;
+            --gray: #9E9E9E;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #FAFAFA;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            height: 70px;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+        
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 1.8rem;
+            animation: pulse 5s infinite ease-in-out;
+        }
+        
+        .main-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0;
+            height: calc(100vh - 70px);
+        }
+        
+        .sidebar {
+            width: 240px;
+            background-color: white;
+            padding: 1.5rem 1rem;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu-item {
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-menu-item a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            text-decoration: none;
+            color: var(--dark);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-menu-item a:hover, .sidebar-menu-item.active a {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-menu-item.active a {
+            background-color: rgba(76, 175, 80, 0.15);
+            font-weight: 600;
+        }
+        
+        .menu-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.2rem;
+        }
+        
+        .dashboard-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: slideIn 0.5s ease-out forwards;
+            opacity: 0;
+            overflow: hidden;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title-icon {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .card-action {
+            background-color: rgba(76, 175, 80, 0.1);
+            border: none;
+            border-radius: 6px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--primary);
+            transition: all 0.2s ease;
+        }
+        
+        .card-action:hover {
+            background-color: rgba(76, 175, 80, 0.2);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 0.8rem;
+            border-radius: 8px;
+            background-color: rgba(241, 248, 233, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            background-color: rgba(241, 248, 233, 0.8);
+            transform: translateY(-3px);
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin-bottom: 0.3rem;
+        }
+        
+        .stat-change {
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 2px 6px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 0.3rem;
+        }
+        
+        .stat-change.positive {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: var(--success);
+        }
+        
+        .stat-change.negative {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: var(--danger);
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        .progress-container {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .progress-title {
+            color: var(--dark);
+        }
+        
+        .progress-value {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress {
+            height: 100%;
+            border-radius: 4px;
+            width: 0%;
+            position: absolute;
+            animation: progressGrow 1.5s ease-out forwards;
+        }
+        
+        .progress-green {
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+        }
+        
+        .progress-orange {
+            background: linear-gradient(90deg, #FFC107, #FF9800);
+        }
+        
+        .progress-blue {
+            background: linear-gradient(90deg, #2196F3, #1976D2);
+        }
+        
+        .map-container {
+            grid-column: span 8;
+            height: 450px;
+        }
+        
+        .map-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .real-time-map {
+            flex: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            margin-top: 1rem;
+            background-color: #eef7ee;
+        }
+        
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuMDEiIG51bU9jdGF2ZXM9IjUiLz48ZmVDb2xvck1hdHJpeCB0eXBlPSJzYXR1cmF0ZSIgdmFsdWVzPSIwIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjUwMCIgaGVpZ2h0PSI1MDAiIGZpbHRlcj0idXJsKCNub2lzZSkiIG9wYWNpdHk9IjAuMDUiLz48L3N2Zz4=");
+            opacity: 0.8;
+            z-index: 1;
+        }
+        
+        .ernakulam-map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .map-road {
+            position: absolute;
+            background-color: rgba(127, 140, 141, 0.4);
+            z-index: 2;
+        }
+        
+        .map-road.nh66 {
+            height: 6px;
+            width: 100%;
+            top: 40%;
+            transform: rotate(-5deg);
+        }
+        
+        .map-road.nh544 {
+            height: 6px;
+            width: 80%;
+            top: 60%;
+            left: 20%;
+            transform: rotate(15deg);
+        }
+        
+        .map-road.mg-road {
+            width: 6px;
+            height: 70%;
+            left: 30%;
+            top: 15%;
+        }
+        
+        .map-road.banerji-road {
+            width: 6px;
+            height: 50%;
+            left: 60%;
+            top: 25%;
+        }
+        
+        .map-road.shanmugham {
+            height: 6px;
+            width: 50%;
+            top: 25%;
+            left: 30%;
+        }
+        
+        .map-road.park-avenue {
+            height: 6px;
+            width: 40%;
+            top: 75%;
+            left: 40%;
+            transform: rotate(-10deg);
+        }
+        
+        .map-landmark {
+            position: absolute;
+            padding: 5px 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--dark);
+            z-index: 3;
+            pointer-events: none;
+        }
+        
+        .map-landmark.marine-drive {
+            top: 20%;
+            left: 25%;
+        }
+        
+        .map-landmark.info-park {
+            top: 65%;
+            left: 75%;
+        }
+        
+        .map-landmark.fort-kochi {
+            top: 15%;
+            left: 10%;
+        }
+        
+        .map-landmark.kakkanad {
+            top: 70%;
+            right: 15%;
+        }
+        
+        .map-landmark.edappally {
+            top: 45%;
+            right: 30%;
+        }
+        
+        .vehicle-marker {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .vehicle-marker:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            box-shadow: 0 0 0 6px rgba(76, 175, 80, 0.3);
+            z-index: 6;
+        }
+        
+        .vehicle-marker.active {
+            background-color: var(--accent);
+            box-shadow: 0 0 0 5px rgba(139, 195, 74, 0.3);
+        }
+        
+        .vehicle-marker.warning {
+            background-color: var(--warning);
+            box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.2);
+        }
+        
+        .vehicle-marker.danger {
+            background-color: var(--danger);
+            box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.2);
+        }
+        
+        .vehicle-marker.idle {
+            background-color: var(--gray);
+            box-shadow: 0 0 0 4px rgba(158, 158, 158, 0.2);
+        }
+        
+        .vehicle-marker::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            background-color: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .vehicle-info {
+            position: absolute;
+            background-color: white;
+            border-radius: 8px;
+            padding: 0.8rem;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+            font-size: 0.85rem;
+            white-space: nowrap;
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+            left: 10px;
+            top: -10px;
+            min-width: 200px;
+        }
+        
+        .vehicle-marker:hover .vehicle-info {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .vehicle-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .vehicle-info-id {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .vehicle-info-status {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background-color: rgba(76, 175, 80, 0.2);
+            color: var(--success);
+        }
+        
+        .vehicle-info-status.warning {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: var(--warning);
+        }
+        
+        .vehicle-info-status.danger {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: var(--danger);
+        }
+        
+        .vehicle-info-status.idle {
+            background-color: rgba(158, 158, 158, 0.2);
+            color: var(--gray);
+        }
+        
+        .vehicle-info-detail {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.4rem;
+            font-size: 0.8rem;
+        }
+        
+        .vehicle-info-icon {
+            margin-right: 8px;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+        
+        .map-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .map-control-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background-color: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--dark);
+            transition: all 0.2s ease;
+        }
+        
+        .map-control-btn:hover {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--primary);
+        }
+        
+        .map-legend {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 0.8rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            font-size: 0.8rem;
+        }
+        
+        .legend-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.3rem;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .legend-color.active {
+            background-color: var(--primary);
+        }
+        
+        .legend-color.warning {
+            background-color: var(--warning);
+        }
+        
+        .legend-color.danger {
+            background-color: var(--danger);
+        }
+        
+        .legend-color.idle {
+            background-color: var(--gray);
+        }
+        
+        .fleet-status-card {
+            grid-column: span 4;
+        }
+        
+        .fleet-list {
+            margin-top: 1rem;
+            max-height: 380px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gray) #f0f0f0;
+            padding-right: 0.5rem;
+        }
+        
+        .fleet-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .fleet-list::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+        
+        .fleet-list::-webkit-scrollbar-thumb {
+            background-color: var(--gray);
+            border-radius: 10px;
+        }
+        
+        .vehicle-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vehicle-item:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        
+        .vehicle-item.active {
+            border-left: 4px solid var(--primary);
+        }
+        
+        .vehicle-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .vehicle-item:hover::before {
+            opacity: 1;
+        }
+        
+        .vehicle-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .vehicle-name {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: var(--dark);
+        }
+        
+        .vehicle-route {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+        }
+        
+        .vehicle-metrics {
+            display: flex;
+            gap: 0.8rem;
+            font-size: 0.75rem;
+        }
+        
+        .vehicle-metric {
+            display: flex;
+            align-items: center;
+            color: var(--gray);
+        }
+        
+        .vehicle-metric-icon {
+            margin-right: 3px;
+            font-size: 0.85rem;
+        }
+        
+        .vehicle-status-badge {
+            display: flex;
+            align-items: center;
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background-color: rgba(76, 175, 80, 0.2);
+            color: var(--success);
+            white-space: nowrap;
+            height: fit-content;
+        }
+        
+        .vehicle-status-badge.warning {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: var(--warning);
+        }
+        
+        .vehicle-status-badge.danger {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: var(--danger);
+        }
+        
+        .vehicle-status-badge.idle {
+            background-color: rgba(158, 158, 158, 0.2);
+            color: var(--gray);
+        }
+        
+        .collections-card, .fuel-card {
+            grid-column: span 3;
+        }
+        
+        .maintenance-card {
+            grid-column: span 6;
+        }
+        
+        .analytics-card {
+            grid-column: span 6;
+            height: 340px;
+        }
+        
+        .chart-container {
+            height: 220px;
+            position: relative;
+            margin-top: 1rem;
+        }
+        
+        .chart {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+        
+        .chart-column {
+            width: 9%;
+            background: linear-gradient(to top, var(--accent), var(--primary));
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            animation: barRise 1.5s ease-out forwards;
+        }
+        
+        .chart-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        .chart-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+        
+        /* Weather widget */
+        .weather-widget {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+        
+        .weather-icon {
+            font-size: 1.3rem;
+            margin-right: 8px;
+            color: var(--primary);
+        }
+        
+        .weather-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .weather-temp {
+            font-weight: 600;
+        }
+        
+        .weather-location {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+        
+        /* Traffic overlay */
+        .traffic-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .traffic-overlay.active {
+            opacity: 1;
+        }
+        
+        .traffic-indicator {
+            position: absolute;
+            height: 6px;
+            border-radius: 3px;
+        }
+        
+        .traffic-light {
+            background-color: rgba(76, 175, 80, 0.4);
+        }
+        
+        .traffic-medium {
+            background-color: rgba(255, 193, 7, 0.4);
+        }
+        
+        .traffic-heavy {
+            background-color: rgba(244, 67, 54, 0.4);
+        }
+        
+        /* Advanced tracking features */
+        .geofence-region {
+            position: absolute;
+            border: 2px dashed var(--primary);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0.2;
+            transition: opacity 0.3s ease;
+        }
+        
+        .geofence-region:hover {
+            opacity: 0.4;
+        }
+        
+        .geofence-region.active {
+            opacity: 0.6;
+        }
+        
+        .route-optimization {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 3;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .route-optimization.active {
+            opacity: 1;
+        }
+        
+        .optimized-route {
+            position: absolute;
+            border-top: 3px dashed rgba(76, 175, 80, 0.6);
+            pointer-events: none;
+        }
+        
+        .route-stop {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 4;
+        }
+        
+        .route-details {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 0.8rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            font-size: 0.8rem;
+            width: 200px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .route-details.active {
+            opacity: 1;
+        }
+        
+        .route-detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.3rem;
+            font-size: 0.75rem;
+        }
+        
+        .route-detail-label {
+            color: var(--gray);
+        }
+        
+        .route-detail-value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        /* Animation for rain */
+        .rain-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .rain-container.active {
+            opacity: 1;
+        }
+        
+        .rain-drop {
+            position: absolute;
+            width: 1px;
+            height: 15px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(33, 150, 243, 0.5));
+            animation: rain 1s linear infinite;
+        }
+        
+        @keyframes rain {
+            0% {
+                transform: translateY(-15px);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0.3;
+            }
+        }
+        
+        /* Heat map overlay */
+        .heatmap-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 3;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            background: radial-gradient(
+                circle at 70% 30%,
+                rgba(244, 67, 54, 0.3) 0%,
+                rgba(244, 67, 54, 0) 50%
+            ), radial-gradient(
+                circle at 30% 60%,
+                rgba(255, 193, 7, 0.3) 0%,
+                rgba(255, 193, 7, 0) 50%
+            ), radial-gradient(
+                circle at 50% 40%,
+                rgba(255, 193, 7, 0.2) 0%,
+                rgba(255, 193, 7, 0) 40%
+            );
+        }
+        
+        .heatmap-overlay.active {
+            opacity: 1;
+        }
+        
+        /* Notifications */
+        .notifications-panel {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 320px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        
+        .notifications-panel.active {
+            right: 0;
+        }
+        
+        .notifications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .notifications-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .close-notifications {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--gray);
+            cursor: pointer;
+        }
+        
+        .notification-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .notification-item {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 1rem;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s forwards;
+        }
+        
+        .notification-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .notification-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 4px 0 0 4px;
+        }
+        
+        .notification-item.alert::before {
+            background-color: var(--danger);
+        }
+        
+        .notification-item.warning::before {
+            background-color: var(--warning);
+        }
+        
+        .notification-item.info::before {
+            background-color: var(--info);
+        }
+        
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .notification-time {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+        
+        .notification-content {
+            font-size: 0.85rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .notification-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .notification-btn {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .notification-btn.primary {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--primary);
+        }
+        
+        .notification-btn.primary:hover {
+            background-color: rgba(76, 175, 80, 0.2);
+        }
+        
+        .notification-btn.secondary {
+            background-color: #f0f0f0;
+            color: var(--gray);
+        }
+        
+        .notification-btn.secondary:hover {
+            background-color: #e0e0e0;
+        }
+        
+        /* Animated background */
+        .animated-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15;
+            z-index: 1;
+        }
+        
+        .wave {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            top: 60%;
+            left: -50%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 40%;
+            animation: wave 20s infinite linear;
+        }
+        
+        .wave:nth-child(2) {
+            top: 70%;
+            animation-delay: -5s;
+            opacity: 0.3;
+        }
+        
+        .wave:nth-child(3) {
+            top: 65%;
+            animation-delay: -2s;
+            opacity: 0.1;
+        }
+        
+        /* User profile and search */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin-left: auto;
+            position: relative;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .user-name {
+            font-size: 0.9rem;
+            color: white;
+            margin-right: 5px;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 5px 15px;
+            margin-left: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-bar:focus-within {
+            background-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-icon {
+            color: rgba(255, 255, 255, 0.7);
+            margin-right: 8px;
+        }
+        
+        .search-input {
+            background: none;
+            border: none;
+            color: white;
+            outline: none;
+            font-size: 0.9rem;
+            width: 180px;
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Filters and overlays */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        .fleet-filter {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 5px 10px;
+            border-radius: 15px;
+            border: none;
+            background-color: #f0f0f0;
+            color: var(--gray);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* Map modes and layer buttons */
+        .map-modes {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+        
+        .map-mode-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: white;
+            border: none;
+            font-size: 0.75rem;
+            color: var(--dark);
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .map-mode-btn:hover, .map-mode-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* Alert dot for notifications */
+        .alert-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 10px;
+            height: 10px;
+            background-color: var(--danger);
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes progressGrow {
+            from {
+                width: 0%;
+            }
+            to {
+                width: var(--width);
+            }
+        }
+        
+        @keyframes barRise {
+            from {
+                height: 0;
+            }
+            to {
+                height: var(--height);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes wave {
+            0% {
+                transform: translateX(0) translateZ(0) scaleY(1);
+            }
+            50% {
+                transform: translateX(-25%) translateZ(0) scaleY(0.8);
+            }
+            100% {
+                transform: translateX(-50%) translateZ(0) scaleY(1);
+            }
+        }
+        
+        /* Advanced analytics panel styles */
+        .analytics-panel {
+            position: fixed;
+            bottom: -400px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 400px;
+            background-color: white;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+            z-index: 900;
+            transition: bottom 0.5s ease;
+            overflow: hidden;
+        }
+        
+        .analytics-panel.active {
+            bottom: 0;
+        }
+        
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .analytics-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .close-analytics {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .close-analytics:hover {
+            color: var(--dark);
+        }
+        
+        .analytics-content {
+            display: flex;
+            height: calc(100% - 60px);
+        }
+        
+        .analytics-sidebar {
+            width: 200px;
+            padding: 1rem;
+            border-right: 1px solid #f0f0f0;
+            overflow-y: auto;
+        }
+        
+        .analytics-menu {
+            list-style: none;
+        }
+        
+        .analytics-menu-item {
+            padding: 0.7rem 1rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+        
+        .analytics-menu-item:hover, .analytics-menu-item.active {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--primary);
+        }
+        
+        .analytics-menu-item.active {
+            font-weight: 600;
+        }
+        
+        .analytics-main {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            overflow-y: auto;
+        }
+        
+        .analytics-tab {
+            display: none;
+        }
+        
+        .analytics-tab.active {
+            display: block;
+            animation: fadeIn 0.3s forwards;
+        }
+        
+        /* Animation delays for cards */
+        .dashboard-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        
+        .dashboard-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .dashboard-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        
+        .dashboard-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+        
+        .dashboard-card:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+        
+        .dashboard-card:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: repeat(6, 1fr);
+            }
+            
+            .map-container {
+                grid-column: span 6;
+            }
+            
+            .fleet-status-card {
+                grid-column: span 6;
+            }
+            
+            .collections-card, .fuel-card {
+                grid-column: span 3;
+            }
+            
+            .maintenance-card, .analytics-card {
+                grid-column: span 6;
+            }
+            
+            .analytics-panel {
+                width: 90%;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-card {
+                grid-column: span 1 !important;
+            }
+            
+            .main-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .header-content {
+                flex-wrap: wrap;
+            }
+            
+            .search-bar {
+                margin-left: 0;
+                margin-top: 0.5rem;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .analytics-panel {
+                width: 100%;
+                border-radius: 0;
+            }
+            
+            .analytics-content {
+                flex-direction: column;
+            }
+            
+            .analytics-sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            
+            .analytics-menu {
+                display: flex;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+            
+            .analytics-menu-item {
+                white-space: nowrap;
+                margin-right: 0.5rem;
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="animated-bg">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <!-- <span>Ernakulam EcoFleet Tracker</span> -->
+            </div>
+            <div class="search-bar">
+                <!-- <div class="search-icon">🔍</div>
+                <input type="text" class="search-input" placeholder="Search vehicles, routes...">
+            </div> -->
+            <div class="user-profile">
+                <!-- <div class="user-avatar">JD</div>
+                <div class="user-name">John Doe</div>
+                <div class="dropdown-icon">▼</div> -->
+            </div>
+        </div>
+    </header>
+    
+    <!-- <div class="main-container"> -->
+        <!-- <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="sidebar-menu-item active">
+                    <a href="#">
+                        <span class="menu-icon">📊</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="#">
+                        <span class="menu-icon">🚚</span>
+                        Fleet Management
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="#">
+                        <span class="menu-icon">🗺️</span>
+                        Route Planning
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="#">
+                        <span class="menu-icon">🔧</span>
+                        Maintenance
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="#">
+                        <span class="menu-icon">⛽</span>
+                        Fuel Management
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="#">
+                        <span class="menu-icon">📈</span>
+                        Analytics
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="#">
+                        <span class="menu-icon">📝</span>
+                        Reports
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="#">
+                        <span class="menu-icon">👥</span>
+                        Drivers
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="#">
+                        <span class="menu-icon">⚙️</span>
+                        Settings
+                    </a>
+                </li>
+            </ul> -->
+        </div>
+        
+        <div class="content">
+            <div class="dashboard">
+                <div class="dashboard-card map-container">
+                    <div class="map-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <span class="card-title-icon">🗺️</span>
+                                Ernakulam Fleet Tracker
+                            </h3>
+                            <div class="card-actions">
+                                <button class="card-action refresh-map">🔄</button>
+                                <button class="card-action toggle-fullscreen">⛶</button>
+                            </div>
+                        </div>
+                        <div class="real-time-map" id="ernakulam-map">
+                            <div class="map-overlay"></div>
+                            
+                            <!-- Ernakulam roads -->
+                            <div class="ernakulam-map">
+                                <div class="map-road nh66"></div>
+                                <div class="map-road nh544"></div>
+                                <div class="map-road mg-road"></div>
+                                <div class="map-road banerji-road"></div>
+                                <div class="map-road shanmugham"></div>
+                                <div class="map-road park-avenue"></div>
+                                
+                                <!-- Ernakulam landmarks -->
+                                <div class="map-landmark marine-drive">Marine Drive</div>
+                                <div class="map-landmark info-park">InfoPark</div>
+                                <div class="map-landmark fort-kochi">Fort Kochi</div>
+                                <div class="map-landmark kakkanad">Kakkanad</div>
+                                <div class="map-landmark edappally">Edappally</div>
+                            </div>
+                            
+                            <!-- Weather widget -->
+                            <div class="weather-widget">
+                                <div class="weather-icon">☀️</div>
+                                <div class="weather-info">
+                                    <div class="weather-temp">32°C</div>
+                                    <div class="weather-location">Ernakulam</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Traffic overlay -->
+                            <div class="traffic-overlay" id="traffic-overlay">
+                                <div class="traffic-indicator traffic-heavy" style="width: 40%; top: 40%; left: 20%; transform: rotate(-5deg);"></div>
+                                <div class="traffic-indicator traffic-medium" style="width: 30%; top: 60%; left: 40%; transform: rotate(15deg);"></div>
+                                <div class="traffic-indicator traffic-light" style="height: 40%; width: 6px; top: 30%; left: 30%;"></div>
+                                <div class="traffic-indicator traffic-medium" style="height: 30%; width: 6px; top: 40%; left: 60%;"></div>
+                            </div>
+                            
+                            <!-- Route optimization overlay -->
+                            <div class="route-optimization" id="route-optimization">
+                                <div class="optimized-route" style="width: 40%; top: 30%; left: 20%; transform: rotate(20deg);"></div>
+                                <div class="optimized-route" style="width: 30%; top: 40%; left: 50%; transform: rotate(-30deg);"></div>
+                                <div class="optimized-route" style="width: 20%; top: 60%; left: 70%; transform: rotate(10deg);"></div>
+                                
+                                <div class="route-stop" style="top: 30%; left: 20%;"></div>
+                                <div class="route-stop" style="top: 40%; left: 50%;"></div>
+                                <div class="route-stop" style="top: 60%; left: 70%;"></div>
+                                <div class="route-stop" style="top: 70%; left: 80%;"></div>
+                            </div>
+                            
+                            <!-- Geofence regions -->
+                            <div class="geofence-region" style="width: 100px; height: 100px; top: 25%; left: 20%; transform: translate(-50%, -50%);"></div>
+                            <div class="geofence-region" style="width: 150px; height: 150px; top: 60%; left: 70%; transform: translate(-50%, -50%);"></div>
+                            
+                            <!-- Heatmap overlay -->
+                            <div class="heatmap-overlay" id="heatmap-overlay"></div>
+                            
+                            <!-- Rain animation container -->
+                            <div class="rain-container" id="rain-container"></div>
+                            
+                            <!-- Route details panel -->
+                            <div class="route-details" id="route-details">
+                                <h4 style="margin-bottom: 0.5rem;">Optimized Route</h4>
+                                <div class="route-detail-item">
+                                    <span class="route-detail-label">Distance:</span>
+                                    <span class="route-detail-value">28.5 km</span>
+                                </div>
+                                <div class="route-detail-item">
+                                    <span class="route-detail-label">Estimated Time:</span>
+                                    <span class="route-detail-value">1h 45m</span>
+                                </div>
+                                <div class="route-detail-item">
+                                    <span class="route-detail-label">Fuel Saved:</span>
+                                    <span class="route-detail-value">12%</span>
+                                </div>
+                                <div class="route-detail-item">
+                                    <span class="route-detail-label">Stops:</span>
+                                    <span class="route-detail-value">4</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Map controls -->
+                            <div class="map-controls">
+                                <button class="map-control-btn zoom-in">+</button>
+                                <button class="map-control-btn zoom-out">-</button>
+                                <button class="map-control-btn center-map">◎</button>
+                                <button class="map-control-btn toggle-traffic" id="toggle-traffic">🚦</button>
+                                <button class="map-control-btn toggle-weather" id="toggle-weather">☀️</button>
+                            </div>
+                            
+                            <!-- Map mode buttons -->
+                            <div class="map-modes">
+                                <button class="map-mode-btn active" data-mode="default">Default</button>
+                                <button class="map-mode-btn" data-mode="traffic">Traffic</button>
+                                <button class="map-mode-btn" data-mode="heatmap">Heatmap</button>
+                                <button class="map-mode-btn" data-mode="routes">Routes</button>
+                            </div>
+                            
+                            <!-- Map legend -->
+                            <div class="map-legend">
+                                <div class="legend-title">Vehicle Status</div>
+                                <div class="legend-item">
+                                    <div class="legend-color active"></div>
+                                    <span>Active</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color warning"></div>
+                                    <span>Delayed</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color danger"></div>
+                                    <span>Issue Detected</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color idle"></div>
+                                    <span>Idle</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card fleet-status-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-title-icon">🚚</span>
+                            Fleet Status
+                        </h3>
+                        <div class="card-actions">
+                            <button class="card-action toggle-notifications" id="show-notifications">
+                                🔔
+                                <span class="alert-dot"></span>
+                            </button>
+                            <button class="card-action view-all">👁️</button>
+                        </div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">28</div>
+                            <div class="stat-change positive">+3</div>
+                            <div class="stat-label">Total Vehicles</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">22</div>
+                            <div class="stat-change positive">+2</div>
+                            <div class="stat-label">Active</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">4</div>
+                            <div class="stat-change negative">+2</div>
+                            <div class="stat-label">Delayed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">2</div>
+                            <div class="stat-change negative">+1</div>
+                            <div class="stat-label">Maintenance</div>
+                        </div>
+                    </div>
+                    
+                    <div class="fleet-filter">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="active">Active</button>
+                        <button class="filter-btn" data-filter="delayed">Delayed</button>
+                        <button class="filter-btn" data-filter="maintenance">Maintenance</button>
+                        <button class="filter-btn" data-filter="idle">Idle</button>
+                        <button class="filter-btn" data-filter="kakkanad">Kakkanad</button>
+                        <button class="filter-btn" data-filter="fort-kochi">Fort Kochi</button>
+                    </div>
+                    
+                    <div class="fleet-list">
+                        <div class="vehicle-item active" data-id="EKM-1234" data-type="active">
+                            <div class="vehicle-details">
+                                <div class="vehicle-name">Truck #EKM-1234</div>
+                                <div class="vehicle-route">Marine Drive → Kakkanad</div>
+                                <div class="vehicle-metrics">
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">⏱️</span>
+                                        <span>On time</span>
+                                    </div>
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">⛽</span>
+                                        <span>85%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="vehicle-status-badge">Active</div>
+                        </div>
+                        
+                        <div class="vehicle-item" data-id="EKM-5678" data-type="active">
+                            <div class="vehicle-details">
+                                <div class="vehicle-name">Truck #EKM-5678</div>
+                                <div class="vehicle-route">Fort Kochi → InfoPark</div>
+                                <div class="vehicle-metrics">
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">⏱️</span>
+                                        <span>On time</span>
+                                    </div>
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">⛽</span>
+                                        <span>72%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="vehicle-status-badge">Active</div>
+                        </div>
+                        
+                        <div class="vehicle-item" data-id="EKM-9012" data-type="delayed">
+                            <div class="vehicle-details">
+                                <div class="vehicle-name">Truck #EKM-9012</div>
+                                <div class="vehicle-route">Edappally → Fort Kochi</div>
+                                <div class="vehicle-metrics">
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">⏱️</span>
+                                        <span>15 min late</span>
+                                    </div>
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">⛽</span>
+                                        <span>45%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="vehicle-status-badge warning">Delayed</div>
+                        </div>
+                        
+                        <div class="vehicle-item" data-id="EKM-3456" data-type="maintenance">
+                            <div class="vehicle-details">
+                                <div class="vehicle-name">Truck #EKM-3456</div>
+                                <div class="vehicle-route">In Maintenance</div>
+                                <div class="vehicle-metrics">
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">🔧</span>
+                                        <span>Brake repair</span>
+                                    </div>
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">⏱️</span>
+                                        <span>2 hrs left</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="vehicle-status-badge danger">Maintenance</div>
+                        </div>
+                        
+                        <div class="vehicle-item" data-id="EKM-7890" data-type="idle">
+                            <div class="vehicle-details">
+                                <div class="vehicle-name">Truck #EKM-7890</div>
+                                <div class="vehicle-route">Stationed at InfoPark</div>
+                                <div class="vehicle-metrics">
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">⏱️</span>
+                                        <span>Idle 30 min</span>
+                                    </div>
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">⛽</span>
+                                        <span>92%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="vehicle-status-badge idle">Idle</div>
+                        </div>
+                        
+                        <div class="vehicle-item" data-id="EKM-2468" data-type="active">
+                            <div class="vehicle-details">
+                                <div class="vehicle-name">Truck #EKM-2468</div>
+                                <div class="vehicle-route">Kakkanad → Marine Drive</div>
+                                <div class="vehicle-metrics">
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">⏱️</span>
+                                        <span>On time</span>
+                                    </div>
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">⛽</span>
+                                        <span>63%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="vehicle-status-badge">Active</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card collections-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-title-icon">♻️</span>
+                            Waste Collection
+                        </h3>
+                        <div class="card-actions">
+                            <button class="card-action view-details">📊</button>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span class="progress-title">Today's Collection</span>
+                            <span class="progress-value">68%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress progress-green" style="--width: 68%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span class="progress-title">Organic Waste</span>
+                            <span class="progress-value">72%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress progress-green" style="--width: 72%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span class="progress-title">Recyclable Waste</span>
+                            <span class="progress-value">45%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress progress-orange" style="--width: 45%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span class="progress-title">E-Waste</span>
+                            <span class="progress-value">24%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress progress-blue" style="--width: 24%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card fuel-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-title-icon">⛽</span>
+                            Fuel Consumption
+                        </h3>
+                        <div class="card-actions">
+                            <button class="card-action view-details">📊</button>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart">
+                            <div class="chart-column" style="--height: 60%">
+                                <div class="chart-value">950L</div>
+                                <div class="chart-label">Mon</div>
+                            </div>
+                            <div class="chart-column" style="--height: 75%">
+                                <div class="chart-value">1200L</div>
+                                <div class="chart-label">Tue</div>
+                            </div>
+                            <div class="chart-column" style="--height: 65%">
+                                <div class="chart-value">1050L</div>
+                                <div class="chart-label">Wed</div>
+                            </div>
+                            <div class="chart-column" style="--height: 80%">
+                                <div class="chart-value">1280L</div>
+                                <div class="chart-label">Thu</div>
+                            </div>
+                            <div class="chart-column" style="--height: 70%">
+                                <div class="chart-value">1120L</div>
+                                <div class="chart-label">Fri</div>
+                            </div>
+                            <div class="chart-column" style="--height: 50%">
+                                <div class="chart-value">800L</div>
+                                <div class="chart-label">Sat</div>
+                            </div>
+                            <div class="chart-column" style="--height: 35%">
+                                <div class="chart-value">560L</div>
+                                <div class="chart-label">Sun</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card maintenance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-title-icon">🔧</span>
+                            Maintenance Schedule
+                        </h3>
+                        <div class="card-actions">
+                            <button class="card-action view-all">👁️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="fleet-list">
+                        <div class="vehicle-item">
+                            <div class="vehicle-details">
+                                <div class="vehicle-name">Truck #EKM-3456</div>
+                                <div class="vehicle-route">Brake System Repair</div>
+                                <div class="vehicle-metrics">
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">⏱️</span>
+                                        <span>In progress</span>
+                                    </div>
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">📅</span>
+                                        <span>Today</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="vehicle-status-badge danger">Urgent</div>
+                        </div>
+                        
+                        <div class="vehicle-item">
+                            <div class="vehicle-details">
+                                <div class="vehicle-name">Truck #EKM-5678</div>
+                                <div class="vehicle-route">Routine Inspection</div>
+                                <div class="vehicle-metrics">
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">⏱️</span>
+                                        <span>Scheduled</span>
+                                    </div>
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">📅</span>
+                                        <span>Tomorrow</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="vehicle-status-badge">Regular</div>
+                        </div>
+                        
+                        <div class="vehicle-item">
+                            <div class="vehicle-details">
+                                <div class="vehicle-name">Truck #EKM-9012</div>
+                                <div class="vehicle-route">Tire Replacement</div>
+                                <div class="vehicle-metrics">
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">⏱️</span>
+                                        <span>Scheduled</span>
+                                    </div>
+                                    <div class="vehicle-metric">
+                                        <span class="vehicle-metric-icon">📅</span>
+                                        <span>18 Mar</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="vehicle-status-badge warning">Preventive</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card analytics-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-title-icon">📈</span>
+                            Collection Analytics
+                        </h3>
+                        <div class="card-actions">
+                            <button class="card-action view-analytics" id="show-analytics">📊</button>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart">
+                            <div class="chart-column" style="--height: 65%">
+                                <div class="chart-value">28T</div>
+                                <div class="chart-label">Mon</div>
+                            </div>
+                            <div class="chart-column" style="--height: 80%">
+                                <div class="chart-value">35T</div>
+                                <div class="chart-label">Tue</div>
+                            </div>
+                            <div class="chart-column" style="--height: 75%">
+                                <div class="chart-value">32T</div>
+                                <div class="chart-label">Wed</div>
+                            </div>
+                            <div class="chart-column" style="--height: 85%">
+                                <div class="chart-value">37T</div>
+                                <div class="chart-label">Thu</div>
+                            </div>
+                            <div class="chart-column" style="--height: 90%">
+                                <div class="chart-value">39T</div>
+                                <div class="chart-label">Fri</div>
+                            </div>
+                            <div class="chart-column" style="--height: 70%">
+                                <div class="chart-value">30T</div>
+                                <div class="chart-label">Sat</div>
+                            </div>
+                            <div class="chart-column" style="--height: 45%">
+                                <div class="chart-value">19T</div>
+                                <div class="chart-label">Sun</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notifications panel -->
+    <div class="notifications-panel" id="notifications-panel">
+        <div class="notifications-header">
+            <h3 class="notifications-title">Notifications</h3>
+            <button class="close-notifications" id="close-notifications">×</button>
+        </div>
+        
+        <div class="notification-list">
+            <div class="notification-item alert">
+                <div class="notification-header">
+                    <div class="notification-title">Vehicle Breakdown</div>
+                    <div class="notification-time">10 min ago</div>
+                </div>
+                <div class="notification-content">
+                    Truck #EKM-3456 has reported a brake system failure near Edappally.
+                </div>
+                <div class="notification-actions">
+                    <button class="notification-btn primary">Dispatch Support</button>
+                    <button class="notification-btn secondary">Dismiss</button>
+                </div>
+            </div>
+            
+            <div class="notification-item warning">
+                <div class="notification-header">
+                    <div class="notification-title">Collection Delay</div>
+                    <div class="notification-time">25 min ago</div>
+                </div>
+                <div class="notification-content">
+                    Truck #EKM-9012 is running 15 minutes behind schedule due to traffic.
+                </div>
+                <div class="notification-actions">
+                    <button class="notification-btn primary">Notify Customers</button>
+                    <button class="notification-btn secondary">Dismiss</button>
+                </div>
+            </div>
+            
+            <div class="notification-item info">
+                <div class="notification-header">
+                    <div class="notification-title">Maintenance Complete</div>
+                    <div class="notification-time">1 hour ago</div>
+                </div>
+                <div class="notification-content">
+                    Routine maintenance for Truck #EKM-7890 has been completed successfully.
+                </div>
+                <div class="notification-actions">
+                    <button class="notification-btn primary">View Details</button>
+                    <button class="notification-btn secondary">Dismiss</button>
+                </div>
+            </div>
+            
+            <div class="notification-item info">
+                <div class="notification-header">
+                    <div class="notification-title">Fuel Refill Reminder</div>
+                    <div class="notification-time">2 hours ago</div>
+                </div>
+                <div class="notification-content">
+                    Truck #EKM-2468 needs to refuel. Current level at 25%.
+                </div>
+                <div class="notification-actions">
+                    <button class="notification-btn primary">Schedule Refill</button>
+                    <button class="notification-btn secondary">Dismiss</button>
+                </div>
+            </div>
+            
+            <div class="notification-item warning">
+                <div class="notification-header">
+                    <div class="notification-title">Weather Alert</div>
+                    <div class="notification-time">3 hours ago</div>
+                </div>
+                <div class="notification-content">
+                    Heavy rain expected in Fort Kochi area. Consider route adjustments.
+                </div>
+                <div class="notification-actions">
+                    <button class="notification-btn primary">View Forecast</button>
+                    <button class="notification-btn secondary">Dismiss</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Analytics panel -->
+    <div class="analytics-panel" id="analytics-panel">
+        <div class="analytics-header">
+            <h3 class="analytics-title">Advanced Analytics</h3>
+            <button class="close-analytics" id="close-analytics">×</button>
+        </div>
+        
+        <div class="analytics-content">
+            <div class="analytics-sidebar">
+                <ul class="analytics-menu">
+                    <li class="analytics-menu-item active" data-tab="collection">Collection Analysis</li>
+                    <li class="analytics-menu-item" data-tab="fuel">Fuel Efficiency</li>
+                    <li class="analytics-menu-item" data-tab="routes">Route Optimization</li>
+                    <li class="analytics-menu-item" data-tab="maintenance">Maintenance Costs</li>
+                    <li class="analytics-menu-item" data-tab="performance">Fleet Performance</li>
+                </ul>
+            </div>
+            
+            <div class="analytics-main">
+                <div class="analytics-tab active" id="collection-tab">
+                    <h4>Waste Collection Analysis</h4>
+                    <p>Detailed analysis of waste collection metrics across Ernakulam district.</p>
+                    <!-- Collection analytics content would go here -->
+                </div>
+                
+                <div class="analytics-tab" id="fuel-tab">
+                    <h4>Fuel Efficiency Analysis</h4>
+                    <p>Detailed analysis of fuel consumption and efficiency metrics.</p>
+                    <!-- Fuel analytics content would go here -->
+                </div>
+                
+                <div class="analytics-tab" id="routes-tab">
+                    <h4>Route Optimization Analysis</h4>
+                    <p>Detailed analysis of current routes and optimization opportunities.</p>
+                    <!-- Routes analytics content would go here -->
+                </div>
+                
+                <div class="analytics-tab" id="maintenance-tab">
+                    <h4>Maintenance Cost Analysis</h4>
+                    <p>Detailed analysis of maintenance frequencies and costs.</p>
+                    <!-- Maintenance analytics content would go here -->
+                </div>
+                
+                <div class="analytics-tab" id="performance-tab">
+                    <h4>Fleet Performance Analysis</h4>
+                    <p>Detailed analysis of overall fleet performance metrics.</p>
+                    <!-- Performance analytics content would go here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overlay for modal backgrounds -->
+    <div class="overlay" id="overlay"></div>
+    
+    <script>
+        // Vehicle markers - would be dynamically generated in a real app
+        const vehicles = [
+            {id: 'EKM-1234', lat: 25, lng: 35, status: 'active'},
+            {id: 'EKM-5678', lat: 15, lng: 10, status: 'active'},
+            {id: 'EKM-9012', lat: 65, lng: 60, status: 'warning'},
+            {id: 'EKM-7890', lat: 75, lng: 75, status: 'idle'},
+            {id: 'EKM-2468', lat: 55, lng: 45, status: 'active'}
+        ];
+        
+        // Create vehicle markers
+        const mapContainer = document.querySelector('.real-time-map');
+        
+        vehicles.forEach(vehicle => {
+            const marker = document.createElement('div');
+            marker.className = `vehicle-marker ${vehicle.status}`;
+            marker.style.top = `${vehicle.lat}%`;
+            marker.style.left = `${vehicle.lng}%`;
+            marker.setAttribute('data-id', vehicle.id);
+            
+            const info = document.createElement('div');
+            info.className = 'vehicle-info';
+            
+            const infoHeader = document.createElement('div');
+            infoHeader.className = 'vehicle-info-header';
+            
+            const infoId = document.createElement('div');
+            infoId.className = 'vehicle-info-id';
+            infoId.textContent = vehicle.id;
+            
+            const infoStatus = document.createElement('div');
+            infoStatus.className = `vehicle-info-status ${vehicle.status}`;
+            infoStatus.textContent = vehicle.status.charAt(0).toUpperCase() + vehicle.status.slice(1);
+            
+            infoHeader.appendChild(infoId);
+            infoHeader.appendChild(infoStatus);
+            
+            const infoDetails = document.createElement('div');
+            infoDetails.className = 'vehicle-info-details';
+            
+            const routeDetail = document.createElement('div');
+            routeDetail.className = 'vehicle-info-detail';
+            routeDetail.innerHTML = '<span class="vehicle-info-icon">🛣️</span> ' + 
+                                    '<span>Route: Marine Drive → Kakkanad</span>';
+            
+            const speedDetail = document.createElement('div');
+            speedDetail.className = 'vehicle-info-detail';
+            speedDetail.innerHTML = '<span class="vehicle-info-icon">⏱️</span> ' + 
+                                    '<span>Speed: 35 km/h</span>';
+            
+            const fuelDetail = document.createElement('div');
+            fuelDetail.className = 'vehicle-info-detail';
+            fuelDetail.innerHTML = '<span class="vehicle-info-icon">⛽</span> ' + 
+                                    '<span>Fuel: 85%</span>';
+            
+            infoDetails.appendChild(routeDetail);
+            infoDetails.appendChild(speedDetail);
+            infoDetails.appendChild(fuelDetail);
+            
+            info.appendChild(infoHeader);
+            info.appendChild(infoDetails);
+            
+            marker.appendChild(info);
+            mapContainer.appendChild(marker);
+        });
+        
+        // Add rain drops for animation
+        const rainContainer = document.getElementById('rain-container');
+        for (let i = 0; i < 100; i++) {
+            const drop = document.createElement('div');
+            drop.className = 'rain-drop';
+            drop.style.left = `${Math.random() * 100}%`;
+            drop.style.animationDuration = `${0.5 + Math.random() * 1}s`;
+            drop.style.animationDelay = `${Math.random() * 2}s`;
+            rainContainer.appendChild(drop);
+        }
+        
+        // Toggle functions
+        document.getElementById('show-notifications').addEventListener('click', function() {
+            document.getElementById('notifications-panel').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        });
+        
+        document.getElementById('close-notifications').addEventListener('click', function() {
+            document.getElementById('notifications-panel').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        });
+        
+        document.getElementById('show-analytics').addEventListener('click', function() {
+            document.getElementById('analytics-panel').classList.add('active');
+        });
+        
+        document.getElementById('close-analytics').addEventListener('click', function() {
+            document.getElementById('analytics-panel').classList.remove('active');
+        });
+        
+        document.getElementById('toggle-traffic').addEventListener('click', function() {
+            document.getElementById('traffic-overlay').classList.toggle('active');
+        });
+        
+        document.getElementById('toggle-weather').addEventListener('click', function() {
+            document.getElementById('rain-container').classList.toggle('active');
+        });
+        
+        // Map mode buttons
+        const mapModeButtons = document.querySelectorAll('.map-mode-btn');
+        mapModeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                mapModeButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Handle different map modes
+                const mode = this.getAttribute('data-mode');
+                const trafficOverlay = document.getElementById('traffic-overlay');
+                const heatmapOverlay = document.getElementById('heatmap-overlay');
+                const routeOptimization = document.getElementById('route-optimization');
+                const routeDetails = document.getElementById('route-details');
+                
+                // Reset all overlays
+                trafficOverlay.classList.remove('active');
+                heatmapOverlay.classList.remove('active');
+                routeOptimization.classList.remove('active');
+                routeDetails.classList.remove('active');
+                
+                // Activate the selected overlay
+                if (mode === 'traffic') {
+                    trafficOverlay.classList.add('active');
+                } else if (mode === 'heatmap') {
+                    heatmapOverlay.classList.add('active');
+                } else if (mode === 'routes') {
+                    routeOptimization.classList.add('active');
+                    routeDetails.classList.add('active');
+                }
+            });
+        });
+        
+        // Vehicle list filtering
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const vehicleItems = document.querySelectorAll('.vehicle-item');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                
+                vehicleItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-type') === filter) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Analytics tab switching
+        const analyticsTabs = document.querySelectorAll('.analytics-menu-item');
+        
+        analyticsTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                analyticsTabs.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all tab contents
+                document.querySelectorAll('.analytics-tab').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Show the selected tab content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+        
+        // Set up animation delays for dashboard cards
+        document.querySelectorAll('.dashboard-card').forEach((card, index) => {
+            card.style.animationDelay = `${0.1 * index}s`;
+        });
+    </script>
+</body>
+</html>

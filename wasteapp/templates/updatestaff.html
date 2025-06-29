@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrack - Update Staff</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2E7D32;
+            --primary-light: #4CAF50;
+            --primary-dark: #1B5E20;
+            --accent-color: #81C784;
+            --background-light: #F9FFF9;
+            --background-dark: #F1F8E9;
+            --text-primary: #263238;
+            --text-secondary: #546E7A;
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 15px 25px rgba(0, 0, 0, 0.1);
+            --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(ellipse at bottom right, rgba(129, 199, 132, 0.4) 0%, rgba(46, 125, 50, 0.1) 70%), 
+                        linear-gradient(135deg, var(--background-light) 0%, var(--background-dark) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background-color: white;
+            color: var(--primary-color);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-bounce);
+            z-index: 100;
+            border: 2px solid transparent;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .card {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.7s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            padding: 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .animated-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.2;
+        }
+        
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: pulse 15s infinite alternate;
+        }
+        
+        .circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -50px;
+            animation-delay: 0s;
+        }
+        
+        .circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: -50px;
+            right: 100px;
+            animation-delay: 2s;
+        }
+        
+        .circle:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            bottom: -50px;
+            right: -50px;
+            animation-delay: 4s;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1) translate(0, 0);
+                opacity: 0.2;
+            }
+            50% {
+                transform: scale(1.1) translate(20px, 10px);
+                opacity: 0.3;
+            }
+            100% {
+                transform: scale(0.9) translate(-10px, -20px);
+                opacity: 0.2;
+            }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            margin-right: 0.75rem;
+            animation: spin 15s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .form-body {
+            padding: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: formElementSlideUp 0.5s forwards;
+        }
+        
+        @keyframes formElementSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition-normal);
+            background-color: #F5F5F5;
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
+        }
+        
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 0.75rem;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .btn-submit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition-bounce);
+            cursor: pointer;
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-submit::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s ease-out;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-submit:hover::after {
+            transform: translate(-50%, -50%) scale(2);
+        }
+        
+        .alert-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            max-width: 400px;
+            width: 100%;
+            z-index: 1100;
+        }
+        
+        .alert {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            display: flex;
+            align-items: stretch;
+            animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 4s;
+            transform: translateX(120%);
+            opacity: 0;
+        }
+        
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOut {
+            to {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+        }
+        
+        .alert-color {
+            width: 5px;
+        }
+        
+        .alert-success .alert-color {
+            background-color: var(--primary-color);
+        }
+        
+        .alert-content {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            flex-grow: 1;
+        }
+        
+        .alert-icon {
+            margin-right: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .alert-success .alert-icon {
+            color: var(--primary-color);
+        }
+        
+        .alert-message {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .alert-close {
+            color: #9E9E9E;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-left: 0.5rem;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--primary-color);
+            font-weight: 500;
+            transition: var(--transition-normal);
+        }
+        
+        .back-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .empty-state {
+            padding: 4rem 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: #E0E0E0;
+            animation: floatAnimation 3s ease-in-out infinite;
+        }
+        
+        @keyframes floatAnimation {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .form-header {
+                padding: 1.5rem;
+            }
+            
+            .title {
+                font-size: 1.5rem;
+            }
+            
+            .form-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Back Button -->
+    <a href="/viewstaff" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    
+    <!-- Main Card -->
+    <div class="card">
+        <!-- Header Section -->
+        <header class="form-header">
+            <div class="animated-bg">
+                <div class="circle"></div>
+                <div class="circle"></div>
+                <div class="circle"></div>
+            </div>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-leaf"></i>
+                    <h1 class="text-2xl font-bold">EcoTrack</h1>
+                </div>
+                <h2 class="title">Update Staff</h2>
+                <p class="subtitle">Edit staff member information</p>
+            </div>
+        </header>
+        
+        <!-- Form Body -->
+        <div class="form-body">
+            {% if tt %}
+                {% for t in tt %}
+                <form action="/updatestaffingaction/" id="update-form">
+                    <input type="hidden" name="id" value="{{t.Sid}}">
+                    
+                    <div class="form-group" style="animation-delay: 0.1s;">
+                        <label for="staffname" class="form-label">Staff Name</label>
+                        <div class="relative">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="staffname" name="staffname" class="form-control" value="{{t.Name}}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.2s;">
+                        <label for="gender" class="form-label">Gender</label>
+                        <div class="relative">
+                            <i class="fas fa-venus-mars input-icon"></i>
+                            <select id="gender" name="gender" class="form-control" required>
+                                <option value="M" {% if t.Gender == 'M' %}selected{% endif %}>Male</option>
+                                <option value="F" {% if t.Gender == 'F' %}selected{% endif %}>Female</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.3s;">
+                        <label for="date" class="form-label">Date of Birth</label>
+                        <div class="relative">
+                            <i class="fas fa-calendar-alt input-icon"></i>
+                            <input type="date" id="date" name="date" class="form-control" value="{{t.Dob}}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.4s;">
+                        <label for="address" class="form-label">Address</label>
+                        <div class="relative">
+                            <i class="fas fa-home input-icon"></i>
+                            <input type="text" id="address" name="address" class="form-control" value="{{t.Address}}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.5s;">
+                        <label for="place" class="form-label">Place</label>
+                        <div class="relative">
+                            <i class="fas fa-map-marker-alt input-icon"></i>
+                            <input type="text" id="place" name="place" class="form-control" value="{{t.Place}}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.6s;">
+                        <label for="phone" class="form-label">Phone</label>
+                        <div class="relative">
+                            <i class="fas fa-phone input-icon"></i>
+                            <input type="text" id="phone" name="phone" class="form-control" value="{{t.Phone}}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.7s;">
+                        <label for="adhaar" class="form-label">Aadhaar</label>
+                        <div class="relative">
+                            <i class="fas fa-id-card input-icon"></i>
+                            <input type="text" id="adhaar" name="adhaar" class="form-control" value="{{t.Adhaar}}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.8s;">
+                        <label for="email" class="form-label">Email</label>
+                        <div class="relative">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" id="email" name="email" class="form-control" value="{{t.Email}}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.9s;">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save mr-2"></i>Update Staff
+                        </button>
+                    </div>
+                    
+                    <div class="text-center">
+                        <a href="/viewstaff" class="back-link">
+                            <i class="fas fa-chevron-left mr-1"></i> Back to staff list
+                        </a>
+                    </div>
+                </form>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-circle empty-icon"></i>
+                    <h3 class="text-xl font-medium">No staff record found</h3>
+                    <p class="text-gray-500">The staff member you're looking for doesn't exist or has been removed.</p>
+                    <a href="/viewstaff" class="btn-submit mt-4" style="max-width: 250px;">
+                        <i class="fas fa-users mr-2"></i> Return to Staff List
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Alert Container -->
+    <div id="alert-container" class="alert-container"></div>
+    
+    <script>
+        // Animation for form groups
+        document.querySelectorAll('.form-group').forEach((group, index) => {
+            group.style.animationDelay = `${0.1 * (index + 1)}s`;
+        });
+        
+        // Form submission with animated alert
+        document.getElementById('update-form')?.addEventListener('submit', function(e) {
+            // Don't prevent default as we want the form to actually submit
+            // But we can still show a nice animation
+            
+            // Show animated success alert
+            showAlert('Staff information updated successfully!', 'success');
+        });
+        
+        // Alert function
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alert-container');
+            
+            const icons = {
+                success: '<i class="fas fa-check-circle"></i>',
+                error: '<i class="fas fa-exclamation-circle"></i>',
+                warning: '<i class="fas fa-exclamation-triangle"></i>'
+            };
+            
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <div class="alert-color"></div>
+                <div class="alert-content">
+                    <div class="alert-icon">${icons[type]}</div>
+                    <div class="alert-message">${message}</div>
+                    <button class="alert-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            alertContainer.appendChild(alert);
+            
+            // Close on button click
+            alert.querySelector('.alert-close').addEventListener('click', () => {
+                alert.remove();
+            });
+            
+            // Auto remove after animation completes
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

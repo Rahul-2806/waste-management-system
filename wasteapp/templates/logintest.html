@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immersive Login Experience</title>
+    <link href="https://unpkg.com/css.gg@2.0.0/icons/css/lock.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --accent: #06b6d4;
+            --bg-dark: #0f172a;
+            --bg-darker: #020617;
+            --text-light: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(ellipse at bottom, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            position: relative;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        /* Background animation */
+        .particles-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: floatUp 15s infinite linear;
+            opacity: 0;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-20vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg"><path fill="%234f46e5" fill-opacity="0.2" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: 1440px 100px;
+            animation: waveAnimation 20s linear infinite;
+        }
+
+        .wave:nth-child(2) {
+            bottom: 0;
+            opacity: 0.7;
+            animation: waveAnimation 15s linear infinite reverse;
+            height: 140px;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg"><path fill="%2306b6d4" fill-opacity="0.3" d="M0,192L60,181.3C120,171,240,149,360,149.3C480,149,600,171,720,165.3C840,160,960,128,1080,112C1200,96,1320,96,1380,96L1440,96L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>');
+            background-size: 1440px 140px;
+        }
+
+        @keyframes waveAnimation {
+            0% {
+                background-position-x: 0;
+            }
+            100% {
+                background-position-x: 1440px;
+            }
+        }
+
+        .login-container {
+            display: flex;
+            width: 900px;
+            height: 600px;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                        0 0 0 1px rgba(255, 255, 255, 0.1),
+                        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            transform-style: preserve-3d;
+            transform: rotateX(0deg) rotateY(0deg);
+            transition: transform 0.4s ease-out;
+            animation: containerAppear 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes containerAppear {
+            0% {
+                transform: scale(0.9) translateY(40px);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Quotes Section */
+        .quotes-section {
+            flex: 1;
+            background: linear-gradient(135deg, 
+                rgba(79, 70, 229, 0.4) 0%, 
+                rgba(6, 182, 212, 0.4) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 200px rgba(79, 70, 229, 0.3);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .quotes-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M25,2 L75,2 L98,25 L98,75 L75,98 L25,98 L2,75 L2,25 Z" stroke="white" fill="none" stroke-width="1" /></svg>');
+            background-size: 100px;
+            animation: rotateBg 120s linear infinite;
+        }
+
+        @keyframes rotateBg {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .quotes-section h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 3rem;
+            position: relative;
+            text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+        }
+
+        .quotes-section h2:after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 4px;
+            background: var(--accent);
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        .quotes-carousel {
+            position: relative;
+            height: 150px;
+            width: 100%;
+            perspective: 1000px;
+        }
+
+        .quote {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transform: translateZ(-100px) rotateY(0deg);
+            opacity: 0;
+        }
+
+        .quote.active {
+            transform: translateZ(0) rotateY(0deg);
+            opacity: 1;
+        }
+
+        .quote.prev {
+            transform: translateZ(-50px) rotateY(-90deg);
+            opacity: 0;
+        }
+
+        .quote.next {
+            transform: translateZ(-50px) rotateY(90deg);
+            opacity: 0;
+        }
+
+        .quote p {
+            font-size: 1.2rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+
+        .quote-author {
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .quote-indicator {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .indicator-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+
+        .indicator-dot.active {
+            background: var(--accent);
+            transform: scale(1.3);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        /* Login Section */
+        .form-container {
+            flex: 1;
+            padding: 3rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .form-container:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeSlideDown 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeSlideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-header h1 {
+            color: var(--text-light);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--text-light) 0%, var(--accent) 100%);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        .form-header h1:after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 3px;
+            background: var(--accent);
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 3px;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .form-header p {
+            color: var(--text-dim);
+            font-size: 1rem;
+            font-weight: 300;
+        }
+
+        #authForm {
+            display: flex;
+            flex-direction: column;
+            gap: 1.75rem;
+        }
+
+        .form-group {
+            position: relative;
+            animation: fadeSlideUp 0.6s ease-out both;
+        }
+
+        .form-group:nth-child(1) {
+            animation-delay: 0.3s;
+        }
+
+        .form-group:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .form-group .submit-btn {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeSlideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-left: 3.2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 300;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus + .input-icon {
+            color: var(--accent);
+        }
+
+        .float-label {
+            position: absolute;
+            left: 3.2rem;
+            top: 1.2rem;
+            color: var(--text-dim);
+            pointer-events: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            opacity: 0;
+        }
+
+        .input-field:focus ~ .float-label,
+        .input-field:not(:placeholder-shown) ~ .float-label {
+            transform: translateY(-2.8rem);
+            font-size: 0.8rem;
+            opacity: 1;
+            color: var(--accent);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+            animation: fadeSlideUp 0.6s ease-out 0.5s both;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 10px 25px -5px rgba(79, 70, 229, 0.4),
+                0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: all 0.6s;
+        }
+
+        .submit-btn:hover:before {
+            left: 100%;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-dim);
+            animation: fadeIn 1s ease-out 0.8s both;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .signup-link a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .signup-link a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background: var(--accent);
+            transition: all 0.3s ease;
+        }
+
+        .signup-link a:hover:after {
+            width: 100%;
+        }
+
+        .signup-link a:hover {
+            color: #38bdf8;
+            text-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
+        }
+
+        /* Loading animation */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(2, 6, 23, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(8px);
+        }
+
+        .loader {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .loader-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            mix-blend-mode: overlay;
+        }
+
+        .loader-circle:nth-child(1) {
+            border-top-color: var(--primary);
+            animation: spin 1.2s linear infinite;
+        }
+
+        .loader-circle:nth-child(2) {
+            border-right-color: var(--accent);
+            animation: spin 1.2s linear infinite reverse;
+        }
+
+        .loader-circle:nth-child(3) {
+            width: 80%;
+            height: 80%;
+            left: 10%;
+            top: 10%;
+            border-left-color: #f472b6;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Logout Success Popup */
+        .logout-popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            display: none;
+            animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .logout-popup:before {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: #10b981;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%) rotate(45deg);
+            z-index: -1;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive styles */
+        @media screen and (max-width: 900px) {
+            .login-container {
+                width: 95%;
+                height: auto;
+                flex-direction: column;
+            }
+
+            .quotes-section {
+                padding: 2rem 1rem;
+                max-height: 200px;
+            }
+
+            .form-container {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logout Success Popup -->
+    <div id="logoutPopup" class="logout-popup">
+        <div>Successfully logged out!</div>
+    </div>
+
+    <!-- Background Elements -->
+    <div class="particles-container" id="particles"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+
+    <div class="login-container" id="loginContainer">
+        <!-- Quotes Section -->
+        <div class="quotes-section">
+            <div class="quotes-bg"></div>
+            <h2>Sustainable Living</h2>
+            <div class="quotes-carousel">
+                <div class="quote active">
+                    <p>"The greatest threat to our planet is the belief that someone else will save it."</p>
+                    <div class="quote-author">— Robert Swan</div>
+                </div>
+                <div class="quote next">
+                    <p>"We don't need a handful of people doing zero waste perfectly. We need millions of people doing it imperfectly."</p>
+                    <div class="quote-author">— Anne Marie Bonneau</div>
+                </div>
+                <div class="quote prev">
+                    <p>"There is no such thing as 'away'. When we throw anything away, it must go somewhere."</p>
+                    <div class="quote-author">— Annie Leonard</div>
+                </div>
+            </div>
+            <div class="quote-indicator">
+                <div class="indicator-dot active"></div>
+                <div class="indicator-dot"></div>
+                <div class="indicator-dot"></div>
+            </div>
+        </div>
+
+        <!-- Login Section -->
+        <div class="form-container">
+            <div id="loadingOverlay" class="loading-overlay">
+                <div class="loader">
+                    <div class="loader-circle"></div>
+                    <div class="loader-circle"></div>
+                    <div class="loader-circle"></div>
+                </div>
+            </div>
+
+            <div class="form-header">
+                <h1>Welcome Back</h1>
+                <p>Sign in to continue to your account</p>
+            </div>
+
+            <form id="authForm" action="/loginaction/">
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input type="text" class="input-field" name="login" required placeholder="Email address">
+                        <svg class="input-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span class="float-label">Email address</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input type="password" class="input-field" name="password" required placeholder="Password">
+                        <svg class="input-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        <span class="float-label">Password</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="signup-link">
+                Don't have an account? <a href="/customer">Sign Up</a>
+                <br><br>
+                <a href="/">Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create particles for background
+        document.addEventListener('DOMContentLoaded', function() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random position
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const size = Math.random() * 3 + 1;
+                const animationDuration = Math.random() * 20 + 10;
+                const animationDelay = Math.random() * 10;
+                
+                particle.style.left = `${posX}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.animationDuration = `${animationDuration}s`;
+                particle.style.animationDelay = `${animationDelay}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        });
+
+        // 3D tilt effect for login container
+        document.addEventListener('mousemove', function(e) {
+            const loginContainer = document.getElementById('loginContainer');
+            const rect = loginContainer.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            
+            const angleY = (mouseX - centerX) / 30;
+            const angleX = (centerY - mouseY) / 30;
+            
+            loginContainer.style.transform = `rotateY(${angleY}deg) rotateX(${angleX}deg)`;
+        });
+
+        // Reset transform when mouse leaves
+        document.addEventListener('mouseleave', function() {
+            const loginContainer = document.getElementById('loginContainer');
+            loginContainer.style.transform = 'rotateY(0deg) rotateX(0deg)';
+        });
+
+        // Quotes Carousel
+        const quotes = document.querySelectorAll('.quote');
+        const dots = document.querySelectorAll('.indicator-dot');
+        let currentQuote = 0;
+
+        function showQuote(index) {
+            quotes.forEach((quote, i) => {
+                quote.classList.remove('active', 'next', 'prev');
+                if (i === index) {
+                    quote.classList.add('active');
+                } else if (i === (index + 1) % quotes.length) {
+                    quote.classList.add('next');
+                } else {
+                    quote.classList.add('prev');
+                }
+            });
+
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        function nextQuote() {
+            currentQuote = (currentQuote + 1) % quotes.length;
+            showQuote(currentQuote);
+        }
+
+        // Click event for indicator dots
+        dots.forEach((dot, i) => {
+            dot.addEventListener('click', () => {
+                currentQuote = i;
+                showQuote(currentQuote);
+            });
+        });
+
+        // Auto-advance quotes
+        setInterval(nextQuote, 6000);
+
+        // Form Submission with loading animation
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const loadingOverlay = document.querySelector('.loading-overlay');
+            loadingOverlay.style.display = 'flex';
+            
+            setTimeout(() => {
+                this.submit();
+            }, 2000);
+        });
+
+        // Logout Success Popup
+        function showLogoutPopup() {
+            const logoutPopup = document.getElementById('logoutPopup');
+            logoutPopup.style.display = 'block';
+            
+            setTimeout(() => {
+                logoutPopup.style.animation = 'slideOut 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
+                setTimeout(() => {
+                    logoutPopup.style.display = 'none';
+                    logoutPopup.style.animation = '';
+                }, 500);
+            }, 3000);
+        }
+
+        // Check if the user is logged out and show the popup
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('logout')) {
+            showLogoutPopup();
+        }
+
+        // Focus effect for input fields
+        const inputFields = document.querySelectorAll('.input-field');
+        
+        inputFields.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        });
+    </script>
+</body>
+</html>

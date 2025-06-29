@@ -1,0 +1,2672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Buddy - A Smarter Way to Manage Waste</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <style>
+        /* Global Styles */
+:root {
+    --primary-green: #2EB886;
+    --primary-green-transparent: rgba(46, 184, 134, 0.85);
+    --light-green: #8FD5A6;
+    --dark-green: #1A7A54;
+    --accent-green: #4ECB71;
+    --off-white: #F8F9FA;
+    --light-gray: #E9ECEF;
+    --dark-gray: #495057;
+    --transition: all 0.3s ease;
+    --transition-slow: all 0.5s ease;
+    --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--off-white);
+    color: var(--dark-gray);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+}
+
+h1, h2, h3 {
+    color: var(--dark-green);
+    margin-bottom: 20px;
+}
+
+.btn {
+    display: inline-block;
+    background-color: var(--primary-green);
+    color: white;
+    padding: 14px 32px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    box-shadow: 0 6px 15px rgba(46, 184, 134, 0.3);
+}
+
+.btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: var(--transition);
+    z-index: -1;
+}
+
+.btn:hover {
+    background-color: var(--dark-green);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(26, 122, 84, 0.4);
+}
+
+.btn:hover:before {
+    left: 100%;
+}
+
+section {
+    padding: 100px 0;
+    position: relative;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-title h2 {
+    font-size: 2.8rem;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    text-transform: capitalize;
+}
+
+.section-title h2::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background-color: var(--primary-green);
+}
+
+.section-title h2::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background-color: var(--dark-green);
+}
+
+.section-title p {
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+    color: var(--dark-gray);
+}
+
+.bg-pattern {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0.05;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23008060' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Floating elements */
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
+
+.floating-slow {
+    animation: floating 6s ease-in-out infinite;
+}
+
+.floating-delay {
+    animation: floating 3s ease-in-out 1.5s infinite;
+}
+
+@keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Header */
+header {
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    transition: var(--transition);
+}
+
+header.scrolled {
+    background-color: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+    padding: 5px 0;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    transition: var(--transition);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo i {
+    font-size: 2.2rem;
+    margin-right: 10px;
+    background: linear-gradient(45deg, var(--primary-green), var(--dark-green));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: var(--transition);
+}
+
+.logo h1 {
+    font-size: 1.8rem;
+    margin: 0;
+    background: linear-gradient(45deg, var(--primary-green), var(--dark-green));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: var(--transition);
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 10px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: var(--dark-gray);
+    font-weight: 500;
+    transition: var(--transition);
+    padding: 8px 15px;
+    border-radius: 20px;
+    position: relative;
+}
+
+nav ul li a:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-green);
+    transition: var(--transition);
+}
+
+nav ul li a:hover:before {
+    width: 50%;
+}
+
+nav ul li a:hover {
+    color: var(--primary-green);
+}
+
+.active {
+    color: var(--primary-green) !important;
+    font-weight: 600;
+}
+
+.active:before {
+    width: 50% !important;
+}
+
+.nav-button {
+    background-color: var(--primary-green);
+    color: white !important;
+    padding: 8px 20px !important;
+    border-radius: 50px !important;
+    margin-left: 15px;
+    box-shadow: 0 4px 15px rgba(46, 184, 134, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-button:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: var(--transition);
+}
+
+.nav-button:hover {
+    background-color: var(--dark-green);
+    color: white !important;
+    transform: translateY(-3px);
+}
+
+.nav-button:hover:before {
+    left: 100%;
+}
+
+.mobile-toggle {
+    display: none;
+    font-size: 1.5rem;
+    color: var(--dark-gray);
+    cursor: pointer;
+    z-index: 1001;
+}
+
+/* Hero Banner */
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    background: linear-gradient(135deg, rgba(143, 213, 166, 0.1) 0%, rgba(46, 184, 134, 0.2) 100%);
+    overflow: hidden;
+    margin-top: 0;
+    padding-top: 80px;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 600px;
+}
+
+.hero span.highlight {
+    position: relative;
+    z-index: 1;
+    color: var(--primary-green);
+    font-weight: 600;
+}
+
+.hero span.highlight:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    background-color: rgba(46, 184, 134, 0.2);
+    z-index: -1;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    margin-bottom: 25px;
+    color: var(--dark-green);
+    font-weight: 800;
+    line-height: 1.2;
+    text-shadow: var(--text-shadow);
+}
+
+.hero p {
+    font-size: 1.25rem;
+    margin-bottom: 35px;
+    color: var(--dark-gray);
+}
+
+.hero-actions {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.hero-secondary-btn {
+    color: var(--dark-green);
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.hero-secondary-btn i {
+    margin-left: 5px;
+    transition: var(--transition);
+}
+
+.hero-secondary-btn:hover {
+    color: var(--primary-green);
+}
+
+.hero-secondary-btn:hover i {
+    transform: translateX(5px);
+}
+
+.hero-image {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 55%;
+    background-image: url('/api/placeholder/800/600');
+    background-size: cover;
+    background-position: center;
+    clip-path: polygon(10% 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+.hero-image:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(46, 184, 134, 0.6) 100%);
+    z-index: 1;
+}
+
+.hero-shape {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+}
+
+.hero-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    background-color: var(--primary-green);
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* Stats Counter */
+.stats-counter {
+    background-color: white;
+    box-shadow: var(--box-shadow);
+    border-radius: 15px;
+    padding: 30px;
+    margin-top: -100px;
+    position: relative;
+    z-index: 5;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.stat-item {
+    text-align: center;
+    position: relative;
+}
+
+.stat-item:not(:last-child):after {
+    content: '';
+    position: absolute;
+    right: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 50px;
+    background-color: var(--light-gray);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-green);
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-value i {
+    font-size: 1.5rem;
+    margin-right: 5px;
+    opacity: 0.8;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: var(--dark-gray);
+    font-weight: 500;
+}
+
+/* What We Offer */
+.offerings {
+    background-color: white;
+    position: relative;
+    z-index: 2;
+}
+
+.offer-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.offer-card {
+    background-color: var(--off-white);
+    padding: 40px 30px;
+    border-radius: 15px;
+    text-align: center;
+    transition: var(--transition-slow);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    height: 100%;
+}
+
+.offer-card:before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--primary-green);
+    transition: var(--transition-slow);
+    z-index: -1;
+    opacity: 0.1;
+}
+
+.offer-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.offer-card:hover:before {
+    height: 100%;
+}
+
+.offer-icon {
+    font-size: 3rem;
+    color: var(--primary-green);
+    margin-bottom: 25px;
+    position: relative;
+    display: inline-block;
+    transition: var(--transition);
+}
+
+.offer-icon:after {
+    content: '';
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--primary-green);
+    opacity: 0.1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    transition: var(--transition);
+}
+
+.offer-card:hover .offer-icon:after {
+    width: 70px;
+    height: 70px;
+}
+
+.offer-card h3 {
+    margin-bottom: 15px;
+    transition: var(--transition);
+    position: relative;
+    display: inline-block;
+}
+
+.offer-card h3:after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-green);
+    transition: var(--transition);
+}
+
+.offer-card:hover h3:after {
+    width: 50px;
+}
+
+.offer-card p {
+    transition: var(--transition);
+}
+
+/* Eco Solutions */
+.eco-solutions {
+    background-color: var(--off-white);
+    position: relative;
+    overflow: hidden;
+}
+
+.solutions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.solution-item {
+    background-color: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+}
+
+.solution-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.solution-icon {
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+}
+
+.solution-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition-slow);
+}
+
+.solution-item:hover .solution-icon img {
+    transform: scale(1.1);
+}
+
+.solution-icon:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent 0%, rgba(46, 184, 134, 0.8) 100%);
+    opacity: 0;
+    transition: var(--transition);
+    z-index: 1;
+}
+
+.solution-item:hover .solution-icon:before {
+    opacity: 1;
+}
+
+.solution-icon i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    color: white;
+    opacity: 0;
+    z-index: 2;
+    transition: var(--transition);
+}
+
+.solution-item:hover .solution-icon i {
+    opacity: 1;
+}
+
+.solution-content {
+    padding: 25px;
+}
+
+.solution-content h3 {
+    margin-bottom: 15px;
+    position: relative;
+    display: inline-block;
+}
+
+.solution-content h3:after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    background-color: var(--primary-green);
+    transition: var(--transition);
+}
+
+.solution-item:hover .solution-content h3:after {
+    width: 50px;
+}
+
+.solution-content p {
+    margin-bottom: 20px;
+}
+
+.solution-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--primary-green);
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.solution-link i {
+    margin-left: 5px;
+    transition: var(--transition);
+}
+
+.solution-link:hover {
+    color: var(--dark-green);
+}
+
+.solution-link:hover i {
+    transform: translateX(5px);
+}
+
+/* About Us */
+.about {
+    background-color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+}
+
+.about-text h2 {
+    font-size: 2.5rem;
+    margin-bottom: 25px;
+    position: relative;
+    display: inline-block;
+}
+
+.about-text h2:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: var(--primary-green);
+}
+
+.about-text p {
+    margin-bottom: 20px;
+}
+
+.about-features {
+    margin: 30px 0;
+}
+
+.about-feature {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.about-feature i {
+    font-size: 1.2rem;
+    color: var(--primary-green);
+    margin-right: 15px;
+    background-color: rgba(46, 184, 134, 0.1);
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.about-image {
+    position: relative;
+}
+
+.about-image-main {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    position: relative;
+    z-index: 2;
+}
+
+.about-image-main img {
+    width: 100%;
+    height: auto;
+    transition: var(--transition);
+}
+
+.about-image:hover .about-image-main img {
+    transform: scale(1.05);
+}
+
+.about-image-float {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    z-index: 3;
+}
+
+.about-image-float img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.about-image-float.top-left {
+    top: -30px;
+    left: -30px;
+    animation: floating 4s ease-in-out infinite;
+}
+
+.about-image-float.bottom-right {
+    bottom: -30px;
+    right: -30px;
+    animation: floating 4s ease-in-out 2s infinite;
+}
+
+.about-image:before {
+    content: '';
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: rgba(46, 184, 134, 0.1);
+    top: -50px;
+    right: -50px;
+    z-index: 1;
+}
+
+.about-image:after {
+    content: '';
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: rgba(46, 184, 134, 0.15);
+    bottom: -30px;
+    left: -30px;
+    z-index: 1;
+}
+
+.company-stats {
+    display: flex;
+    margin-top: 30px;
+    gap: 30px;
+}
+
+.company-stat {
+    text-align: center;
+    flex: 1;
+}
+
+.company-stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-green);
+    margin-bottom: 5px;
+    display: block;
+}
+
+.company-stat-label {
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+}
+
+/* NEW: Recycled Products Section */
+.recycled-products {
+    background-color: white;
+    position: relative;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.product-card {
+    background-color: var(--off-white);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    height: 100%;
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.product-image {
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition-slow);
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.1);
+}
+
+.product-tag {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: var(--primary-green);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    z-index: 1;
+}
+
+.product-content {
+    padding: 25px;
+}
+
+.product-content h3 {
+    margin-bottom: 15px;
+    color: var(--dark-green);
+    font-size: 1.4rem;
+}
+
+.product-content p {
+    margin-bottom: 20px;
+    color: var(--dark-gray);
+}
+
+.product-features {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.product-features span {
+    display: flex;
+    align-items: center;
+    color: var(--dark-gray);
+    font-size: 0.95rem;
+}
+
+.product-features i {
+    color: var(--primary-green);
+    margin-right: 8px;
+    font-size: 1rem;
+}
+
+.product-btn {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+}
+
+.product-info-banner {
+    margin-top: 60px;
+    background-color: var(--primary-green);
+    border-radius: 15px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    box-shadow: var(--box-shadow);
+}
+
+.product-info-content {
+    padding: 40px;
+    color: white;
+}
+
+.product-info-content h3 {
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.product-info-content p {
+    margin-bottom: 25px;
+}
+
+.product-info-content .btn {
+    background-color: white;
+    color: var(--primary-green);
+}
+
+.product-info-content .btn:hover {
+    background-color: var(--dark-green);
+    color: white;
+}
+
+.product-info-image {
+    height: 100%;
+}
+
+.product-info-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Blog & News */
+.blog {
+    background-color: white;
+    position: relative;
+}
+
+.blog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.blog-tabs {
+    display: flex;
+    gap: 20px;
+}
+
+.blog-tab {
+    padding: 8px 20px;
+    background-color: var(--off-white);
+    border-radius: 30px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.blog-tab.active,
+.blog-tab:hover {
+    background-color: var(--primary-green);
+    color: white;
+}
+
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.blog-card {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    background-color: white;
+    transition: var(--transition);
+    position: relative;
+}
+
+.blog-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.blog-image {
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+}
+
+.blog-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition-slow);
+}
+
+.blog-card:hover .blog-image img {
+    transform: scale(1.1);
+}
+
+.blog-tag {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background-color: var(--primary-green);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    z-index: 1;
+}
+
+.blog-content {
+    padding: 25px;
+}
+
+.blog-meta {
+    display: flex;
+    margin-bottom: 10px;
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+}
+
+.blog-meta span {
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.blog-meta i {
+    margin-right: 5px;
+    color: var(--primary-green);
+}
+
+.blog-card h3 {
+    margin-bottom: 15px;
+    transition: var(--transition);
+}
+
+.blog-card:hover h3 {
+    color: var(--primary-green);
+}
+
+.blog-excerpt {
+    margin-bottom: 20px;
+    color: var(--dark-gray);
+}
+
+.read-more {
+    color: var(--primary-green);
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.read-more i {
+    margin-left: 5px;
+    transition: var(--transition);
+}
+
+.read-more:hover {
+    color: var(--dark-green);
+}
+
+.read-more:hover i {
+    transform: translateX(5px);
+}
+
+.view-all {
+    text-align: center;
+    margin-top: 50px;
+}
+
+/* Impact Metrics Section */
+.impact-metrics {
+    background-color: var(--off-white);
+    position: relative;
+    overflow: hidden;
+}
+
+.impact-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: center;
+    margin-bottom: 60px;
+}
+
+.impact-chart-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: var(--box-shadow);
+    height: 400px;
+}
+
+.impact-chart {
+    width: 100%;
+    height: 100%;
+}
+
+.impact-text h3 {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block;
+}
+
+.impact-text h3:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: var(--primary-green);
+}
+
+.impact-text p {
+    margin-bottom: 30px;
+}
+
+.impact-metrics-list {
+    margin: 30px 0;
+}
+
+.impact-metric-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 25px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+}
+
+.impact-metric-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.impact-metric-icon {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(46, 184, 134, 0.1);
+    color: var(--primary-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-right: 20px;
+    font-size: 1.3rem;
+    transition: var(--transition);
+}
+
+.impact-metric-item:hover .impact-metric-icon {
+    background-color: var(--primary-green);
+    color: white;
+}
+
+.impact-metric-content h4 {
+    margin-bottom: 8px;
+    color: var(--dark-green);
+}
+
+.impact-metric-content p {
+    margin-bottom: 0;
+    color: var(--dark-gray);
+}
+
+.partners {
+    text-align: center;
+    padding-top: 40px;
+    border-top: 1px solid var(--light-gray);
+}
+
+.partners h3 {
+    margin-bottom: 30px;
+    position: relative;
+    display: inline-block;
+}
+
+.partners h3:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 2px;
+    background-color: var(--primary-green);
+}
+
+.partner-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.partner-logo {
+    background-color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+}
+
+.partner-logo:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.partner-logo img {
+    height: 60px;
+    width: auto;
+    filter: grayscale(100%);
+    opacity: 0.7;
+    transition: var(--transition);
+}
+
+.partner-logo:hover img {
+    filter: grayscale(0);
+    opacity: 1;
+}
+
+/* NEW: Footer Styles */
+.footer {
+    background-color: var(--dark-green);
+    color: white;
+    position: relative;
+}
+
+.footer-top {
+    padding: 80px 0 40px;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
+    gap: 40px;
+}
+
+.footer-info p {
+    margin-bottom: 25px;
+    opacity: 0.9;
+    line-height: 1.8;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.footer-logo i {
+    font-size: 2.2rem;
+    margin-right: 10px;
+    color: var(--light-green);
+}
+
+.footer-logo h2 {
+    font-size: 1.8rem;
+    margin: 0;
+    color: white;
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-social a {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.1rem;
+    transition: var(--transition);
+}
+
+.footer-social a:hover {
+    background-color: var(--primary-green);
+    transform: translateY(-5px);
+}
+
+.footer-links h3 {
+    color: white;
+    font-size: 1.3rem;
+    margin-bottom: 25px;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.footer-links h3:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    background-color: var(--primary-green);
+}
+
+.footer-links ul {
+    list-style: none;
+}
+
+.footer-links ul li {
+    margin-bottom: 12px;
+}
+
+.footer-links ul li a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: var(--transition);
+    display: inline-block;
+    position: relative;
+    padding-left: 15px;
+}
+
+.footer-links ul li a:before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.footer-links ul li a:hover {
+    color: white;
+    padding-left: 20px;
+}
+
+.footer-links ul li a:hover:before {
+    opacity: 1;
+}
+
+.footer-contact h3 {
+    color: white;
+    font-size: 1.3rem;
+    margin-bottom: 25px;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.footer-contact h3:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    background-color: var(--primary-green);
+}
+
+.contact-info {
+    margin-bottom: 25px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.contact-item i {
+    color: var(--primary-green);
+    margin-right: 15px;
+    font-size: 1.1rem;
+}
+
+.contact-item p {
+    margin-bottom: 0;
+    opacity: 0.9;
+}
+
+.newsletter h4 {
+    color: white;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.newsletter-form {
+    display: flex;
+    height: 45px;
+}
+
+.newsletter-form input {
+    flex: 1;
+    border: none;
+    padding: 0 15px;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+}
+
+.newsletter-form button {
+    width: 45px;
+    background-color: var(--primary-green);
+    color: white;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.newsletter-form button:hover {
+    background-color: var(--light-green);
+}
+
+.footer-bottom {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 20px 0;
+}
+
+.footer-bottom-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-bottom p {
+    margin-bottom: 0;
+    opacity: 0.8;
+}
+
+.footer-bottom-links a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    margin-left: 20px;
+    transition: var(--transition);
+}
+
+.footer-bottom-links a:hover {
+    color: var(--primary-green);
+}
+
+/* Back to Top - Modified to be on the left */
+.back-to-top {
+    position: fixed;
+    bottom: 30px;
+    left: 30px; /* Changed from right to left */
+    background-color: var(--primary-green);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+    z-index: 999;
+    box-shadow: 0 5px 15px rgba(46, 184, 134, 0.3);
+}
+
+.back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.back-to-top:hover {
+    background-color: var(--dark-green);
+    transform: translateY(-5px);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 5px 15px rgba(46, 184, 134, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 10px 25px rgba(46, 184, 134, 0.4);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 5px 15px rgba(46, 184, 134, 0.3);
+    }
+}
+
+/* Preloader */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.preloader.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.loader {
+    width: 70px;
+    height: 70px;
+    position: relative;
+}
+
+.loader:before,
+.loader:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid transparent;
+    border-top-color: var(--primary-green);
+}
+
+.loader:before {
+    animation: spin 1.5s linear infinite;
+    z-index: 2;
+}
+
+.loader:after {
+    border: 4px solid rgba(46, 184, 134, 0.2);
+    z-index: 1;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .hero h1 {
+        font-size: 3.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: 30px;
+    }
+    
+    .stat-item:nth-child(2):after {
+        display: none;
+    }
+    
+    .solutions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+}
+
+@media (max-width: 992px) {
+    section {
+        padding: 70px 0;
+    }
+    
+    .hero h1 {
+        font-size: 3rem;
+    }
+    
+    .hero-image {
+        clip-path: polygon(25% 0, 100% 0, 100% 100%, 0% 100%);
+    }
+    
+    .about-content,
+    .impact-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .about-image {
+        margin-top: 50px;
+    }
+    
+    .product-info-banner {
+        grid-template-columns: 1fr;
+    }
+    
+    .product-info-image {
+        height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    section {
+        padding: 60px 0;
+    }
+    
+    .section-title h2 {
+        font-size: 2.2rem;
+    }
+    
+    .hero {
+        text-align: center;
+        padding-top: 120px;
+        height: auto;
+        min-height: 100vh;
+    }
+    
+    .hero-content {
+        max-width: 100%;
+        margin-bottom: 50px;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+    
+    .hero-image {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        clip-path: none;
+    }
+    
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        height: 100%;
+        background-color: white;
+        z-index: 1000;
+        padding: 80px 40px;
+        transition: all 0.4s ease;
+        box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .nav-menu.active {
+        right: 0;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    nav ul li {
+        margin: 0;
+    }
+    
+    .mobile-toggle {
+        display: block;
+    }
+    
+    .stats-counter {
+        margin-top: -50px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-item:after {
+        display: none;
+    }
+    
+    .solutions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .blog-header {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .blog-tabs {
+        justify-content: center;
+    }
+    
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .footer-bottom-content {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .footer-bottom-links {
+        margin-top: 10px;
+    }
+    
+    .footer-bottom-links a {
+        margin: 0 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .header-content {
+        padding: 10px 0;
+    }
+    
+    .logo h1 {
+        font-size: 1.5rem;
+    }
+    
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+    
+    .back-to-top {
+        left: 20px;
+        bottom: 20px;
+        width: 40px;
+        height: 40px;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-leaf"></i>
+                    <h1>Eco Buddy</h1>
+                </div>
+                <div class="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <nav>
+                    <ul class="nav-menu">
+                        <li><a href="#" class="active">Home</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Products</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#" class="nav-button">Get Started</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="hero">
+        <div class="hero-particles"></div>
+        <div class="container">
+            <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
+                <h1>A <span class="highlight">Smarter</span> Way to Manage Waste</h1>
+                <p>Join us in creating a sustainable future through innovative waste management solutions that protect our planet and conserve resources for generations to come.</p>
+                <div class="hero-actions">
+                    <a href="#" class="btn hero-btn">Get Started <i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="hero-secondary-btn">Learn More <i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="hero-image"></div>
+        <svg class="hero-shape" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+            <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,176C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </section>
+
+    <!-- Stats Counter -->
+    <div class="container">
+        <div class="stats-counter" data-aos="fade-up" data-aos-duration="1000" data-aos-offset="0">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value"><i class="fas fa-recycle"></i> 10K+</div>
+                    <div class="stat-label">Tons Recycled</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value"><i class="fas fa-users"></i> 5K+</div>
+                    <div class="stat-label">Happy Clients</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value"><i class="fas fa-globe-americas"></i> 20+</div>
+                    <div class="stat-label">Communities Served</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value"><i class="fas fa-award"></i> 15+</div>
+                    <div class="stat-label">Awards Won</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- What We Offer -->
+    <section class="offerings" id="offerings">
+        <div class="bg-pattern"></div>
+        <div class="container">
+            <div class="section-title">
+                <h2>What We Offer</h2>
+                <p>Comprehensive waste management solutions designed to make a positive impact on our environment while meeting your specific needs.</p>
+            </div>
+            <div class="offer-cards">
+                <div class="offer-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+                    <div class="offer-icon">
+                        <i class="fas fa-recycle"></i>
+                    </div>
+                    <h3>Smart Collection</h3>
+                    <p>Our IoT-enabled waste bins and intelligent collection system ensures timely pickup and proper segregation of different types of waste.</p>
+                </div>
+                <div class="offer-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                    <div class="offer-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Resource Recovery</h3>
+                    <p>We extract valuable resources from waste and convert them into reusable materials, supporting the circular economy model.</p>
+                </div>
+                <div class="offer-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
+                    <div class="offer-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Safe Disposal</h3>
+                    <p>Hazardous waste is handled with extreme care and disposed of safely to prevent environmental damage and protect public health.</p>
+                </div>
+                <div class="offer-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
+                    <div class="offer-icon">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <h3>Carbon Reduction</h3>
+                    <p>Our processes are designed to minimize carbon footprint and protect our planet for future generations through sustainable practices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Eco Solutions -->
+    <section class="eco-solutions" id="solutions">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Eco Solutions</h2>
+                <p>Innovative approaches to waste management that combine technology, sustainability, and efficiency.</p>
+            </div>
+            <div class="solutions-grid">
+                <div class="solution-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+                    <div class="solution-icon">
+                        <img src="/api/placeholder/600/400" alt="Smart Waste Collection">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="solution-content">
+                        <h3>Smart Waste Collection</h3>
+                        <p>IoT-enabled waste bins that optimize collection routes and schedules based on fill levels, reducing fuel consumption and emissions.</p>
+                        <a href="#" class="solution-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="solution-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                    <div class="solution-icon">
+                        <img src="/api/placeholder/600/400" alt="Biogas Production">
+                        <i class="fas fa-fire-alt"></i>
+                    </div>
+                    <div class="solution-content">
+                        <h3>Biogas Production</h3>
+                        <p>Converting organic waste into biogas, a renewable energy source that can be used for heating, electricity generation, and as a fuel.</p>
+                        <a href="#" class="solution-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="solution-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
+                    <div class="solution-icon">
+                        <img src="/api/placeholder/600/400" alt="Recycling Programs">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="solution-content">
+                        <h3>Recycling Programs</h3>
+                        <p>Comprehensive recycling services for businesses and communities, including collection, sorting, and processing of recyclable materials.</p>
+                        <a href="#" class="solution-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us -->
+    <section class="about" id="about">
+        <div class="bg-pattern"></div>
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text" data-aos="fade-right" data-aos-duration="1000">
+                    <h2>About Eco Buddy</h2>
+                    <p>At Eco Buddy, we believe that proper waste management is the cornerstone of environmental sustainability. Our mission is to transform waste from a liability into a valuable resource.</p>
+                    <p>Founded in 2020, we have been at the forefront of implementing innovative technologies that make waste management more efficient, eco-friendly, and economically viable.</p>
+                    
+                    <div class="about-features">
+                        <div class="about-feature">
+                            <i class="fas fa-check"></i>
+                            <div>
+                                <h4>Innovative Technology</h4>
+                                <p>Using IoT, AI, and data analytics to revolutionize waste management processes.</p>
+                            </div>
+                        </div>
+                        <div class="about-feature">
+                            <i class="fas fa-check"></i>
+                            <div>
+                                <h4>Sustainable Practices</h4>
+                                <p>Implementing eco-friendly methods that reduce environmental impact.</p>
+                            </div>
+                        </div>
+                        <div class="about-feature">
+                            <i class="fas fa-check"></i>
+                            <div>
+                                <h4>Expert Team</h4>
+                                <p>Environmental specialists, engineers, and technology experts working together.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="btn">Learn More About Us</a>
+                    
+                    <div class="company-stats">
+                        <div class="company-stat">
+                            <span class="company-stat-value">15+</span>
+                            <span class="company-stat-label">Years Experience</span>
+                        </div>
+                        <div class="company-stat">
+                            <span class="company-stat-value">50+</span>
+                            <span class="company-stat-label">Team Members</span>
+                        </div>
+                        <div class="company-stat">
+                            <span class="company-stat-value">100+</span>
+                            <span class="company-stat-label">Projects Completed</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image" data-aos="fade-left" data-aos-duration="1000">
+                    <div class="about-image-main">
+                        <img src="/api/placeholder/600/400" alt="Eco Buddy Team">
+                    </div>
+                    <div class="about-image-float top-left">
+                        <img src="/api/placeholder/200/200" alt="Eco Project">
+                    </div>
+                    <div class="about-image-float bottom-right">
+                        <img src="/api/placeholder/200/200" alt="Eco Project">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: Recycled Products -->
+    <section class="recycled-products" id="products">
+        <div class="container">
+            <div class="section-title">
+                <h2>Products From Waste</h2>
+                <p>Discover our innovative product line created from recycled materials, turning waste into beautiful and functional items.</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+                    <div class="product-image">
+                        <img src="/api/placeholder/400/300" alt="Recycled Furniture">
+                        <div class="product-tag">Furniture</div>
+                    </div>
+                    <div class="product-content">
+                        <h3>Eco-Friendly Furniture</h3>
+                        <p>Stylish and durable furniture made from recycled plastic and reclaimed wood. Each piece saves approximately 50kg of plastic waste from landfills.</p>
+                        <div class="product-features">
+                            <span><i class="fas fa-check-circle"></i> 100% Recycled Materials</span>
+                            <span><i class="fas fa-check-circle"></i> Durable Design</span>
+                            <span><i class="fas fa-check-circle"></i> Weather Resistant</span>
+                        </div>
+                        <a href="#" class="btn product-btn">Shop Collection</a>
+                    </div>
+                </div>
+                <div class="product-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                    <div class="product-image">
+                        <img src="/api/placeholder/400/300" alt="Eco Decor">
+                        <div class="product-tag">Home Decor</div>
+                    </div>
+                    <div class="product-content">
+                        <h3>Upcycled Home Decor</h3>
+                        <p>Beautiful home accessories crafted from glass bottles, textile waste, and discarded metals. Each purchase supports our waste reduction initiatives.</p>
+                        <div class="product-features">
+                            <span><i class="fas fa-check-circle"></i> Handcrafted Items</span>
+                            <span><i class="fas fa-check-circle"></i> Unique Designs</span>
+                            <span><i class="fas fa-check-circle"></i> Artisan Made</span>
+                        </div>
+                        <a href="#" class="btn product-btn">Shop Collection</a>
+                    </div>
+                </div>
+                <div class="product-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
+                    <div class="product-image">
+                        <img src="/api/placeholder/400/300" alt="Eco Fashion">
+                        <div class="product-tag">Fashion</div>
+                    </div>
+                    <div class="product-content">
+                        <h3>Sustainable Fashion</h3>
+                        <p>Eco-conscious clothing and accessories made from recycled plastic bottles, upcycled fabrics, and organic materials. Fashion that doesn't cost the earth.</p>
+                        <div class="product-features">
+                            <span><i class="fas fa-check-circle"></i> Ethical Production</span>
+                            <span><i class="fas fa-check-circle"></i> Reduced Carbon Footprint</span>
+                            <span><i class="fas fa-check-circle"></i> Fair Trade Certified</span>
+                        </div>
+                        <a href="#" class="btn product-btn">Shop Collection</a>
+                    </div>
+                </div>
+                <div class="product-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
+                    <div class="product-image">
+                        <img src="/api/placeholder/400/300" alt="Bio Packaging">
+                        <div class="product-tag">Packaging</div>
+                    </div>
+                    <div class="product-content">
+                        <h3>Biodegradable Packaging</h3>
+                        <p>Eco-friendly packaging solutions made from agricultural waste, mushroom roots, and recycled paper. Fully compostable and plastic-free alternatives.</p>
+                        <div class="product-features">
+                            <span><i class="fas fa-check-circle"></i> Compostable Materials</span>
+                            <span><i class="fas fa-check-circle"></i> Custom Solutions</span>
+                            <span><i class="fas fa-check-circle"></i> Business Friendly</span>
+                        </div>
+                        <a href="#" class="btn product-btn">Shop Collection</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-info-banner" data-aos="fade-up" data-aos-duration="1000">
+                <div class="product-info-content">
+                    <h3>From Waste to Wonder</h3>
+                    <p>Every Eco Buddy product represents our commitment to a circular economy. By purchasing our recycled products, you're not just acquiring a high-quality item – you're directly contributing to waste reduction and supporting sustainable manufacturing practices.</p>
+                    <a href="#" class="btn">Our Recycling Process</a>
+                </div>
+                <div class="product-info-image">
+                    <img src="/api/placeholder/500/300" alt="Recycling Process">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog & News -->
+    <section class="blog" id="blog">
+        <div class="container">
+            <div class="blog-header">
+                <div class="section-title" style="margin-bottom: 0; text-align: left;">
+                    <h2>Blog & News</h2>
+                </div>
+                <div class="blog-tabs">
+                    <div class="blog-tab active" data-category="all">All</div>
+                    <div class="blog-tab" data-category="news">News</div>
+                    <div class="blog-tab" data-category="tips">Tips</div>
+                    <div class="blog-tab" data-category="case-studies">Case Studies</div>
+                </div>
+            </div>
+            <div class="blog-grid">
+                <div class="blog-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+                    <div class="blog-image">
+                        <img src="/api/placeholder/400/200" alt="Blog Post">
+                        <div class="blog-tag">Tips</div>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span><i class="far fa-calendar"></i> March 15, 2025</span>
+                            <span><i class="far fa-user"></i> Admin</span>
+                        </div>
+                        <h3>5 Ways to Reduce Waste in Your Office</h3>
+                        <p class="blog-excerpt">Discover practical tips to minimize waste generation in your workplace and create a more sustainable office environment.</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="blog-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                    <div class="blog-image">
+                        <img src="/api/placeholder/400/200" alt="Blog Post">
+                        <div class="blog-tag">News</div>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span><i class="far fa-calendar"></i> March 10, 2025</span>
+                            <span><i class="far fa-user"></i> Admin</span>
+                        </div>
+                        <h3>The Future of Waste-to-Energy Technology</h3>
+                        <p class="blog-excerpt">Explore the latest innovations in converting waste into clean, renewable energy and how it's shaping our sustainable future.</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="blog-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
+                    <div class="blog-image">
+                        <img src="/api/placeholder/400/200" alt="Blog Post">
+                        <div class="blog-tag">Tips</div>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span><i class="far fa-calendar"></i> March 5, 2025</span>
+                            <span><i class="far fa-user"></i> Admin</span>
+                        </div>
+                        <h3>Composting 101: A Beginner's Guide</h3>
+                        <p class="blog-excerpt">Learn the basics of home composting and turn your kitchen scraps and yard waste into nutrient-rich soil for your garden.</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="view-all">
+                <a href="#" class="btn">View All Posts</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Metrics -->
+    <section class="impact-metrics" id="impact">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Environmental Impact</h2>
+                <p>Tracking our progress and measuring the positive difference we're making for our planet.</p>
+            </div>
+            <div class="impact-container">
+                <div class="impact-chart-container" data-aos="fade-right" data-aos-duration="1000">
+                    <div class="impact-chart">
+                        <canvas id="impactChart"></canvas>
+                    </div>
+                </div>
+                <div class="impact-text" data-aos="fade-left" data-aos-duration="1000">
+                    <h3>Measurable Results</h3>
+                    <p>At Eco Buddy, we believe in transparency and accountability. We regularly measure our environmental impact to ensure we're making meaningful progress toward a sustainable future.</p>
+                    
+                    <div class="impact-metrics-list">
+                        <div class="impact-metric-item">
+                            <div class="impact-metric-icon">
+                                <i class="fas fa-trash-alt"></i>
+                            </div>
+                            <div class="impact-metric-content">
+                                <h4>Waste Diverted</h4>
+                                <p>Over 50,000 tons of waste diverted from landfills annually through our recycling and composting programs.</p>
+                            </div>
+                        </div>
+                        <div class="impact-metric-item">
+                            <div class="impact-metric-icon">
+                                <i class="fas fa-cloud"></i>
+                            </div>
+                            <div class="impact-metric-content">
+                                <h4>Carbon Reduction</h4>
+                                <p>Our optimized collection routes and waste-to-energy solutions have reduced carbon emissions by 35% since 2020.</p>
+                            </div>
+                        </div>
+                        <div class="impact-metric-item">
+                            <div class="impact-metric-icon">
+                                <i class="fas fa-tree"></i>
+                            </div>
+                            <div class="impact-metric-content">
+                                <h4>Resource Conservation</h4>
+                                <p>Through our recycling efforts, we've saved the equivalent of 75,000 trees and 30 million gallons of water.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="btn">Download Impact Report</a>
+                </div>
+            </div>
+            <div class="partners" data-aos="fade-up" data-aos-duration="1000">
+                <h3>Our Environmental Partners</h3>
+                <div class="partner-logos">
+                    <div class="partner-logo">
+                        <img src="/api/placeholder/150/75" alt="Partner 1">
+                    </div>
+                    <div class="partner-logo">
+                        <img src="/api/placeholder/150/75" alt="Partner 2">
+                    </div>
+                    <div class="partner-logo">
+                        <img src="/api/placeholder/150/75" alt="Partner 3">
+                    </div>
+                    <div class="partner-logo">
+                        <img src="/api/placeholder/150/75" alt="Partner 4">
+                    </div>
+                    <div class="partner-logo">
+                        <img src="/api/placeholder/150/75" alt="Partner 5">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-info">
+                        <div class="footer-logo">
+                            <i class="fas fa-leaf"></i>
+                            <h2>Eco Buddy</h2>
+                        </div>
+                        <p>Transforming waste management through innovation and sustainability to create a cleaner, greener planet for future generations.</p>
+                        <div class="footer-social">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-youtube"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-links">
+                        <h3>Quick Links</h3>
+                        <ul>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Services</a></li>
+                            <li><a href="#">Products</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-links">
+                        <h3>Our Services</h3>
+                        <ul>
+                            <li><a href="#">Waste Collection</a></li>
+                            <li><a href="#">Recycling Programs</a></li>
+                            <li><a href="#">Waste-to-Energy</a></li>
+                            <li><a href="#">Consulting Services</a></li>
+                            <li><a href="#">Community Initiatives</a></li>
+                            <li><a href="#">Education & Training</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-contact">
+                        <h3>Contact Us</h3>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <p>123 Green Street, Eco City, EC 12345</p>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone-alt"></i>
+                                <p>+1 (555) 123-4567</p>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <p>info@ecobuddy.com</p>
+                            </div>
+                        </div>
+                        <div class="newsletter">
+                            <h4>Subscribe to Newsletter</h4>
+                            <form class="newsletter-form">
+                                <input type="email" placeholder="Your Email Address">
+                                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="footer-bottom-content">
+                    <p>&copy; 2025 Eco Buddy. All Rights Reserved.</p>
+                    <div class="footer-bottom-links">
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Sitemap</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top (moved to the left) -->
+    <div class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script>
+        // Initialize AOS Animation
+AOS.init({
+    once: true,
+    offset: 100,
+    duration: 800
+});
+
+// DOM Elements
+const header = document.querySelector('header');
+const mobileToggle = document.querySelector('.mobile-toggle');
+const navMenu = document.querySelector('.nav-menu');
+const preloader = document.querySelector('.preloader');
+const backToTop = document.querySelector('.back-to-top');
+const blogTabs = document.querySelectorAll('.blog-tab');
+const blogCards = document.querySelectorAll('.blog-card');
+
+// Preloader
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        preloader.classList.add('fade-out');
+    }, 500);
+});
+
+// Header Scroll
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+
+    // Back To Top Button
+    if (window.scrollY > 500) {
+        backToTop.classList.add('show');
+    } else {
+        backToTop.classList.remove('show');
+    }
+});
+
+// Mobile Menu Toggle
+mobileToggle.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+    mobileToggle.classList.toggle('active');
+});
+
+// Blog Tabs
+blogTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        // Remove active class from all tabs
+        blogTabs.forEach(t => t.classList.remove('active'));
+        
+        // Add active class to clicked tab
+        tab.classList.add('active');
+        
+        const category = tab.getAttribute('data-category');
+        
+        if (category === 'all') {
+            blogCards.forEach(card => {
+                card.style.display = 'block';
+            });
+        } else {
+            blogCards.forEach(card => {
+                const cardTag = card.querySelector('.blog-tag').textContent.toLowerCase();
+                if (cardTag === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    });
+});
+
+// Back to Top
+backToTop.addEventListener('click', () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
+
+// Hero Particles
+const heroParticles = document.querySelector('.hero-particles');
+for (let i = 0; i < 50; i++) {
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+    
+    // Random size
+    const size = Math.random() * 5 + 2;
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    
+    // Random position
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.top = `${Math.random() * 100}%`;
+    
+    // Random opacity
+    particle.style.opacity = Math.random() * 0.3;
+    
+    // Random animation delay
+    particle.style.animationDelay = `${Math.random() * 5}s`;
+    particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+    
+    // Add particle to hero
+    heroParticles.appendChild(particle);
+}
+
+// Add floating animation to service cards
+const animateCards = () => {
+    document.querySelectorAll('.offer-card').forEach((card, index) => {
+        setTimeout(() => {
+            card.classList.add('animate__animated', 'animate__pulse');
+            setTimeout(() => {
+                card.classList.remove('animate__animated', 'animate__pulse');
+            }, 1000);
+        }, index * 200);
+    });
+};
+
+// Run animation every 8 seconds
+setInterval(animateCards, 8000);
+
+// Animate elements when they come into view
+const animateOnScroll = () => {
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach(element => {
+        const elementPosition = element.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+        if (elementPosition < windowHeight - 100) {
+            element.classList.add('animate');
+        }
+    });
+};
+
+// Initial call and event listener
+animateOnScroll();
+window.addEventListener('scroll', animateOnScroll);
+
+// Impact Metrics Chart
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('impactChart').getContext('2d');
+    
+    // Chart data
+    const chartData = {
+        labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
+        datasets: [{
+            label: 'Waste Recycled (tons)',
+            data: [5000, 12000, 19000, 28000, 35000, 42000],
+            backgroundColor: 'rgba(46, 184, 134, 0.2)',
+            borderColor: 'rgba(46, 184, 134, 1)',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true
+        },
+        {
+            label: 'Carbon Emissions Reduced (tons)',
+            data: [2000, 6000, 10000, 16000, 22000, 30000],
+            backgroundColor: 'rgba(26, 122, 84, 0.2)',
+            borderColor: 'rgba(26, 122, 84, 1)',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true
+        }]
+    };
+    
+    // Chart configuration
+    const config = {
+        type: 'line',
+        data: chartData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        font: {
+                            family: 'Segoe UI',
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    titleColor: '#1A7A54',
+                    bodyColor: '#495057',
+                    titleFont: {
+                        family: 'Segoe UI',
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        family: 'Segoe UI',
+                        size: 13
+                    },
+                    padding: 12,
+                    borderColor: 'rgba(46, 184, 134, 0.2)',
+                    borderWidth: 1,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('en-US').format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            family: 'Segoe UI',
+                            size: 12
+                        }
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        borderDash: [5, 5],
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                        font: {
+                            family: 'Segoe UI',
+                            size: 12
+                        },
+                        callback: function(value) {
+                            return value.toLocaleString() + ' tons';
+                        }
+                    }
+                }
+            },
+            elements: {
+                point: {
+                    radius: 4,
+                    hoverRadius: 6
+                }
+            },
+            interaction: {
+                mode: 'index',
+                intersect: false
+            }
+        }
+    };
+    
+    // Create the chart
+    new Chart(ctx, config);
+});
+    </script>
+</body>
+</html>

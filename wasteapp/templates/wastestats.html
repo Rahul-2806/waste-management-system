@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ernakulam Waste Statistics Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #34d399;
+            --secondary: #3b82f6;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f9ff;
+            color: var(--dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .plastic .stat-icon {
+            background-color: var(--primary);
+        }
+
+        .paper .stat-icon {
+            background-color: var(--info);
+        }
+
+        .glass .stat-icon {
+            background-color: var(--warning);
+        }
+
+        .metal .stat-icon {
+            background-color: var(--danger);
+        }
+
+        .stat-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .stat-unit {
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        .stat-progress {
+            height: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 5px;
+            width: 0;
+            transition: width 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .plastic .progress-bar {
+            background-color: var(--primary);
+        }
+
+        .paper .progress-bar {
+            background-color: var(--info);
+        }
+
+        .glass .progress-bar {
+            background-color: var(--warning);
+        }
+
+        .metal .progress-bar {
+            background-color: var(--danger);
+        }
+
+        .stat-subtext {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--danger);
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            min-height: 350px;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .chart-canvas {
+            width: 100%;
+            height: 300px;
+            position: relative;
+        }
+
+        #wasteTrendsChart, #wasteCompositionChart {
+            width: 100%;
+            height: 100%;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .info-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            opacity: 0.1;
+        }
+
+        .info-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .info-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .info-unit {
+            font-size: 1rem;
+            margin-left: 5px;
+            opacity: 0.7;
+        }
+
+        .info-text {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        .card-1 {
+            border-top: 4px solid var(--primary);
+        }
+
+        .card-2 {
+            border-top: 4px solid var(--info);
+        }
+
+        .card-3 {
+            border-top: 4px solid var(--warning);
+        }
+
+        .card-4 {
+            border-top: 4px solid var(--danger);
+        }
+
+        footer {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+            margin-top: 30px;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .footer-text {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: white;
+            color: var(--primary);
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .hidden {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .sparkline {
+            fill: none;
+            stroke-width: 2;
+            min-height: 50px;
+            max-height: 50px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .sparkline-plastic {
+            stroke: var(--primary);
+        }
+
+        .sparkline-paper {
+            stroke: var(--info);
+        }
+
+        .sparkline-glass {
+            stroke: var(--warning);
+        }
+
+        .sparkline-metal {
+            stroke: var(--danger);
+        }
+
+        @media (max-width: 768px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .float {
+            animation: float 5s infinite ease-in-out;
+        }
+
+        @keyframes highlight {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .highlight {
+            background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.5), rgba(255,255,255,0));
+            background-size: 200% 100%;
+            animation: highlight 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 class="float">Ernakulam Waste Statistics Dashboard</h1>
+            <p class="subtitle">Track, analyze, and visualize waste generation and recycling data in Ernakulam District, Kerala</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="stats-container hidden">
+            <div class="stat-card plastic">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-wine-bottle"></i>
+                    </div>
+                    <div class="stat-title">Plastic Waste</div>
+                </div>
+                <div class="stat-value">42 <span class="stat-unit">tons</span></div>
+                <div class="stat-progress">
+                    <div class="progress-bar" data-value="78"></div>
+                </div>
+                <div class="stat-subtext">
+                    <div>Annual production in Ernakulam</div>
+                    <div class="trend trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>3.8%</span>
+                    </div>
+                </div>
+                <svg class="sparkline sparkline-plastic" viewBox="0 0 100 20" preserveAspectRatio="none">
+                    <path d="M0,10 L10,9 L20,11 L30,5 L40,7 L50,4 L60,6 L70,2 L80,5 L90,1 L100,3"></path>
+                </svg>
+            </div>
+
+            <div class="stat-card paper">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-scroll"></i>
+                    </div>
+                    <div class="stat-title">Paper Waste</div>
+                </div>
+                <div class="stat-value">38 <span class="stat-unit"> tons</span></div>
+                <div class="stat-progress">
+                    <div class="progress-bar" data-value="65"></div>
+                </div>
+                <div class="stat-subtext">
+                    <div>Annual production in Ernakulam</div>
+                    <div class="trend trend-down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>2.1%</span>
+                    </div>
+                </div>
+                <svg class="sparkline sparkline-paper" viewBox="0 0 100 20" preserveAspectRatio="none">
+                    <path d="M0,3 L10,5 L20,4 L30,6 L40,8 L50,5 L60,9 L70,7 L80,10 L90,8 L100,11"></path>
+                </svg>
+            </div>
+
+            <div class="stat-card glass">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-glass-martini-alt"></i>
+                    </div>
+                    <div class="stat-title">Glass Waste</div>
+                </div>
+                <div class="stat-value">15 <span class="stat-unit"> tons</span></div>
+                <div class="stat-progress">
+                    <div class="progress-bar" data-value="42"></div>
+                </div>
+                <div class="stat-subtext">
+                    <div>Annual production in Ernakulam</div>
+                    <div class="trend trend-down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>1.2%</span>
+                    </div>
+                </div>
+                <svg class="sparkline sparkline-glass" viewBox="0 0100 20" preserveAspectRatio="none">
+                    <path d="M0,10 L10,8 L20,12 L30,9 L40,10 L50,7 L60,8 L70,6 L80,9 L90,7 L100,8"></path>
+                </svg>
+            </div>
+
+            <div class="stat-card metal">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-car-battery"></i>
+                    </div>
+                    <div class="stat-title">Metal Waste</div>
+                </div>
+                <div class="stat-value">19 <span class="stat-unit">tons</span></div>
+                <div class="stat-progress">
+                    <div class="progress-bar" data-value="59"></div>
+                </div>
+                <div class="stat-subtext">
+                    <div>Annual production in Ernakulam</div>
+                    <div class="trend trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>1.8%</span>
+                    </div>
+                </div>
+                <svg class="sparkline sparkline-metal" viewBox="0 0 100 20" preserveAspectRatio="none">
+                    <path d="M0,8 L10,10 L20,7 L30,11 L40,9 L50,12 L60,8 L70,10 L80,6 L90,9 L100,5"></path>
+                </svg>
+            </div>
+        </div>
+
+        <div class="charts-container">
+            <div class="chart-card hidden">
+                <div class="chart-title">Ernakulam Waste Generation Trends (2015-2025)</div>
+                <div class="chart-canvas">
+                    <canvas id="wasteTrendsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card hidden">
+                <div class="chart-title">Waste Composition by Area in Ernakulam</div>
+                <div class="chart-canvas">
+                    <canvas id="wasteCompositionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-cards">
+            <div class="info-card card-1 hidden">
+                <i class="fas fa-recycle info-icon"></i>
+                <div class="info-title">Recycling Rate</div>
+                <div class="info-value">38<span class="info-unit">%</span></div>
+                <div class="info-text">Ernakulam's recycling rate across all waste types, higher than the national average but with significant room for improvement.</div>
+            </div>
+
+            <div class="info-card card-2 hidden">
+                <i class="fas fa-trash info-icon"></i>
+                <div class="info-title">Waste per Capita</div>
+                <div class="info-value">0.82<span class="info-unit">kg/day</span></div>
+                <div class="info-text">Average daily waste generation per person in Ernakulam, higher than Kerala's average of 0.65 kg/day due to urbanization.</div>
+            </div>
+
+            <div class="info-card card-3 hidden">
+                <i class="fas fa-water info-icon"></i>
+                <div class="info-title">Waterway Pollution</div>
+                <div class="info-value">3.2<span class="info-unit"> tons/year</span></div>
+                <div class="info-text">Estimated amount of waste entering Ernakulam's waterways annually, with significant impact on the Vembanad Lake and backwaters.</div>
+            </div>
+
+            <div class="info-card card-4 hidden">
+                <i class="fas fa-industry info-icon"></i>
+                <div class="info-title">E-Waste Generation</div>
+                <div class="info-value">4.8<span class="info-unit"> tons/year</span></div>
+                <div class="info-text">Annual electronic waste generation in Ernakulam, growing at 5% annually with the district being Kerala's technological hub.</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <h3 class="footer-title">Take Action Today</h3>
+                <p class="footer-text">Join the local movement to reduce waste, increase recycling, and create a more sustainable future for Ernakulam and Kerala.</p>
+                <a href="#" class="cta-button">Learn More About Waste Reduction in Ernakulam</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.hidden').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Initialize progress bars
+        setTimeout(() => {
+            document.querySelectorAll('.progress-bar').forEach(bar => {
+                const value = bar.getAttribute('data-value');
+                bar.style.width = `${value}%`;
+            });
+        }, 500);
+
+        // Waste Trends Chart
+        const wasteTrendsCanvas = document.getElementById('wasteTrendsChart');
+        const wasteTrendsChart = new Chart(wasteTrendsCanvas, {
+            type: 'line',
+            data: {
+                labels: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025'],
+                datasets: [
+                    {
+                        label: 'Plastic',
+                        data: [32, 33, 35, 37, 38, 39, 40, 42, 43, 45, 46],
+                        borderColor: '#34d399',
+                        backgroundColor: 'rgba(52, 211, 153, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Paper',
+                        data: [40, 41, 42, 41, 40, 39, 38, 38, 37, 36, 35],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Glass',
+                        data: [17, 17, 16, 16, 16, 15, 15, 15, 14, 14, 13],
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Metal',
+                        data: [15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + ' thousand tons';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Thousand Tons'
+                        },
+                        beginAtZero: false,
+                        min: 10
+                    }
+                }
+            }
+        });
+
+        // Waste Composition Chart
+        const wasteCompositionCanvas = document.getElementById('wasteCompositionChart');
+        const wasteCompositionChart = new Chart(wasteCompositionCanvas, {
+            type: 'bar',
+            data: {
+                labels: ['Kochi City', 'Aluva', 'Kalamassery', 'Tripunithura', 'Angamaly', 'Other Areas'],
+                datasets: [
+                    {
+                        label: 'Plastic',
+                        data: [45, 38, 42, 35, 36, 32],
+                        backgroundColor: 'rgba(52, 211, 153, 0.8)'
+                    },
+                    {
+                        label: 'Paper',
+                        data: [28, 30, 25, 22, 26, 20],
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)'
+                    },
+                    {
+                        label: 'Glass',
+                        data: [12, 15, 13, 16, 14, 18],
+                        backgroundColor: 'rgba(245, 158, 11, 0.8)'
+                    },
+                    {
+                        label: 'Metal',
+                        data: [15, 17, 20, 18, 14, 13],
+                        backgroundColor: 'rgba(239, 68, 68, 0.8)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Percentage (%)'
+                        },
+                        min: 0,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Periodically update the stats to simulate real-time data
+        function updateStats() {
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach(value => {
+                const currentValue = parseInt(value.textContent);
+                const variation = Math.random() > 0.5 ? 1 : -1;
+                const newValue = currentValue + variation;
+                value.textContent = newValue + ' ';
+                value.appendChild(value.querySelector('.stat-unit'));
+                value.classList.add('highlight');
+                setTimeout(() => {
+                    value.classList.remove('highlight');
+                }, 1000);
+            });
+        }
+
+        // Update stats every 10 seconds
+        setInterval(updateStats, 10000);
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.right = '20px';
+            notification.style.padding = '15px 25px';
+            notification.style.background = 'white';
+            notification.style.color = 'var(--dark)';
+            notification.style.borderRadius = '10px';
+            notification.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+            notification.style.display = 'flex';
+            notification.style.alignItems = 'center';
+            notification.style.gap = '10px';
+            notification.style.zIndex = '1000';
+            notification.style.transform = 'translateY(100px)';
+            notification.style.opacity = '0';
+            notification.style.transition = 'all 0.3s ease';
+
+            let iconClass = 'fas fa-info-circle';
+            let iconColor = 'var(--info)';
+
+            if (type === 'success') {
+                iconClass = 'fas fa-check-circle';
+                iconColor = 'var(--success)';
+            } else if (type === 'warning') {
+                iconClass = 'fas fa-exclamation-triangle';
+                iconColor = 'var(--warning)';
+            } else if (type === 'error') {
+                iconClass = 'fas fa-times-circle';
+                iconColor = 'var(--danger)';
+            }
+
+            notification.innerHTML = `
+                <i class="${iconClass}" style="color: ${iconColor}; font-size: 1.2rem;"></i>
+                <span>${message}</span>
+                <i class="fas fa-times" style="margin-left: 15px; cursor: pointer;"></i>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateY(0)';
+                notification.style.opacity = '1';
+            }, 100);
+
+            const closeButton = notification.querySelector('.fa-times');
+            closeButton.addEventListener('click', () => {
+                notification.style.transform = 'translateY(100px)';
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            });
+
+            setTimeout(() => {
+                notification.style.transform = 'translateY(100px)';
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // Show sample notifications
+        setTimeout(() => {
+            showNotification('Ernakulam waste statistics updated', 'info');
+        }, 3000);
+
+        setTimeout(() => {
+            showNotification('Kochi city meets recycling target!', 'success');
+        }, 8000);
+
+        // Interactive elements
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const type = card.classList[1];
+                const text = card.querySelector('.stat-title').textContent;
+                showNotification(`Detailed ${text} statistics for Ernakulam now available`, 'info');
+            });
+        });
+
+        // Add some randomness to sparkline paths to simulate live data
+        function animateSparklines() {
+            document.querySelectorAll('.sparkline path').forEach(path => {
+                const originalPath = path.getAttribute('d');
+                const pathParts = originalPath.split(' ');
+                
+                const newPath = pathParts.map(part => {
+                    if (part.includes(',')) {
+                        const [x, y] = part.split(',');
+                        const newY = parseFloat(y) + (Math.random() * 2 - 1);
+                        return `${x},${newY}`;
+                    }
+                    return part;
+                }).join(' ');
+                
+                path.setAttribute('d', newPath);
+            });
+            
+            setTimeout(animateSparklines, 3000);
+        }
+        
+        animateSparklines();
+    </script>
+</body>
+</html>

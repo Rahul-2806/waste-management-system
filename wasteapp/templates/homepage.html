@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoSolution - Professional Waste Management</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --primary: #0e8a5f;
+      --secondary: #32b37b;
+      --accent: #ffd640;
+      --dark: #172b31;
+      --light: #f4f9f4;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--light);
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+
+    .hidden {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    header {
+      background-color: rgba(255, 255, 255, 0.95);
+      position: fixed;
+      width: 100%;
+      z-index: 1000;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo-icon {
+      color: var(--primary);
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .eco {
+      color: var(--primary);
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 500;
+      position: relative;
+      padding: 0.5rem 0;
+      transition: var(--transition);
+    }
+
+    nav a:hover {
+      color: var(--primary);
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--primary);
+      transition: var(--transition);
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    .contact-btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .contact-btn:hover {
+      background-color: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(to right, rgba(23, 43, 49, 0.9), rgba(14, 138, 95, 0.8));
+    }
+
+    .hero-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .hero-text {
+      max-width: 600px;
+      color: white;
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .primary-btn {
+      background-color: var(--accent);
+      color: var(--dark);
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .secondary-btn {
+      background-color: transparent;
+      color: white;
+      border: 2px solid white;
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .secondary-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .hero-image {
+      max-width: 500px;
+      position: relative;
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Floating elements animation */
+    .floating-elements {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .floating-element {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+    }
+
+    /* Services Section */
+    section {
+      padding: 6rem 2rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-title h2 {
+      font-size: 2.5rem;
+      position: relative;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    .section-title h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background-color: var(--primary);
+    }
+
+    .section-title p {
+      max-width: 700px;
+      margin: 0 auto;
+      color: #666;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .service-card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .service-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background-color: var(--primary);
+      transition: var(--transition);
+      z-index: -1;
+    }
+
+    .service-card:hover::before {
+      width: 100%;
+      background-color: rgba(14, 138, 95, 0.05);
+    }
+
+    .service-icon {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .service-title {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .service-description {
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* About Section */
+    .about {
+      background-color: #f9f9f9;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-container {
+      display: flex;
+      align-items: center;
+      gap: 4rem;
+    }
+
+    .about-image {
+      flex: 1;
+      position: relative;
+    }
+
+    .about-image img {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .about-content {
+      flex: 1;
+    }
+
+    .about-title {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .about-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 80px;
+      height: 3px;
+      background-color: var(--primary);
+    }
+
+    .about-description {
+      color: #555;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 1.5rem;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-text {
+      color: #666;
+      font-weight: 500;
+    }
+
+    /* Process Section */
+    .process-container {
+      margin-top: 4rem;
+    }
+
+    .process-steps {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      top: 50px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: #e0e0e0;
+      z-index: 1;
+    }
+
+    .process-step {
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      width: calc(25% - 30px);
+    }
+
+    .step-number {
+      width: 100px;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--primary);
+      color: white;
+      font-size: 2rem;
+      font-weight: 700;
+      border-radius: 50%;
+      margin: 0 auto 1.5rem;
+      position: relative;
+      z-index: 2;
+      transition: var(--transition);
+    }
+
+    .process-step:hover .step-number {
+      transform: scale(1.1);
+      box-shadow: 0 10px 20px rgba(14, 138, 95, 0.3);
+    }
+
+    .step-title {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+
+    .step-description {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    /* Contact Section */
+    .contact {
+      background: linear-gradient(to right, var(--dark), var(--primary));
+      color: white;
+    }
+
+    .contact-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4rem;
+    }
+
+    .contact-info h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .contact-info h2::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 80px;
+      height: 3px;
+      background-color: var(--accent);
+    }
+
+    .contact-info p {
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    .contact-details {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .contact-icon {
+      width: 40px;
+      height: 40px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .contact-form {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-title {
+      color: var(--dark);
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #555;
+      font-weight: 500;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(14, 138, 95, 0.1);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .submit-btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      width: 100%;
+    }
+
+    .submit-btn:hover {
+      background-color: var(--secondary);
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--dark);
+      color: white;
+      padding: 4rem 2rem 1rem;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+
+    .footer-logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .footer-about {
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+      color: #bbb;
+    }
+
+    .social-media {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .social-icon {
+      width: 40px;
+      height: 40px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: var(--transition);
+    }
+
+    .social-icon:hover {
+      background-color: var(--primary);
+      transform: translateY(-3px);
+    }
+
+    .footer-title {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .footer-title::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background-color: var(--primary);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .footer-link {
+      color: #bbb;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .footer-link:hover {
+      color: white;
+      transform: translateX(5px);
+    }
+
+    .newsletter-form {
+      position: relative;
+    }
+
+    .newsletter-input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      padding-right: 3rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 5px;
+      color: white;
+    }
+
+    .newsletter-input::placeholder {
+      color: #bbb;
+    }
+
+    .newsletter-input:focus {
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .newsletter-btn {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .newsletter-btn:hover {
+      background-color: var(--secondary);
+    }
+
+    .copyright {
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 4rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #bbb;
+      font-size: 0.9rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero-title {
+        font-size: 3rem;
+      }
+
+      .about-container {
+        flex-direction: column;
+      }
+
+      .process-steps {
+        flex-wrap: wrap;
+      }
+
+      .process-step {
+        width: calc(50% - 30px);
+        margin-bottom: 3rem;
+      }
+
+      .process-steps::before {
+        display: none;
+      }
+
+      .contact-container {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-content {
+        flex-direction: column;
+        text-align: center;
+        padding-top: 6rem;
+      }
+
+      .hero-text {
+        margin-bottom: 3rem;
+      }
+
+      .cta-buttons {
+        justify-content: center;
+      }
+
+      .service-card {
+        max-width: 350px;
+        margin: 0 auto;
+      }
+
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+
+      .process-step {
+        width: 100%;
+      }
+
+      .footer-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Animation classes */
+    .fade-in {
+      animation: fadeIn 1s forwards;
+    }
+
+    .slide-in-left {
+      animation: slideInLeft 1s forwards;
+    }
+
+    .slide-in-right {
+      animation: slideInRight 1s forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <span class="logo-icon">♻️</span>
+      <div class="logo-text"><span class="eco">Eco</span>Solution</div>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#process">Process</a></li>
+      </ul>
+    </nav>
+    <button class="contact-btn">Contact Us</button>
+  </header>
+
+  <section class="hero" id="home">
+    <div class="floating-elements" id="floating-elements"></div>
+    <div class="hero-content">
+      <div class="hero-text hidden">
+        <h1 class="hero-title">Sustainable Waste Management Solutions</h1>
+        <p class="hero-subtitle">We provide innovative and eco-friendly waste management services for residential, commercial, and industrial clients.</p>
+        <div class="cta-buttons">
+          <button class="primary-btn">Get a Quote</button>
+          <button class="secondary-btn">Learn More</button>
+        </div>
+      </div>
+      <div class="hero-image hidden">
+        <img src="/api/placeholder/600/400" alt="Eco-friendly waste management">
+      </div>
+    </div>
+  </section>
+
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-title">
+        <h2 class="hidden">Our Services</h2>
+        <p class="hidden">We offer comprehensive waste management solutions tailored to your specific needs.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card hidden">
+          <div class="service-icon">🏢</div>
+          <h3 class="service-title">Commercial Waste</h3>
+          <p class="service-description">Customized waste collection and recycling programs for businesses of all sizes, helping you meet sustainability goals while reducing costs.</p>
+        </div>
+        <div class="service-card hidden">
+          <div class="service-icon">🏠</div>
+          <h3 class="service-title">Residential Services</h3>
+          <p class="service-description">Reliable and convenient waste collection services for households, including recycling, yard waste, and special item pickup.</p>
+        </div>
+        <div class="service-card hidden">
+          <div class="service-icon">🏭</div>
+          <h3 class="service-title">Industrial Solutions</h3>
+          <p class="service-description">Specialized waste management for manufacturing, construction, and other industrial sectors, including hazardous material handling.</p>
+        </div>
+        <div class="service-card hidden">
+          <div class="service-icon">♻️</div>
+          <h3 class="service-title">Recycling Programs</h3>
+          <p class="service-description">Comprehensive recycling services that divert waste from landfills and convert them into valuable resources.</p>
+        </div>
+        <div class="service-card hidden">
+          <div class="service-icon">📊</div>
+          <h3 class="service-title">Waste Audits</h3>
+          <p class="service-description">Detailed analysis of your waste stream to identify opportunities for reduction, recycling, and cost savings.</p>
+        </div>
+        <div class="service-card hidden">
+          <div class="service-icon">🌱</div>
+          <h3 class="service-title">Green Initiatives</h3>
+          <p class="service-description">Environmental programs and education to help your organization achieve sustainability goals and reduce environmental impact.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-container">
+        <div class="about-image hidden">
+          <img src="/api/placeholder/600/400" alt="About EcoSolution">
+        </div>
+        <div class="about-content">
+          <h2 class="about-title hidden">Committed to a Cleaner Future</h2>
+          <p class="about-description hidden">EcoSolution is a leading provider of sustainable waste management services with over 15 years of experience. We combine innovation, expertise, and a deep commitment to environmental responsibility to deliver exceptional service to our clients.</p>
+          <p class="about-description hidden">Our mission is to transform waste management practices by implementing cutting-edge solutions that minimize environmental impact while maximizing resource recovery. We work closely with our clients to develop tailored strategies that meet their specific needs and sustainability goals.</p>
+          <div class="stats-container">
+            <div class="stat-item hidden">
+              <div class="stat-number">15+</div>
+              <div class="stat-text">Years Experience</div>
+            </div>
+            <div class="stat-item hidden">
+              <div class="stat-number">500+</div>
+              <div class="stat-text">Happy Clients</div>
+            </div>
+            <div class="stat-item hidden">
+              <div class="stat-number">85%</div>
+              <div class="stat-text">Waste Diverted</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="process" id="process">
+    <div class="container">
+      <div class="section-title">
+        <h2 class="hidden">Our Process</h2>
+        <p class="hidden">We follow a systematic approach to ensure efficient and effective waste management.</p>
+      </div>
+      <div class="process-container">
+        <div class="process-steps">
+          <div class="process-step hidden">
+            <div class="step-number">1</div>
+            <h3 class="step-title">Assessment</h3>
+            <p class="step-description">We begin with a thorough assessment of your waste management needs and current practices.</p>
+          </div>
+          <div class="process-step hidden">
+            <div class="step-number">2</div>
+            <h3 class="step-title">Planning</h3>
+            <p class="step-description">Our experts develop a customized plan tailored to your specific requirements and sustainability goals.</p>
+          </div>
+          <div class="process-step hidden">
+            <div class="step-number">3</div>
+            <h3 class="step-title">Implementation</h3>
+            <p class="step-description">We implement the solutions with minimal disruption to your operations, providing all necessary equipment and training.</p>
+          </div>
+          <div class="process-step hidden">
+            <div class="step-number">4</div>
+            <h3 class="step-title">Monitoring</h3>
+            <p class="step-description">Continuous monitoring and reporting ensure optimal performance and identify opportunities for improvement.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="contact-container">
+        <div class="contact-info">
+          <h2 class="hidden">Get In Touch</h2>
+          <p class="hidden">Ready to transform your waste management practices? Contact us today to discuss how we can help you achieve your sustainability goals while reducing costs.</p>
+          <div class="contact-details">
+            <div class="contact-item hidden">
+              <div class="contact-icon">📞</div>
+              <span>(555) 123-4567</span>
+            </div>
+            <div class="contact-item hidden">
+              <div class="contact-icon">✉️</div>
+              <span>info@ecosolution.com</span>
+            </div>
+            <div class="contact-item hidden">
+              <div class="contact-icon">🏢</div>
+              <span>123 Green Street, Eco City, EC 12345</span>
+            </div>
+          </div>
+        </div>
+        <div class="contact-form hidden">
+          <h3 class="form-title">Send Us a Message</h3>
+          <form>
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" class="form-control" placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-control" placeholder="Your email">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Service Required</label>
+              <select class="form-control">
+                <option value="" selected disabled>Select a service</option>
+                <option value="commercial">Commercial Waste</option>
+                <option value="residential">Residential Services</option>
+                <option value="industrial">Industrial Solutions</option>
+                <option value="recycling">Recycling Programs</option>
+                <option value="audit">Waste Audits</option>
+                <option value="green">Green Initiatives</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Message</label>
+              <textarea class="form-control" placeholder="Your message"></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-container">
+        <div class="footer-column">
+          <div class="footer-logo"><span class="eco">Eco</span>Solution</div>
+          <p class="footer-about">Providing sustainable waste management solutions for a cleaner, greener future.</p>
+          <div class="social-media">
+            <a href="#" class="social-icon">📱</a>
+            <a href="#" class="social-icon">📘</a>
+            <a href="#" class="social-icon">📸</a>
+            <a href="#" class="social-icon">🐦</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h3 class="footer-title">Quick Links</h3>
+          <div class="footer-links">
+            <a href="#" class="footer-link">Home</a>
+            <a href="#" class="footer-link">About Us</a>
+            <a href="#" class="footer-link">Services</a>
+            <a href="#" class="footer-link">Process</a>
+            <a href="#" class="footer-link">Contact</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h3 class="footer-title">Our Services</h3>
+          <div class="footer-links">
+            <a href="#" class="footer-link">Commercial Waste</a>
+            <a href="#" class="footer-link">Residential Services</a>
+            <a href="#" class="footer-link">Industrial Solutions</a>
+            <a href="#" class="footer-link">Recycling Programs</a>
+            <a href="#" class="footer-link">Waste Audits</a>
+            <a href="#" class="footer-link">Green Initiatives</a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h3 class="footer-title">Newsletter</h3>
+          <p class="footer-about">Subscribe to our newsletter for the latest updates and eco-tips.</p>
+          <div class="newsletter-form">
+            <input type="email" class="newsletter-input" placeholder="Your email address">
+            <button class="newsletter-btn">➡️</button>
+          </div>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2025 EcoSolution. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize GSAP and ScrollTrigger
+    gsap.registerPlugin(ScrollTrigger);
+    
+    // Hero section animations
+    gsap.to(".hero-text", {
+      opacity: 1,
+      y: 0,
+      duration: 1,
+      delay: 0.5
+    });
+    
+    gsap.to(".hero-image", {
+      opacity: 1,
+      y: 0,
+      duration: 1,
+      delay: 0.8
+    });
+    
+    // Create floating elements
+    function createFloatingElements() {
+      const container = document.getElementById('floating-elements');
+      const elementsCount = 15;
+      
+      for (let i = 0; i < elementsCount; i++) {
+        const element = document.createElement('div');
+        element.classList.add('floating-element');
+        
+        // Random size between 10 and 60
+        const size = Math.random() * 50 + 10;
+        element.style.width = `${size}px`;
+        element.style.height = `${size}px`;
+        
+        // Random position
+        element.style.top = `${Math.random() * 100}%`;
+        element.style.left = `${Math.random() * 100}%`;
+        
+        container.appendChild(element);
+        
+        // Animate each element
+        gsap.to(element, {
+          x: `random(-100, 100)`,
+          y: `random(-100, 100)`,
+          duration: `random(10, 20)`,
+          repeat: -1,
+          yoyo: true,
+          ease: "none"
+        });
+      }
+    }
+    
+    createFloatingElements();
+    
+    // Scroll animations
+    const animateElements = gsap.utils.toArray('.hidden');
+    
+    animateElements.forEach((element) => {
+      gsap.from(element, {
+        scrollTrigger: {
+          trigger: element,
+          start: "top 80%",
+          onEnter: () => {
+            element.classList.remove('hidden');
+            element.classList.add('fade-in');
+          }
+        }
+      });
+    });
+    
+    // Service cards staggered animation
+    gsap.from(".service-card", {
+      scrollTrigger: {
+        trigger: ".services-grid",
+        start: "top 80%"
+      },
+      y: 50,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.2
+    });
+    
+    // Process steps staggered animation
+    gsap.from(".process-step", {
+      scrollTrigger: {
+        trigger: ".process-steps",
+        start: "top 80%"
+      },
+      y: 50,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.3
+    });
+    
+    // Stats counter animation
+    const statNumbers = document.querySelectorAll('.stat-number');
+    
+    statNumbers.forEach(stat => {
+      const target = stat.innerText;
+      const plusSign = target.includes('+');
+      const percentSign = target.includes('%');
+      let number = parseInt(target.replace(/[^\d]/g, ''));
+      
+      gsap.to(stat, {
+        scrollTrigger: {
+          trigger: stat,
+          start: "top 80%",
+          once: true
+        },
+        innerText: 0,
+        duration: 0,
+        onComplete: () => {
+          let counter = { value: 0 };
+          gsap.to(counter, {
+            value: number,
+            duration: 2,
+            onUpdate: () => {
+              let currentValue = Math.floor(counter.value);
+              stat.innerText = currentValue;
+              if (plusSign) stat.innerText += '+';
+              if (percentSign) stat.innerText += '%';
+            }
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

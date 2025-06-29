@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartWaste IoT Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-dot {
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .online {
+            background-color: #2ecc71;
+        }
+        
+        .offline {
+            background-color: #e74c3c;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .bin-status {
+            display: flex;
+            margin-top: 10px;
+        }
+        
+        .bin-level {
+            flex-grow: 1;
+            height: 25px;
+            background-color: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .bin-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        .level-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #333;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .map-container {
+            height: 400px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .map {
+            height: 100%;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .bin-icon {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: #7f8c8d;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .bin-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .bin-icon.critical {
+            background-color: #e74c3c;
+        }
+        
+        .bin-icon.warning {
+            background-color: #f39c12;
+        }
+        
+        .bin-icon.good {
+            background-color: #2ecc71;
+        }
+        
+        .controls {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .control-header {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .control-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+        
+        .primary-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .primary-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .secondary-btn {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        .secondary-btn:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .danger-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .danger-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .warning-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .warning-btn:hover {
+            background-color: #d35400;
+        }
+        
+        .notifications {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .notification-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .notification-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .notification-icon {
+            margin-right: 10px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .notification-urgent {
+            background-color: #e74c3c;
+        }
+        
+        .notification-warning {
+            background-color: #f39c12;
+        }
+        
+        .notification-info {
+            background-color: #3498db;
+        }
+        
+        .notification-content {
+            flex-grow: 1;
+        }
+        
+        .notification-time {
+            font-size: 12px;
+            color: #95a5a6;
+        }
+        
+        .analytics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .analytics-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .chart-container {
+            height: 200px;
+            position: relative;
+        }
+        
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            height: 180px;
+            gap: 8px;
+            padding-top: 20px;
+        }
+        
+        .chart-bar {
+            flex-grow: 1;
+            background-color: #3498db;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+        
+        .chart-label {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+        }
+        
+        .chart-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+        }
+        
+        .settings-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 300px;
+            background-color: white;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .close-settings {
+            cursor: pointer;
+            font-size: 24px;
+        }
+        
+        .settings-group {
+            margin-bottom: 20px;
+        }
+        
+        .settings-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .settings-row {
+            margin-bottom: 10px;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin-right: 10px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #2ecc71;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .slider-control {
+            width: 100%;
+        }
+        
+        .optimize-routes {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .route-highlight {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: #3498db;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .route-line {
+            position: absolute;
+            height: 2px;
+            background-color: #3498db;
+            z-index: 1;
+            transform-origin: left center;
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .analytics {
+                grid-template-columns: 1fr;
+            }
+            
+            .settings-panel {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">SmartWaste IoT Management System</div>
+            <div class="status-indicator">
+                <div class="status-dot online" id="connection-status"></div>
+                <span id="status-text">System Online</span>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="dashboard" id="bins-dashboard">
+            <!-- Bins will be dynamically added here -->
+        </div>
+        
+        <div class="map-container">
+            <h3 class="card-title">Waste Bin Locations</h3>
+            <div class="map" id="bin-map">
+                <!-- Bin icons will be dynamically added here -->
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-header">
+                <h3 class="card-title">System Controls</h3>
+            </div>
+            <div class="control-actions">
+                <button class="primary-btn" id="optimize-routes-btn">Optimize Collection Routes</button>
+                <button class="secondary-btn" id="refresh-data-btn">Refresh Data</button>
+                <button class="warning-btn" id="maintenance-mode-btn">Maintenance Mode</button>
+                <button class="primary-btn" id="settings-btn">Settings</button>
+                <button class="danger-btn" id="reset-system-btn">Reset System</button>
+            </div>
+        </div>
+        
+        <div class="notifications">
+            <div class="control-header">
+                <h3 class="card-title">Notifications</h3>
+            </div>
+            <div class="notification-list" id="notification-list">
+                <!-- Notifications will be dynamically added here -->
+            </div>
+        </div>
+        
+        <div class="analytics">
+            <div class="analytics-card">
+                <div class="card-header">
+                    <h3 class="card-title">Weekly Collection Volume</h3>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-bars" id="weekly-chart">
+                        <!-- Chart bars will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analytics-card">
+                <div class="card-header">
+                    <h3 class="card-title">Waste Type Distribution</h3>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-bars" id="waste-type-chart">
+                        <!-- Chart bars will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="settings-panel" id="settings-panel">
+        <div class="settings-header">
+            <h3>System Settings</h3>
+            <span class="close-settings" id="close-settings">&times;</span>
+        </div>
+        
+        <div class="settings-group">
+            <h4 class="settings-title">Alerts</h4>
+            <div class="settings-row">
+                <label class="switch">
+                    <input type="checkbox" id="alert-notifications" checked>
+                    <span class="slider"></span>
+                </label>
+                <span>Enable Alert Notifications</span>
+            </div>
+            <div class="settings-row">
+                <label class="switch">
+                    <input type="checkbox" id="email-notifications" checked>
+                    <span class="slider"></span>
+                </label>
+                <span>Email Notifications</span>
+            </div>
+            <div class="settings-row">
+                <label class="switch">
+                    <input type="checkbox" id="sms-notifications">
+                    <span class="slider"></span>
+                </label>
+                <span>SMS Notifications</span>
+            </div>
+        </div>
+        
+        <div class="settings-group">
+            <h4 class="settings-title">Collection Thresholds</h4>
+            <div class="settings-row">
+                <label for="critical-threshold">Critical Level (%):</label>
+                <input type="range" id="critical-threshold" class="slider-control" min="70" max="95" value="85">
+                <span id="critical-threshold-value">85%</span>
+            </div>
+            <div class="settings-row">
+                <label for="warning-threshold">Warning Level (%):</label>
+                <input type="range" id="warning-threshold" class="slider-control" min="50" max="80" value="65">
+                <span id="warning-threshold-value">65%</span>
+            </div>
+        </div>
+        
+        <div class="settings-group">
+            <h4 class="settings-title">Collection Schedule</h4>
+            <div class="settings-row">
+                <label for="collection-frequency">Collection Frequency:</label>
+                <select id="collection-frequency" class="form-control">
+                    <option value="daily">Daily</option>
+                    <option value="alternate" selected>Alternate Days</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="smart">Smart (Level-based)</option>
+                </select>
+            </div>
+            <div class="settings-row">
+                <label for="collection-time">Preferred Collection Time:</label>
+                <select id="collection-time" class="form-control">
+                    <option value="morning" selected>Morning (6AM - 10AM)</option>
+                    <option value="afternoon">Afternoon (12PM - 4PM)</option>
+                    <option value="evening">Evening (6PM - 10PM)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="settings-group">
+            <h4 class="settings-title">System</h4>
+            <div class="settings-row">
+                <label class="switch">
+                    <input type="checkbox" id="auto-optimize" checked>
+                    <span class="slider"></span>
+                </label>
+                <span>Auto-optimize Routes</span>
+            </div>
+            <div class="settings-row">
+                <label class="switch">
+                    <input type="checkbox" id="predictive-analytics" checked>
+                    <span class="slider"></span>
+                </label>
+                <span>Predictive Analytics</span>
+            </div>
+            <div class="settings-row">
+                <label class="switch">
+                    <input type="checkbox" id="weather-adjustments">
+                    <span class="slider"></span>
+                </label>
+                <span>Weather-based Adjustments</span>
+            </div>
+        </div>
+        
+        <div class="optimize-routes">
+            <button class="primary-btn" id="save-settings-btn">Save Settings</button>
+        </div>
+    </div>
+    
+    <script>
+        // Data structures and variables
+        let bins = [
+            { id: 1, name: "Bin 01", location: "Main St & 5th Ave", fillLevel: 78, type: "General", lastEmptied: "2025-03-15", batteryLevel: 82, status: "active" },
+            { id: 2, name: "Bin 02", location: "Park Rd & Oak St", fillLevel: 45, type: "Recycling", lastEmptied: "2025-03-16", batteryLevel: 90, status: "active" },
+            { id: 3, name: "Bin 03", location: "Market Square", fillLevel: 92, type: "General", lastEmptied: "2025-03-14", batteryLevel: 65, status: "active" },
+            { id: 4, name: "Bin 04", location: "School Zone", fillLevel: 35, type: "Recycling", lastEmptied: "2025-03-16", batteryLevel: 75, status: "active" },
+            { id: 5, name: "Bin 05", location: "Community Center", fillLevel: 62, type: "Compost", lastEmptied: "2025-03-15", batteryLevel: 88, status: "active" },
+            { id: 6, name: "Bin 06", location: "Industrial Park", fillLevel: 85, type: "General", lastEmptied: "2025-03-14", batteryLevel: 55, status: "active" },
+            { id: 7, name: "Bin 07", location: "Downtown Plaza", fillLevel: 73, type: "Recycling", lastEmptied: "2025-03-15", batteryLevel: 92, status: "maintenance" },
+            { id: 8, name: "Bin 08", location: "Riverside Park", fillLevel: 68, type: "Compost", lastEmptied: "2025-03-16", batteryLevel: 78, status: "active" }
+        ];
+        
+        let notifications = [
+            { id: 1, type: "urgent", message: "Bin 03 has reached critical fill level (92%)", time: "10 minutes ago" },
+            { id: 2, type: "warning", message: "Bin 06 is nearing capacity (85%)", time: "25 minutes ago" },
+            { id: 3, type: "info", message: "Bin 07 has been scheduled for maintenance", time: "1 hour ago" },
+            { id: 4, type: "info", message: "System update completed successfully", time: "3 hours ago" },
+            { id: 5, type: "warning", message: "Bin 01 battery level is below 85%", time: "5 hours ago" }
+        ];
+        
+        const weeklyData = [
+            { day: "Mon", volume: 120 },
+            { day: "Tue", volume: 95 },
+            { day: "Wed", volume: 140 },
+            { day: "Thu", volume: 110 },
+            { day: "Fri", volume: 160 },
+            { day: "Sat", volume: 180 },
+            { day: "Sun", volume: 130 }
+        ];
+        
+        const wasteTypeData = [
+            { type: "General", volume: 450, color: "#3498db" },
+            { type: "Recycling", volume: 280, color: "#2ecc71" },
+            { type: "Compost", volume: 170, color: "#f39c12" },
+            { type: "Hazardous", volume: 50, color: "#e74c3c" }
+        ];
+        
+        let systemStatus = {
+            online: true,
+            maintenanceMode: false,
+            lastUpdated: new Date()
+        };
+        
+        // Settings
+        const settings = {
+            criticalThreshold: 85,
+            warningThreshold: 65,
+            alertNotifications: true,
+            emailNotifications: true,
+            smsNotifications: false,
+            collectionFrequency: "alternate",
+            collectionTime: "morning",
+            autoOptimize: true,
+            predictiveAnalytics: true,
+            weatherAdjustments: false
+        };
+        
+        // DOM Elements
+        const binsDashboard = document.getElementById("bins-dashboard");
+        const binMap = document.getElementById("bin-map");
+        const notificationList = document.getElementById("notification-list");
+        const weeklyChart = document.getElementById("weekly-chart");
+        const wasteTypeChart = document.getElementById("waste-type-chart");
+        const connectionStatus = document.getElementById("connection-status");
+        const statusText = document.getElementById("status-text");
+        const settingsPanel = document.getElementById("settings-panel");
+        
+        // Button Elements
+        const optimizeRoutesBtn = document.getElementById("optimize-routes-btn");
+        const refreshDataBtn = document.getElementById("refresh-data-btn");
+        const maintenanceModeBtn = document.getElementById("maintenance-mode-btn");
+        const settingsBtn = document.getElementById("settings-btn");
+        const resetSystemBtn = document.getElementById("reset-system-btn");
+        const closeSettingsBtn = document.getElementById("close-settings");
+        const saveSettingsBtn = document.getElementById("save-settings-btn");
+        
+        // Settings Elements
+        const criticalThresholdSlider = document.getElementById("critical-threshold");
+        const criticalThresholdValue = document.getElementById("critical-threshold-value");
+        const warningThresholdSlider = document.getElementById("warning-threshold");
+        const warningThresholdValue = document.getElementById("warning-threshold-value");
+        
+        // Initialize the application
+        function initializeApp() {
+            renderBinCards();
+            renderBinMap();
+            renderNotifications();
+            renderWeeklyChart();
+            renderWasteTypeChart();
+            initializeSettings();
+            setupEventListeners();
+            
+            // Simulate real-time data updates
+            setInterval(simulateDataChanges, 10000);
+            
+            // Simulate connection status changes
+            setInterval(simulateConnectionChanges, 30000);
+        }
+        
+        // Render bin cards in the dashboard
+        function renderBinCards() {
+            binsDashboard.innerHTML = "";
+            
+            bins.forEach(bin => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.id = `bin-card-${bin.id}`;
+                
+                let fillColorClass = "good";
+                if (bin.fillLevel >= settings.criticalThreshold) {
+                    fillColorClass = "critical";
+                } else if (bin.fillLevel >= settings.warningThreshold) {
+                    fillColorClass = "warning";
+                }
+                
+                let statusBadge = "";
+                if (bin.status === "maintenance") {
+                    statusBadge = '<span style="background-color: #f39c12; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 10px;">Maintenance</span>';
+                }
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="card-title">${bin.name}${statusBadge}</span>
+                        <span>${bin.type}</span>
+                    </div>
+                    <div>
+                        <strong>Location:</strong> ${bin.location}
+                    </div>
+                    <div>
+                        <strong>Last Emptied:</strong> ${bin.lastEmptied}
+                    </div>
+                    <div>
+                        <strong>Battery:</strong> ${bin.batteryLevel}%
+                    </div>
+                    <div class="bin-status">
+                        <span>Fill Level: </span>
+                        <div class="bin-level">
+                            <div class="bin-fill ${fillColorClass}" style="width: ${bin.fillLevel}%"></div>
+                            <span class="level-label">${bin.fillLevel}%</span>
+                        </div>
+                    </div>
+                `;
+                
+                binsDashboard.appendChild(card);
+            });
+        }
+        
+        // Render bin icons on the map
+        function renderBinMap() {
+            binMap.innerHTML = "";
+            
+            // Simulated bin positions
+            const mapPositions = [
+                { left: "10%", top: "20%" },
+                { left: "30%", top: "40%" },
+                { left: "50%", top: "10%" },
+                { left: "70%", top: "30%" },
+                { left: "20%", top: "60%" },
+                { left: "60%", top: "70%" },
+                { left: "80%", top: "50%" },
+                { left: "40%", top: "80%" }
+            ];
+            
+            bins.forEach((bin, index) => {
+                const binIcon = document.createElement("div");
+                binIcon.className = "bin-icon";
+                binIcon.id = `bin-icon-${bin.id}`;
+                binIcon.textContent = bin.id;
+                
+                binIcon.style.left = mapPositions[index].left;
+                binIcon.style.top = mapPositions[index].top;
+                
+                if (bin.fillLevel >= settings.criticalThreshold) {
+                    binIcon.classList.add("critical");
+                } else if (bin.fillLevel >= settings.warningThreshold) {
+                    binIcon.classList.add("warning");
+                } else {
+                    binIcon.classList.add("good");
+                }
+                
+                binIcon.addEventListener("click", () => {
+                    showBinDetails(bin);
+                });
+                
+                binMap.appendChild(binIcon);
+            });
+        }
+        
+        // Render notifications
+        function renderNotifications() {
+            notificationList.innerHTML = "";
+            
+            notifications.forEach(notification => {
+                const notificationItem = document.createElement("div");
+                notificationItem.className = "notification-item";
+                
+                notificationItem.innerHTML = `
+                    <div class="notification-icon notification-${notification.type}"></div>
+                    <div class="notification-content">
+                        <div>${notification.message}</div>
+                        <div class="notification-time">${notification.time}</div>
+                    </div>
+                `;
+                
+                notificationList.appendChild(notificationItem);
+            });
+        }
+        
+        // Render weekly collection volume chart
+        function renderWeeklyChart() {
+            weeklyChart.innerHTML = "";
+            
+            const maxVolume = Math.max(...weeklyData.map(item => item.volume));
+            
+            weeklyData.forEach(item => {
+                const heightPercentage = (item.volume / maxVolume) * 100;
+                
+                const bar = document.createElement("div");
+                bar.className = "chart-bar";
+                bar.style.height = `${heightPercentage}%`;
+                
+                const label = document.createElement("div");
+                label.className = "chart-label";
+                label.textContent = item.day;
+                
+                const value = document.createElement("div");
+                value.className = "chart-value";
+                value.textContent = `${item.volume}kg`;
+                
+                bar.appendChild(label);
+                bar.appendChild(value);
+                weeklyChart.appendChild(bar);
+            });
+        }
+        
+        // Render waste type distribution chart
+        function renderWasteTypeChart() {
+            wasteTypeChart.innerHTML = "";
+            
+            const totalVolume = wasteTypeData.reduce((acc, item) => acc + item.volume, 0);
+            
+            wasteTypeData.forEach(item => {
+                const heightPercentage = (item.volume / totalVolume) * 100;
+                
+                const bar = document.createElement("div");
+                bar.className = "chart-bar";
+                bar.style.height = `${heightPercentage}%`;
+                bar.style.backgroundColor = item.color;
+                
+                const label = document.createElement("div");
+                label.className = "chart-label";
+                label.textContent = item.type;
+                
+                const value = document.createElement("div");
+                value.className = "chart-value";
+                value.textContent = `${item.volume}kg`;
+                
+                bar.appendChild(label);
+                bar.appendChild(value);
+                wasteTypeChart.appendChild(bar);
+            });
+        }
+        
+        // Initialize settings values
+        function initializeSettings() {
+            criticalThresholdSlider.value = settings.criticalThreshold;
+            criticalThresholdValue.textContent = `${settings.criticalThreshold}%`;
+            
+            warningThresholdSlider.value = settings.warningThreshold;
+            warningThresholdValue.textContent = `${settings.warningThreshold}%`;
+            
+            document.getElementById("alert-notifications").checked = settings.alertNotifications;
+            document.getElementById("email-notifications").checked = settings.emailNotifications;
+            document.getElementById("sms-notifications").checked = settings.smsNotifications;
+            document.getElementById("collection-frequency").value = settings.collectionFrequency;
+            document.getElementById("collection-time").value = settings.collectionTime;
+            document.getElementById("auto-optimize").checked = settings.autoOptimize;
+            document.getElementById("predictive-analytics").checked = settings.predictiveAnalytics;
+            document.getElementById("weather-adjustments").checked = settings.weatherAdjustments;
+        }
+        
+        // Show bin details when clicking on a bin icon
+        function showBinDetails(bin) {
+            // Highlight the corresponding bin card
+            const binCards = document.querySelectorAll(".card");
+            binCards.forEach(card => {
+                card.style.border = "none";
+            });
+            
+            const selectedCard = document.getElementById(`bin-card-${bin.id}`);
+            if (selectedCard) {
+                selectedCard.style.border = "2px solid #3498db";
+                selectedCard.scrollIntoView({ behavior: "smooth" });
+            }
+            
+            // Show a notification
+            const notification = {
+                id: notifications.length + 1,
+                type: "info",
+                message: `Selected ${bin.name} at ${bin.location}`,
+                time: "just now"
+            };
+            
+            notifications.unshift(notification);
+            renderNotifications();
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Optimize routes button
+            optimizeRoutesBtn.addEventListener("click", () => {
+                showNotification("Optimizing collection routes...", "info");
+                setTimeout(() => {
+                    showRouteOptimization();
+                }, 1000);
+            });
+            
+            // Refresh data button
+            refreshDataBtn.addEventListener("click", () => {
+                showNotification("Refreshing system data...", "info");
+                simulateDataChanges();
+                updateSystemStatus();
+            });
+            
+            // Maintenance mode button
+            maintenanceModeBtn.addEventListener("click", () => {
+                systemStatus.maintenanceMode = !systemStatus.maintenanceMode;
+                
+                if (systemStatus.maintenanceMode) {
+                    maintenanceModeBtn.textContent = "Exit Maintenance Mode";
+                    showNotification("System is now in maintenance mode", "warning");
+                    statusText.textContent = "Maintenance Mode";
+                    connectionStatus.className = "status-dot warning";
+                } else {
+                    maintenanceModeBtn.textContent = "Maintenance Mode";
+                    showNotification("System has exited maintenance mode", "info");
+                    statusText.textContent = "System Online";
+                    connectionStatus.className = "status-dot online";
+                }
+            });
+            
+            // Settings button
+            settingsBtn.addEventListener("click", () => {
+                settingsPanel.style.display = "block";
+            });
+            
+            // Close settings button
+            closeSettingsBtn.addEventListener("click", () => {
+                settingsPanel.style.display = "none";
+            });
+            
+            // Reset system button
+            resetSystemBtn.addEventListener("click", () => {
+                if (confirm("Are you sure you want to reset the system? This will clear all data and restart all IoT devices.")) {
+                    showNotification("System reset initiated", "urgent");
+                    
+                    connectionStatus.className = "status-dot offline";
+                    statusText.textContent = "System Resetting";
+                    
+                    setTimeout(() => {
+                        connectionStatus.className = "status-dot online";
+                        statusText.textContent = "System Online";
+                        showNotification("System reset completed successfully", "info");
+                        
+                        // Reset all bins to lower fill levels
+                        bins.forEach(bin => {
+                            bin.fillLevel = Math.floor(Math.random() * 30) + 10;
+                            bin.batteryLevel = Math.floor(Math.random() * 20) + 80;
+                            bin.status = "active";
+                        });
+                        
+                        renderBinCards();
+                        renderBinMap();
+                    }, 3000);
+                }
+            });
+            
+            // Save settings button
+            saveSettingsBtn.addEventListener("click", () => {
+                settings.criticalThreshold = parseInt(criticalThresholdSlider.value);
+                settings.warningThreshold = parseInt(warningThresholdSlider.value);
+                settings.alertNotifications = document.getElementById("alert-notifications").checked;
+                settings.emailNotifications = document.getElementById("email-notifications").checked;
+                settings.smsNotifications = document.getElementById("sms-notifications").checked;
+                settings.collectionFrequency = document.getElementById("collection-frequency").value;
+                settings.collectionTime = document.getElementById("collection-time").value;
+                settings.autoOptimize = document.getElementById("auto-optimize").checked;
+                settings.predictiveAnalytics = document.getElementById("predictive-analytics").checked;
+                settings.weatherAdjustments = document.getElementById("weather-adjustments").checked;
+                
+                settingsPanel.style.display = "none";
+                showNotification("Settings saved successfully", "info");
+                
+                // Re-render with new thresholds
+                renderBinCards();
+                renderBinMap();
+            });
+            
+            // Settings sliders
+            criticalThresholdSlider.addEventListener("input", () => {
+                criticalThresholdValue.textContent = `${criticalThresholdSlider.value}%`;
+            });
+            
+            warningThresholdSlider.addEventListener("input", () => {
+                warningThresholdValue.textContent = `${warningThresholdSlider.value}%`;
+            });
+        }
+        
+        // Show notification
+        function showNotification(message, type) {
+            const notification = {
+                id: notifications.length + 1,
+                type: type,
+                message: message,
+                time: "just now"
+            };
+            
+            notifications.unshift(notification);
+            if (notifications.length > 10) {
+                notifications.pop();
+            }
+            
+            renderNotifications();
+        }
+        
+        // Simulate data changes to demonstrate real-time updates
+        function simulateDataChanges() {
+            bins.forEach(bin => {
+                // Randomly increase fill level
+                if (bin.status === "active" && bin.fillLevel < 100) {
+                    const increase = Math.floor(Math.random() * 5) + 1;
+                    bin.fillLevel = Math.min(100, bin.fillLevel + increase);
+                }
+                
+                // Randomly decrease battery level
+                if (bin.batteryLevel > 0) {
+                    const decrease = Math.floor(Math.random() * 2) + 1;
+                    bin.batteryLevel = Math.max(0, bin.batteryLevel - decrease);
+                }
+                
+                // Add notifications for critical levels
+                if (bin.fillLevel >= settings.criticalThreshold && bin.fillLevel < 100) {
+                    showNotification(`${bin.name} has reached critical fill level (${bin.fillLevel}%)`, "urgent");
+                } else if (bin.fillLevel >= settings.warningThreshold && bin.fillLevel < settings.criticalThreshold) {
+                    // Only show warning notifications occasionally
+                    if (Math.random() > 0.7) {
+                        showNotification(`${bin.name} is nearing capacity (${bin.fillLevel}%)`, "warning");
+                    }
+                }
+                
+                // Notifications for low battery
+                if (bin.batteryLevel < 20) {
+                    showNotification(`${bin.name} battery critically low (${bin.batteryLevel}%)`, "urgent");
+                } else if (bin.batteryLevel < 40) {
+                    // Only show occasionally
+                    if (Math.random() > 0.8) {
+                        showNotification(`${bin.name} battery is getting low (${bin.batteryLevel}%)`, "warning");
+                    }
+                }
+            });
+            
+            renderBinCards();
+            renderBinMap();
+            
+            // Update system status
+            systemStatus.lastUpdated = new Date();
+        }
+        
+        // Simulate connection status changes
+        function simulateConnectionChanges() {
+            if (Math.random() > 0.9 && !systemStatus.maintenanceMode) {
+                // Simulate occasional connection issues
+                systemStatus.online = false;
+                connectionStatus.className = "status-dot offline";
+                statusText.textContent = "Connection Issues";
+                
+                showNotification("System experiencing connection issues", "warning");
+                
+                // Recover after a short period
+                setTimeout(() => {
+                    systemStatus.online = true;
+                    connectionStatus.className = "status-dot online";
+                    statusText.textContent = "System Online";
+                    
+                    showNotification("System connection restored", "info");
+                }, 5000);
+            }
+        }
+        
+        // Update system status
+        function updateSystemStatus() {
+            systemStatus.lastUpdated = new Date();
+            if (systemStatus.online && !systemStatus.maintenanceMode) {
+                connectionStatus.className = "status-dot online";
+                statusText.textContent = "System Online";
+            }
+        }
+        
+        // Show route optimization visualization
+        function showRouteOptimization() {
+            const routeLines = document.querySelectorAll(".route-line, .route-highlight");
+            routeLines.forEach(line => line.remove());
+            
+            // Get all bin icons
+            const binIcons = document.querySelectorAll(".bin-icon");
+            const binPositions = [];
+            
+            binIcons.forEach(icon => {
+                binPositions.push({
+                    id: parseInt(icon.id.split("-")[2]),
+                    left: parseInt(icon.style.left),
+                    top: parseInt(icon.style.top),
+                    element: icon
+                });
+            });
+            
+            // Only optimize for bins that need collection (above warning threshold)
+            const binsToCollect = binPositions.filter(pos => {
+                const bin = bins.find(b => b.id === pos.id);
+                return bin && bin.fillLevel >= settings.warningThreshold;
+            });
+            
+            if (binsToCollect.length === 0) {
+                showNotification("No bins require collection at this time", "info");
+                return;
+            }
+            
+            // Create a simple route (in a real system this would use an algorithm)
+            const depot = { left: 10, top: 10 }; // Starting point
+            let currentPoint = depot;
+            
+            // Draw depot point
+            const depotPoint = document.createElement("div");
+            depotPoint.className = "route-highlight";
+            depotPoint.style.left = `${depot.left}%`;
+            depotPoint.style.top = `${depot.top}%`;
+            depotPoint.style.width = "10px";
+            depotPoint.style.height = "10px";
+            depotPoint.style.backgroundColor = "#27ae60";
+            binMap.appendChild(depotPoint);
+            
+            // Draw lines connecting the bins
+            const sortedRoute = [...binsToCollect].sort((a, b) => {
+                const binA = bins.find(bin => bin.id === a.id);
+                const binB = bins.find(bin => bin.id === b.id);
+                return binB.fillLevel - binA.fillLevel; // Prioritize highest fill levels
+            });
+            
+            sortedRoute.forEach((nextPoint, index) => {
+                // Create line from current point to next bin
+                const line = document.createElement("div");
+                line.className = "route-line";
+                
+                // Calculate line position and rotation
+                const dx = nextPoint.left - currentPoint.left;
+                const dy = nextPoint.top - currentPoint.top;
+                const length = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                
+                line.style.width = `${length}%`;
+                line.style.left = `${currentPoint.left}%`;
+                line.style.top = `${currentPoint.top}%`;
+                line.style.transform = `rotate(${angle}deg)`;
+                
+                // Add sequence number
+                const sequenceNumber = document.createElement("div");
+                sequenceNumber.style.position = "absolute";
+                sequenceNumber.style.left = `${(currentPoint.left + nextPoint.left) / 2}%`;
+                sequenceNumber.style.top = `${(currentPoint.top + nextPoint.top) / 2}%`;
+                sequenceNumber.style.backgroundColor = "white";
+                sequenceNumber.style.borderRadius = "50%";
+                sequenceNumber.style.width = "16px";
+                sequenceNumber.style.height = "16px";
+                sequenceNumber.style.display = "flex";
+                sequenceNumber.style.justifyContent = "center";
+                sequenceNumber.style.alignItems = "center";
+                sequenceNumber.style.fontSize = "10px";
+                sequenceNumber.style.fontWeight = "bold";
+                sequenceNumber.style.border = "1px solid #3498db";
+                sequenceNumber.textContent = index + 1;
+                
+                binMap.appendChild(line);
+                binMap.appendChild(sequenceNumber);
+                
+                // Update current point for next line
+                currentPoint = nextPoint;
+                
+                // Highlight this bin
+                const binElement = document.getElementById(`bin-icon-${nextPoint.id}`);
+                binElement.style.border = "2px solid #27ae60";
+            });
+            
+            // Create line back to depot
+            const finalLine = document.createElement("div");
+            finalLine.className = "route-line";
+            
+            const dx = depot.left - currentPoint.left;
+            const dy = depot.top - currentPoint.top;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+            
+            finalLine.style.width = `${length}%`;
+            finalLine.style.left = `${currentPoint.left}%`;
+            finalLine.style.top = `${currentPoint.top}%`;
+            finalLine.style.transform = `rotate(${angle}deg)`;
+            finalLine.style.borderStyle = "dashed";
+            
+            binMap.appendChild(finalLine);
+            
+            // Show notification
+            showNotification(`Optimized collection route for ${sortedRoute.length} bins`, "info");
+        }
+        
+        // Initialize the app when the page loads
+        window.addEventListener("load", initializeApp);
+    </script>
+</body>
+</html>

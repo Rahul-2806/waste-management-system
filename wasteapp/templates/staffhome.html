@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - WasteManage Pro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            /* Modern color scheme - Vibrant & Fresh */
+            --primary: #3498db;
+            --primary-light: #74b9ff;
+            --primary-dark: #2980b9;
+            --secondary: #8e44ad;
+            --secondary-light: #a55eea;
+            --accent: #f1c40f;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            
+            /* Background colors */
+            --light: #f8fafc;
+            --dark: #2c3e50;
+            --gray: #95a5a6;
+            --gray-light: #ecf0f1;
+            --white: #FFFFFF;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+            
+            /* Rounded corners */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            
+            /* Transitions */
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            position: relative;
+        }
+        
+        /* Light background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(var(--gray-light) 1px, transparent 1px),
+                radial-gradient(var(--gray-light) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            opacity: 0.4;
+            z-index: -1;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            box-shadow: var(--shadow-md);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            width: 250px;
+            height: 100vh;
+            z-index: 100;
+            transition: var(--transition);
+            color: var(--white);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .brand-icon {
+            color: var(--white);
+            font-size: 1.75rem;
+            background: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+        }
+
+        .brand-text {
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--white);
+        }
+
+        .nav-menu {
+            list-style-type: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-item {
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .nav-link i {
+            font-size: 1.25rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .nav-link:hover:not(.active) {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .nav-section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 1.5rem 0 0.75rem 1rem;
+        }
+
+        .user-profile {
+            margin-top: auto;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--accent);
+            color: var(--dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--white);
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .profile-link {
+            color: var(--accent);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            transition: var(--transition);
+        }
+
+        .profile-link:hover {
+            color: var(--white);
+            transform: scale(1.1);
+        }
+
+        .logout-btn {
+            color: rgba(255, 255, 255, 0.7);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            color: var(--danger);
+            transform: scale(1.1);
+        }
+
+        /* Header with logout */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .top-logout-btn {
+            background: linear-gradient(to right, var(--danger), #ff7675);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .top-logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Main Content */
+        .main-content {
+            grid-column: 2;
+            padding: 1.5rem 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            background-color: var(--white);
+            border: 1px solid var(--gray-light);
+            border-radius: var(--radius-md);
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            width: 300px;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            position: relative;
+            color: var(--gray);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: var(--white);
+            font-size: 0.7rem;
+            font-weight: 600;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-btn:hover {
+            color: var(--dark);
+            transform: scale(1.1);
+        }
+
+        /* Dashboard Content */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+
+        /* Welcome Card */
+        .welcome-card {
+            grid-column: span 12;
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            color: var(--white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            right: -50px;
+            top: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .welcome-content h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-content p {
+            opacity: 0.9;
+            max-width: 600px;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            min-width: 120px;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .welcome-image {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+        }
+
+        .welcome-image i {
+            font-size: 4rem;
+            opacity: 0.9;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            border: 1px solid var(--gray-light);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-card-lg {
+            grid-column: span 6;
+        }
+
+        .stat-card-sm {
+            grid-column: span 3;
+        }
+
+        @media (max-width: 1200px) {
+            .stat-card-lg {
+                grid-column: span 12;
+            }
+            
+            .stat-card-sm {
+                grid-column: span 6;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stat-card-sm {
+                grid-column: span 12;
+            }
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-weight: 500;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .icon-primary {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+        }
+
+        .icon-secondary {
+            background: linear-gradient(135deg, var(--secondary-light), var(--secondary));
+            color: white;
+        }
+
+        .icon-accent {
+            background: linear-gradient(135deg, var(--accent), #fdcb6e);
+            color: white;
+        }
+
+        .icon-danger {
+            background: linear-gradient(135deg, var(--danger), #ff7675);
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin: 0.5rem 0;
+            color: var(--dark);
+        }
+
+        .stat-desc {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .stat-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-light);
+            margin-top: 1rem;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.85rem;
+        }
+
+        .change-up {
+            color: var(--success);
+        }
+
+        .change-down {
+            color: var(--danger);
+        }
+
+        .stat-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: var(--transition);
+        }
+
+        .stat-link:hover {
+            color: var(--primary-dark);
+            gap: 0.5rem;
+        }
+
+        /* Activity Section */
+        .activity-section {
+            grid-column: span 8;
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-light);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-light);
+            transition: var(--transition);
+        }
+
+        .activity-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-sm);
+            border-color: var(--primary-light);
+        }
+
+        .activity-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .activity-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .icon-success {
+            background: linear-gradient(135deg, var(--success), #6dd5ed);
+            color: white;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-time {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .activity-status {
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+        }
+
+        .status-completed {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+        }
+
+        .status-in-progress {
+            background-color: rgba(241, 196, 15, 0.1);
+            color: var(--accent);
+        }
+
+        .status-pending {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--primary);
+        }
+
+        /* Calendar Section */
+        .calendar-section {
+            grid-column: span 4;
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-light);
+        }
+
+        /* Profile Card Section */
+        .profile-section {
+            grid-column: span 4; 
+            background-color: var(--white); 
+            border-radius: var(--radius-lg); 
+            padding: 1.5rem; 
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-light);
+        }
+
+        .category-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .category-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .circle-container {
+            position: relative; 
+            width: 80px; 
+            height: 80px;
+        }
+
+        svg .circle-bg {
+            stroke: var(--gray-light);
+            stroke-width: 3;
+            fill: none;
+        }
+
+        svg .circle {
+            stroke-width: 3;
+            stroke-linecap: round;
+            fill: none;
+            transform: rotate(-90deg);
+            transform-origin: center;
+            transition: stroke-dasharray 1s ease;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            grid-column: span 12;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .action-card {
+            background: linear-gradient(to bottom right, var(--white), var(--gray-light));
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid transparent;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .action-card:hover .action-icon {
+            transform: scale(1.1);
+        }
+
+        .action-title {
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--dark);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 1000;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                grid-column: 1;
+                padding-left: 1.5rem;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .welcome-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+
+            .welcome-stats {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .activity-section,
+            .calendar-section {
+                grid-column: span 12;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .top-bar {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-input {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .welcome-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .activity-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stat-card-sm {
+                grid-column: span 12;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--dark);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-right: 1rem;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-toggle {
+                display: block;
+            }
+        }
+
+        /* Animation classes */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .slide-in-up {
+            animation: slideInUp 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fas fa-recycle"></i>
+                </div>
+                <span class="brand-text">Waste Management System</span>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/staffhome" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/viewassignedloc" class="nav-link">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Assigned Locations</span>
+                    </a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a href="/collection-requests" class="nav-link">
+                        <i class="fas fa-truck"></i>
+                        <span>Collections</span>
+                    </a>
+                </li> -->
+                <li class="nav-item">
+                    <a href="/wastecollectingusers" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        <span>Waste Collecting users</span>
+                    </a>
+                </li>
+                
+                <div class="nav-section-title">Reports</div>
+                
+                <!-- <li class="nav-item">
+                    <a href="/wastestats" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/reports" class="nav-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Weekly Reports</span>
+                    </a>
+                </li> -->
+                <li class="nav-item">
+                    <a href="/viewFeedback" class="nav-link">
+                        <i class="fas fa-star"></i>
+                        <span>View Feedback</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/staffprofile" class="nav-link">
+                        <i class="fas fa-user-edit"></i>
+                        <span>Edit Profile</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="user-profile">
+                <div class="user-info">
+                </div>
+                <a href="/staffprofile" class="profile-link">
+                    <i class="fas fa-user-edit"></i>
+                </a>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="page-title-wrapper">
+                    <button class="mobile-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Dashboard</h1>
+                </div>
+                
+                <div class="top-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search...">
+                    </div>
+                    
+                    <div class="header-actions">
+                        <button class="notification-btn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-count">5</span>
+                        </button>
+                        
+                        <a href="/login" class="top-logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="dashboard">
+                <!-- Welcome Card -->
+                <div class="welcome-card slide-in-up" style="--delay: 0.1s">
+                    <div class="welcome-content">
+                        <h2>Welcome back, Sir😊!</h2>
+                        <p>Today you have 3 new collection requests and 2 pending reports to review. Here's your performance summary:</p>
+                        
+                        <div class="welcome-stats">
+                            <div class="stat-item">
+                                <span class="stat-value">28</span>
+                                <span class="stat-label">Collection Requests</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">1.2t</span>
+                                <span class="stat-label">Waste Collected</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">4.8</span>
+                                <span class="stat-label">Service Rating</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="welcome-image">
+                        <i class="fas fa-recycle"></i>
+                    </div>
+                </div>
+                
+                <!-- Stat Cards -->
+                <div class="stat-card stat-card-sm slide-in-up" style="--delay: 0.2s">
+                    <div class="stat-header">
+                        <div class="stat-title">Collection Requests</div>
+                        <div class="stat-icon icon-primary">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">28</div>
+                    <div class="stat-desc">Total requests this week</div>
+                    <div class="stat-footer">
+                        <div class="stat-change change-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>12% from last week</span>
+                        </div>
+                        <!-- <a href="#" class="stat-link">
+                            <span>View all</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a> -->
+                    </div>
+                </div>
+                
+                <div class="stat-card stat-card-sm slide-in-up" style="--delay: 0.3s">
+                    <div class="stat-header">
+                        <div class="stat-title">Waste Collected</div>
+                        <div class="stat-icon icon-secondary">
+                            <i class="fas fa-dumpster"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">1.2 tons</div>
+                    <div class="stat-desc">Total waste collected this week</div>
+                    <div class="stat-footer">
+                        <div class="stat-change change-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>8% from last week</span>
+                        </div>
+                        <a href="/wastestats" class="stat-link">
+                            <span>View stats</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="stat-card stat-card-sm slide-in-up" style="--delay: 0.4s">
+                    <div class="stat-header">
+                        <div class="stat-title">Service Ratings</div>
+                        <div class="stat-icon icon-accent">
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">4.8/5</div>
+                    <div class="stat-desc">Average rating from 8 users</div>
+                    <div class="stat-footer">
+                        <div class="stat-change change-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>0.2 from last month</span>
+                        </div>
+                        <a href="/viewFeedback" class="stat-link">
+                            <span>View feedback</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="stat-card stat-card-sm slide-in-up" style="--delay: 0.5s">
+                    <div class="stat-header">
+                        <div class="stat-title">Weekly Reports</div>
+                        <div class="stat-icon icon-danger">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">7</div>
+                    <div class="stat-desc">Reports requiring your attention</div>
+                    <div class="stat-footer">
+                        <div class="stat-change change-down">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>3 from yesterday</span>
+                        </div>
+                        <a href="/reports" class="stat-link">
+                            <span>Review reports</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Activity Section -->
+                <div class="activity-section slide-in-up" style="--delay: 0.6s">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-history"></i>
+                            Recent Activities
+                        </h2>
+                    </div>
+                    
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon icon-primary">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4 class="activity-title">Waste Collection at Greenview Apartments</h4>
+                                <div class="activity-meta">
+                                    <span class="activity-time">Today at 9:30 AM</span>
+                                    <span class="activity-status status-completed">Completed</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon icon-success">
+                                <i class="fas fa-recycle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4 class="activity-title">Recycling Inspection at Downtown Office Complex</h4>
+                                <div class="activity-meta">
+                                    <span class="activity-time">Yesterday at 2:15 PM</span>
+                                    <span class="activity-status status-completed">Completed</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon icon-accent">
+                                <i class="fas fa-radiation"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4 class="activity-title">Hazardous Waste Pickup at Research Facility</h4>
+                                <div class="activity-meta">
+                                    <span class="activity-time">May 6, 2025 at 11:00 AM</span>
+                                    <span class="activity-status status-in-progress">In Progress</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon icon-secondary">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4 class="activity-title">Weekly Waste Management Report Submission</h4>
+                                <div class="activity-meta">
+                                    <span class="activity-time">May 6, 2025 at 4:45 PM</span>
+                                    <span class="activity-status status-pending">Pending Review</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+               <!-- Waste Category Analysis Section -->
+                <div class="profile-section slide-in-up" style="--delay: 0.7s;">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-chart-pie"></i>
+                            Waste Category Analysis
+                        </h2>
+                        <a href="/wastecategory" class="stat-link">
+                            <span>View Details</span>
+                            <i class="fas fa-chart-pie"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="category-stats">
+                        <!-- Recyclables -->
+                        <div class="category-item">
+                            <div class="circle-container">
+                                <svg viewBox="0 0 36 36">
+                                    <path class="circle-bg"
+                                        d="M18 2.0845
+                                        a 15.9155 15.9155 0 0 1 0 31.831
+                                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    />
+                                    <path class="circle"
+                                        d="M18 2.0845
+                                        a 15.9155 15.9155 0 0 1 0 31.831
+                                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                                        stroke="var(--primary)"
+                                        stroke-dasharray="65, 100"
+                                    />
+                                    <text x="18" y="20.35" style="font-size: 0.5rem; font-weight: 600; text-anchor: middle; fill: var(--dark);">65%</text>
+                                </svg>
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background-color: var(--white);">
+                                    <i class="fas fa-recycle" style="color: var(--primary); font-size: 1.25rem;"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">Recyclables</h3>
+                                <p style="color: var(--gray); font-size: 0.85rem;">780 kg collected this month</p>
+                                <div class="stat-change change-up">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>12% increase from last month</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Organic Waste -->
+                        <div class="category-item">
+                            <div class="circle-container">
+                                <svg viewBox="0 0 36 36">
+                                    <path class="circle-bg"
+                                        d="M18 2.0845
+                                        a 15.9155 15.9155 0 0 1 0 31.831
+                                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    />
+                                    <path class="circle"
+                                        d="M18 2.0845
+                                        a 15.9155 15.9155 0 0 1 0 31.831
+                                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                                        stroke="var(--accent)"
+                                        stroke-dasharray="25, 100"
+                                    />
+                                    <text x="18" y="20.35" style="font-size: 0.5rem; font-weight: 600; text-anchor: middle; fill: var(--dark);">25%</text>
+                                </svg>
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background-color: var(--white);">
+                                    <i class="fas fa-leaf" style="color: var(--accent); font-size: 1.25rem;"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">Organic Waste</h3>
+                                <p style="color: var(--gray); font-size: 0.85rem;">300 kg collected this month</p>
+                                <div class="stat-change change-down">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span>8% decrease from last month</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Non-recyclables -->
+                        <div class="category-item">
+                            <div class="circle-container">
+                                <svg viewBox="0 0 36 36">
+                                    <path class="circle-bg"
+                                        d="M18 2.0845
+                                        a 15.9155 15.9155 0 0 1 0 31.831
+                                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    />
+                                    <path class="circle"
+                                        d="M18 2.0845
+                                        a 15.9155 15.9155 0 0 1 0 31.831
+                                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                                        stroke="var(--secondary)"
+                                        stroke-dasharray="10, 100"
+                                    />
+                                    <text x="18" y="20.35" style="font-size: 0.5rem; font-weight: 600; text-anchor: middle; fill: var(--dark);">10%</text>
+                                </svg>
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background-color: var(--white);">
+                                    <i class="fas fa-trash-alt" style="color: var(--secondary); font-size: 1.25rem;"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 style="font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem;">Non-recyclables</h3>
+                                <p style="color: var(--gray); font-size: 0.85rem;">120 kg collected this month</p>
+                                <div class="stat-change change-down">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span>15% decrease from last month</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Button for Detailed Analysis -->
+                        <a href="/wastecategory" style="background: linear-gradient(to right, var(--secondary), var(--primary)); color: white; text-decoration: none; padding: 0.75rem; border-radius: var(--radius-md); text-align: center; font-weight: 500; transition: var(--transition); margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: var(--shadow-sm);">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>View Detailed Analysis</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <a href="/viewassignedloc" class="action-card slide-in-up" style="--delay: 0.8s; text-decoration: none;">
+                        <div class="action-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h3 class="action-title"> Assigned Location</h3>
+                    </a>
+                    
+                    <a href="/viewcollectionmap" class="action-card slide-in-up" style="--delay: 0.9s; text-decoration: none;">
+                        <div class="action-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h3 class="action-title">View Collection Map</h3>
+                    </a>
+                    
+                    <a href="/reports" class="action-card slide-in-up" style="--delay: 1s; text-decoration: none;">
+                        <div class="action-icon">
+                            <i class="fas fa-file-export"></i>
+                        </div>
+                        <h3 class="action-title">Weekly Reports</h3>
+                    </a>
+                    
+                    <a href="/staffprofile" class="action-card slide-in-up" style="--delay: 1.2s; text-decoration: none;">
+                        <div class="action-icon">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        <h3 class="action-title">Edit My Profile</h3>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // DOM Elements
+        const sidebar = document.querySelector('.sidebar');
+        const mobileToggle = document.querySelector('.mobile-toggle');
+        const actionCards = document.querySelectorAll('.action-card');
+        const statCards = document.querySelectorAll('.stat-card');
+        const activityItems = document.querySelectorAll('.activity-item');
+        
+        // Mobile toggle functionality
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+        
+        // Animation on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Apply animations with delay
+            function animateWithDelay(elements, baseDelay = 0) {
+                elements.forEach((element, index) => {
+                    setTimeout(() => {
+                        element.classList.add('fade-in');
+                    }, baseDelay + (index * 100));
+                });
+            }
+            
+            // Animate elements
+            animateWithDelay(statCards, 200);
+            animateWithDelay(activityItems, 500);
+            animateWithDelay(actionCards, 800);
+            
+            // Activity item click handlers
+            activityItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const title = item.querySelector('.activity-title').textContent;
+                    const status = item.querySelector('.activity-status').textContent;
+                    alert(`Activity: ${title}\nStatus: ${status}`);
+                });
+            });
+        });
+        
+        // Demo data update function (for simulation)
+        function updateDashboardData() {
+            // Update stat card values with random numbers
+            const collectionValue = document.querySelector('.stat-card:nth-child(2) .stat-value');
+            const currentValue = parseInt(collectionValue.textContent);
+            collectionValue.textContent = currentValue + Math.floor(Math.random() * 3);
+            
+            // Update trend indicators randomly
+            const trendIndicators = document.querySelectorAll('.stat-change');
+            trendIndicators.forEach(trend => {
+                const isUp = Math.random() > 0.3;
+                if (isUp) {
+                    trend.classList.remove('change-down');
+                    trend.classList.add('change-up');
+                    trend.querySelector('i').className = 'fas fa-arrow-up';
+                } else {
+                    trend.classList.remove('change-up');
+                    trend.classList.add('change-down');
+                    trend.querySelector('i').className = 'fas fa-arrow-down';
+                }
+                
+                const percentage = Math.floor(Math.random() * 15) + 1;
+                trend.querySelector('span').textContent = `${percentage}% from last week`;
+            });
+        }
+        
+        // Simulate real-time updates (in a real app this would use WebSockets or regular API polling)
+        setInterval(updateDashboardData, 30000);
+        
+        // Notification system (demo)
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.right = '20px';
+            notification.style.backgroundColor = 'var(--white)';
+            notification.style.padding = '15px 20px';
+            notification.style.borderRadius = 'var(--radius-md)';
+            notification.style.boxShadow = 'var(--shadow-lg)';
+            notification.style.zIndex = '2000';
+            notification.style.display = 'flex';
+            notification.style.alignItems = 'center';
+            notification.style.gap = '15px';
+            notification.style.maxWidth = '350px';
+            notification.style.transform = 'translateY(100px)';
+            notification.style.opacity = '0';
+            notification.style.transition = 'all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55)';
+            notification.style.border = '1px solid var(--primary-light)';
+            
+            // Notification icon
+            const icon = document.createElement('div');
+            icon.style.width = '40px';
+            icon.style.height = '40px';
+            icon.style.background = 'linear-gradient(135deg, var(--primary-light), var(--primary))';
+            icon.style.color = 'white';
+            icon.style.borderRadius = '50%';
+            icon.style.display = 'flex';
+            icon.style.alignItems = 'center';
+            icon.style.justifyContent = 'center';
+            icon.style.flexShrink = '0';
+            
+            const iconElement = document.createElement('i');
+            iconElement.className = 'fas fa-bell';
+            icon.appendChild(iconElement);
+            
+            // Notification content
+            const content = document.createElement('div');
+            content.style.flex = '1';
+            
+            const title = document.createElement('div');
+            title.style.fontWeight = '500';
+            title.style.marginBottom = '5px';
+            title.textContent = 'Notification';
+            
+            const text = document.createElement('div');
+            text.style.fontSize = '0.9rem';
+            text.style.color = 'var(--gray)';
+            text.textContent = message;
+            
+            content.appendChild(title);
+            content.appendChild(text);
+            
+            // Close button
+            const closeBtn = document.createElement('button');
+            closeBtn.style.background = 'none';
+            closeBtn.style.border = 'none';
+            closeBtn.style.color = 'var(--gray)';
+            closeBtn.style.cursor = 'pointer';
+            closeBtn.style.fontSize = '1rem';
+            closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            
+            closeBtn.addEventListener('click', () => {
+                removeNotification();
+            });
+            
+            // Append all elements
+            notification.appendChild(icon);
+            notification.appendChild(content);
+            notification.appendChild(closeBtn);
+            
+            // Add to body
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateY(0)';
+                notification.style.opacity = '1';
+            }, 100);
+            
+            // Auto-remove after 5 seconds
+            const timeout = setTimeout(() => {
+                removeNotification();
+            }, 5000);
+            
+            function removeNotification() {
+                clearTimeout(timeout);
+                notification.style.transform = 'translateY(100px)';
+                notification.style.opacity = '0';
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        document.body.removeChild(notification);
+                    }
+                }, 500);
+            }
+        }
+        
+        // Show sample notifications for demo
+        setTimeout(() => {
+            showNotification('New collection request received from Greenview Apartments');
+        }, 5000);
+        
+        setTimeout(() => {
+            showNotification('Weekly report due in 2 hours');
+        }, 15000);
+    </script>
+</body>
+</html>

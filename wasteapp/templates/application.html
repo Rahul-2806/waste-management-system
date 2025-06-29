@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --accent: #f97316;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --text: #334155;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(37, 99, 235, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 30%, rgba(16, 185, 129, 0.05) 0%, transparent 25%),
+                radial-gradient(circle at 50% 80%, rgba(249, 115, 22, 0.05) 0%, transparent 30%);
+            background-attachment: fixed;
+        }
+
+        .header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem 1rem;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 650px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 2rem;
+            color: white;
+            text-align: center;
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-subtitle {
+            font-size: 1rem;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .form-body {
+            padding: 2rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            flex: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row .form-group {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text);
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        input::placeholder {
+            color: var(--text-light);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .radio-item input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .radio-item input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--primary);
+        }
+
+        .radio-item label {
+            font-size: 0.95rem;
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .location-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .location-btn:hover {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .map-link {
+            display: block;
+            margin-top: 0.75rem;
+            color: var(--primary);
+            text-align: center;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .map-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .location-success {
+            display: none;
+            margin-top: 0.75rem;
+            padding: 0.5rem 1rem;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--secondary);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .submit-btn i {
+            font-size: 1.1rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 1rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .form-body {
+                padding: 1.5rem;
+            }
+            
+            .form-title {
+                font-size: 1.5rem;
+            }
+        }
+
+
+        .terms-container {
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .terms-checkbox {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .terms-checkbox input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--primary);
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .terms-label {
+        margin-bottom: 0;
+        font-size: 0.95rem;
+        cursor: pointer;
+    }
+
+    .terms-btn {
+        margin-left: auto;
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: underline;
+        padding: 0;
+    }
+
+    .terms-btn:hover {
+        color: var(--primary-dark);
+    }
+
+    .terms-modal {
+        display: none;
+        position: fixed;
+        z-index: 200;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.3s ease;
+    }
+
+    .terms-modal-content {
+        background-color: white;
+        margin: 5% auto;
+        padding: 2rem;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        animation: slideIn 0.3s ease;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1.5rem;
+        color: var(--text-light);
+        font-size: 1.5rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .close-btn:hover {
+        color: var(--dark);
+    }
+
+    .terms-text {
+        margin: 1.5rem 0;
+        color: var(--text);
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .terms-text p {
+        margin-bottom: 1rem;
+    }
+
+    .terms-text ol {
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .terms-text li {
+        margin-bottom: 0.5rem;
+    }
+
+    .accept-terms-btn {
+        display: block;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    .accept-terms-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+    }
+
+    @keyframes slideIn {
+        from { transform: translateY(-50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+        .terms-modal-content {
+            width: 95%;
+            margin: 10% auto;
+            padding: 1.5rem;
+        }
+    }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="#" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="logo-text">Application Portal</div>
+            </a>
+            <a href="/customerhome" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Go Back
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="form-container">
+            <div class="form-header">
+                <h1 class="form-title">Service Application</h1>
+                <p class="form-subtitle">Fill in your details to submit a new application</p>
+            </div>
+            
+            <form action="/applicationaction/" class="form-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="name" name="name" placeholder="Enter your full name" pattern="[a-zA-Z ]+" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-phone input-icon"></i>
+                            <input type="number" id="phone" name="phone" placeholder="Enter your phone number" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-map-marker-alt input-icon"></i>
+                        <input type="text" id="address" name="address" placeholder="Enter your street address" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-map input-icon"></i>
+                            <select id="location" name="location" required>
+                                <option value="" disabled selected>Select Your Location</option>
+                                {% for t in tt %}
+                                <option value="{{t.Locid}}">{{t.Area}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="house">House Number</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-home input-icon"></i>
+                            <input type="number" id="house" name="house" placeholder="Enter house number" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="area">Landmark</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-landmark input-icon"></i>
+                        <input type="text" id="area" name="area" placeholder="Enter nearby landmark">
+                    </div>
+                    
+                    <button type="button" class="location-btn" onclick="getLocation()">
+                        <i class="fas fa-location-arrow"></i> Get Current Location
+                    </button>
+                    
+                    <div id="locationSuccess" class="location-success">
+                        <i class="fas fa-check-circle"></i> Location captured successfully!
+                    </div>
+                    
+                    <a id="mapLink" class="map-link" href="#" target="_blank" style="display: none;">
+                        <i class="fas fa-map-marked-alt"></i> View on Google Maps
+                    </a>
+                </div>
+
+                <div class="form-group">
+                    <label>Property Type</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="residential" name="type" value="Rate" required>
+                            <label for="residential">Residential</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="commercial" name="type" value="Corate" required>
+                            <label for="commercial">Commercial</label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Add this before the submit button -->
+<div class="form-group terms-container">
+    <div class="terms-checkbox">
+        <input type="checkbox" id="terms" name="terms" required>
+        <label for="terms" class="terms-label">I agree to the Terms and Conditions</label>
+        <button type="button" id="showTermsBtn" class="terms-btn">View Terms</button>
+    </div>
+    <div id="termsModal" class="terms-modal">
+        <div class="terms-modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Terms and Conditions</h3>
+            <div class="terms-text">
+                <p>By submitting this application form, you agree to the following terms and conditions:</p>
+                <ol>
+                    <li>All information provided in this form must be accurate and truthful.</li>
+                    <li>We will collect and process your personal information in accordance with our Privacy Policy.</li>
+                    <li>You authorize us to verify the information provided in this application.</li>
+                    <li>Service availability is subject to location verification and approval.</li>
+                    <li>Submission of this application does not guarantee approval of service.</li>
+                    <li>You may be required to provide additional documentation or information.</li>
+                    <li>Standard service rates and charges will apply as per our current pricing structure.</li>
+                    <li>By sharing your location data, you consent to its use for service provisioning.</li>
+                    <li>We reserve the right to decline applications that do not meet our eligibility criteria.</li>
+                    <li>You will be notified of the status of your application via the contact information provided.</li>
+                </ol>
+                <p>Last updated: March 31, 2025</p>
+            </div>
+            <button type="button" id="acceptTermsBtn" class="accept-terms-btn">Accept Terms</button>
+        </div>
+    </div>
+</div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Submit Application
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+// Enhanced location functionality with accuracy improvements
+function getLocation() {
+    const locationBtn = document.querySelector('.location-btn');
+    const locationSuccess = document.getElementById('locationSuccess');
+    const mapLink = document.getElementById('mapLink');
+    
+    // Change button state to show progress
+    locationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting location...';
+    locationBtn.disabled = true;
+    
+    // Check if geolocation is available
+    if (navigator.geolocation) {
+        // Request maximum accuracy with enhanced options
+        const options = {
+            enableHighAccuracy: true,  // Request the highest possible accuracy
+            timeout: 15000,            // Extended timeout (15 seconds)
+            maximumAge: 0              // Don't use cached position
+        };
+        
+        // Create status message to guide the user
+        locationSuccess.style.display = 'block';
+        locationSuccess.innerHTML = '<i class="fas fa-info-circle"></i> Please wait while we determine your precise location...';
+        
+        // Function to handle successful location
+        function handlePosition(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const accuracy = position.coords.accuracy; // Accuracy in meters
+            
+            // Store coordinates in hidden fields for form submission
+            if (!document.getElementById('lat')) {
+                const latField = document.createElement('input');
+                latField.type = 'hidden';
+                latField.id = 'lat';
+                latField.name = 'latitude';
+                latField.value = latitude;
+                document.querySelector('form').appendChild(latField);
+                
+                const lngField = document.createElement('input');
+                lngField.type = 'hidden';
+                lngField.id = 'lng';
+                lngField.name = 'longitude';
+                lngField.value = longitude;
+                document.querySelector('form').appendChild(lngField);
+                
+                const accField = document.createElement('input');
+                accField.type = 'hidden';
+                accField.id = 'acc';
+                accField.name = 'accuracy';
+                accField.value = accuracy;
+                document.querySelector('form').appendChild(accField);
+            } else {
+                document.getElementById('lat').value = latitude;
+                document.getElementById('lng').value = longitude;
+                document.getElementById('acc').value = accuracy;
+            }
+            
+            // Handle different accuracy levels
+            let accuracyMessage, accuracyClass;
+            if (accuracy <= 10) {
+                accuracyMessage = 'Excellent';
+                accuracyClass = 'text-success';
+            } else if (accuracy <= 50) {
+                accuracyMessage = 'Good';
+                accuracyClass = 'text-success';
+            } else if (accuracy <= 100) {
+                accuracyMessage = 'Moderate';
+                accuracyClass = 'text-warning';
+            } else if (accuracy <= 500) {
+                accuracyMessage = 'Poor';
+                accuracyClass = 'text-warning';
+            } else {
+                accuracyMessage = 'Very poor';
+                accuracyClass = 'text-danger';
+            }
+            
+            // Display appropriate guidance based on accuracy
+            let guidanceMsg = '';
+            if (accuracy > 100) {
+                guidanceMsg = '<div style="margin-top: 10px; font-size: 0.85rem;">For better accuracy: Enable GPS, go outdoors, or try again.</div>';
+            }
+            
+            // Update area field with coordinates and accuracy info
+            document.getElementById('area').value = `Location detected (${accuracyMessage} accuracy)`;
+            
+            // Show status with accuracy information
+            locationSuccess.innerHTML = `
+                <i class="fas fa-check-circle"></i> Location captured! 
+                <span style="font-weight: 600;">Accuracy: ${Math.round(accuracy)}m (${accuracyMessage})</span>
+                ${guidanceMsg}
+            `;
+            
+            // Set Google Maps link with appropriate zoom level based on accuracy
+            const zoomLevel = accuracy < 50 ? 19 : (accuracy < 100 ? 18 : (accuracy < 500 ? 16 : 14));
+            const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}&z=${zoomLevel}`;
+            mapLink.href = googleMapsUrl;
+            mapLink.style.display = 'block';
+            mapLink.innerHTML = '<i class="fas fa-map-marked-alt"></i> Verify location on Google Maps';
+            
+            // Update button state based on accuracy
+            if (accuracy <= 100) {
+                locationBtn.innerHTML = '<i class="fas fa-check-circle"></i> Location Captured';
+            } else {
+                locationBtn.innerHTML = '<i class="fas fa-location-arrow"></i> Try for Better Accuracy';
+                locationBtn.disabled = false;
+            }
+            
+            // Try to get address from coordinates using multiple services for better results
+            fetchAddressFromCoordinates(latitude, longitude);
+        }
+        
+        // Function to handle location errors
+        function handleError(error) {
+            console.error("Error getting location:", error);
+            
+            // Detailed error handling with user guidance
+            let errorMessage = '<i class="fas fa-exclamation-triangle"></i> ';
+            let helpMessage = '';
+            
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage += 'Location access denied.';
+                    helpMessage = 'Please enable location services in your browser settings and try again.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage += 'Location information unavailable.';
+                    helpMessage = 'Try moving to an area with better GPS signal or enable Wi-Fi for better location.';
+                    break;
+                case error.TIMEOUT:
+                    errorMessage += 'Location request timed out.';
+                    helpMessage = 'Please check your GPS/location settings and try again.';
+                    break;
+                default:
+                    errorMessage += 'An unknown error occurred.';
+                    helpMessage = 'Please try again or enter your address manually.';
+                    break;
+            }
+            
+            // Update message
+            locationSuccess.style.display = 'block';
+            locationSuccess.innerHTML = `${errorMessage}<br><span style="font-size: 0.85rem; margin-top: 5px; display: block;">${helpMessage}</span>`;
+            
+            // Restore button
+            locationBtn.innerHTML = '<i class="fas fa-location-arrow"></i> Get Current Location';
+            locationBtn.disabled = false;
+        }
+        
+        // Start geolocation process
+        navigator.geolocation.getCurrentPosition(handlePosition, handleError, options);
+    } else {
+        // Browser doesn't support geolocation
+        locationSuccess.style.display = 'block';
+        locationSuccess.innerHTML = '<i class="fas fa-exclamation-circle"></i> Your browser does not support geolocation.';
+        
+        locationBtn.innerHTML = '<i class="fas fa-map-marker-alt"></i> Enter Location Manually';
+        setTimeout(() => {
+            locationBtn.disabled = false;
+        }, 1500);
+    }
+}
+
+// Enhanced address fetching using multiple services for better results
+function fetchAddressFromCoordinates(latitude, longitude) {
+    // First try with OpenStreetMap Nominatim API
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`, {
+        headers: {
+            'Accept-Language': navigator.language || 'en-US' // Use browser language for better local results
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.address) {
+            updateAddressFields(data.address, data.display_name);
+        } else {
+            fallbackGeocoding(latitude, longitude);
+        }
+    })
+    .catch(error => {
+        console.error('Error with primary geocoding service:', error);
+        fallbackGeocoding(latitude, longitude);
+    });
+}
+
+// Fallback geocoding for when primary service fails
+function fallbackGeocoding(latitude, longitude) {
+    // Here you would implement a secondary geocoding service
+    // For example, using a different API like Google Maps Geocoding API (requires API key)
+    console.log('Primary geocoding failed, using fallback...');
+    
+    // For this example, we'll simply display coordinates as address
+    document.getElementById('address').value = `Near ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+    
+    // Inform the user they may need to enter address manually
+    const locationSuccess = document.getElementById('locationSuccess');
+    const currentMessage = locationSuccess.innerHTML;
+    locationSuccess.innerHTML = `${currentMessage}<div style="margin-top: 8px; font-size: 0.85rem;">Address lookup failed - please verify or enter manually.</div>`;
+}
+
+// Update form fields with address data
+function updateAddressFields(addressData, fallbackAddress) {
+    // Build a properly formatted address
+    let formattedAddress = '';
+    
+    // Create address components in proper order
+    if (addressData.road || addressData.street) formattedAddress += (addressData.road || addressData.street);
+    if (addressData.house_number) formattedAddress += `, ${addressData.house_number}`;
+    if (addressData.suburb || addressData.neighbourhood) formattedAddress += `, ${addressData.suburb || addressData.neighbourhood}`;
+    if (addressData.city || addressData.town || addressData.village) {
+        formattedAddress += `, ${addressData.city || addressData.town || addressData.village}`;
+    }
+    if (addressData.postcode) formattedAddress += `, ${addressData.postcode}`;
+    
+    // If we couldn't build a proper address, use the display name
+    if (!formattedAddress || formattedAddress === '') {
+        formattedAddress = fallbackAddress || '';
+    }
+    
+    // Update address field with cleaned-up address
+    document.getElementById('address').value = formattedAddress;
+    
+    // Update house number if available
+    if (addressData.house_number) {
+        document.getElementById('house').value = addressData.house_number;
+    }
+    
+    // Try to select location from dropdown if city/area matches
+    if (addressData.city || addressData.town || addressData.village) {
+        const locationSelect = document.getElementById('location');
+        const locationName = addressData.city || addressData.town || addressData.village;
+        
+        // Try to find a matching option
+        for (let i = 0; i < locationSelect.options.length; i++) {
+            if (locationSelect.options[i].text.includes(locationName)) {
+                locationSelect.selectedIndex = i;
+                break;
+            }
+        }
+    }
+}
+        
+        // Form validation enhancement
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInput = document.getElementById('phone');
+            
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function() {
+                    // Limit to 10 digits
+                    if (this.value.length > 10) {
+                        this.value = this.value.slice(0, 10);
+                    }
+                });
+            }
+        });
+
+
+          // Terms and conditions functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const termsModal = document.getElementById('termsModal');
+        const showTermsBtn = document.getElementById('showTermsBtn');
+        const closeBtn = document.querySelector('.close-btn');
+        const acceptTermsBtn = document.getElementById('acceptTermsBtn');
+        const termsCheckbox = document.getElementById('terms');
+        
+        // Open terms modal
+        showTermsBtn.addEventListener('click', function() {
+            termsModal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
+        });
+        
+        // Close modal functions
+        function closeModal() {
+            termsModal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        }
+        
+        closeBtn.addEventListener('click', closeModal);
+        
+        // Close if clicked outside of modal content
+        window.addEventListener('click', function(event) {
+            if (event.target === termsModal) {
+                closeModal();
+            }
+        });
+        
+        // Accept terms
+        acceptTermsBtn.addEventListener('click', function() {
+            termsCheckbox.checked = true;
+            closeModal();
+        });
+        
+        // Form submission validation
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(event) {
+            if (!termsCheckbox.checked) {
+                event.preventDefault();
+                alert('Please agree to the Terms and Conditions to proceed.');
+                showTermsBtn.focus();
+            }
+        });
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Assistant</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Left side - Content */
+        /* .content {
+            width: 50%;
+            padding: 20px;
+            box-sizing: border-box;
+        } */
+
+        /* Right side - Virtual Assistant */
+        .assistant {
+            width: 50%;
+            position: relative;
+            background-color: #f0f0f0;
+        }
+
+        /* 3D Model Container */
+        model-viewer {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Chat Interface */
+        .chat {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat input {
+            width: calc(100% - 90px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .chat button {
+            width: 80px;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Left Side - Content -->
+    <!-- <div class="content">
+        <h1>Welcome to Our Website</h1>
+        <p>This is the left side content. Interact with the virtual assistant on the right!</p>
+    </div> -->
+
+    <!-- Right Side - Virtual Assistant -->
+    <div class="assistant">
+        <!-- 3D Model -->
+        <model-viewer
+            src="assets/models/Animation_Walking_withSkin.glb"
+            alt="Virtual Assistant"
+            ar
+            auto-rotate
+            camera-controls
+            shadow-intensity="1">
+        </model-viewer>
+
+        <!-- Chat Interface
+        <div class="chat">
+            <input type="text" id="userInput" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div> -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script type="module">
+      import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.128/examples/jsm/loaders/GLTFLoader.js';
+    
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+    
+      const loader = new GLTFLoader();
+      loader.load('model.glb', function (gltf) {
+        scene.add(gltf.scene);
+        camera.position.z = 5;
+      });
+    
+      function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+      }
+      animate();
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Category Analysis - WasteManage Pro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary: #34A853;
+            --primary-light: #8FDA9F;
+            --primary-dark: #257E3E;
+            --secondary: #4285F4;
+            --secondary-light: #A2C4FF;
+            --accent: #FBBC05;
+            --danger: #EA4335;
+            --light: #F8F9FA;
+            --dark: #202124;
+            --gray: #70757A;
+            --gray-light: #DFE1E5;
+            --white: #FFFFFF;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Google Sans', 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--white);
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            width: 250px;
+            height: 100vh;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .brand-icon {
+            color: var(--primary);
+            font-size: 1.75rem;
+        }
+
+        .brand-text {
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--dark);
+        }
+
+        .nav-menu {
+            list-style-type: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-item {
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .nav-link i {
+            font-size: 1.25rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        .nav-link:hover:not(.active) {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        .nav-section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray);
+            margin: 1.5rem 0 0.75rem 1rem;
+        }
+
+        .user-profile {
+            margin-top: auto;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            background-color: var(--light);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        /* Main Content */
+        .main-content {
+            grid-column: 2;
+            padding: 1.5rem 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            background-color: var(--white);
+            border: 1px solid var(--gray-light);
+            border-radius: var(--radius-md);
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            width: 300px;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(52, 168, 83, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-lg {
+            grid-column: span 6;
+        }
+
+        .card-md {
+            grid-column: span 4;
+        }
+
+        .card-sm {
+            grid-column: span 3;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+
+        .view-link {
+            color: var(--secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: var(--transition);
+        }
+
+        .view-link:hover {
+            color: var(--primary);
+        }
+
+        /* Circular Progress */
+        .progress-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            margin-bottom: 1rem;
+        }
+
+        .progress-item:hover {
+            background-color: var(--light);
+        }
+
+        .progress-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .progress-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: var(--gray-light);
+            stroke-width: 3;
+        }
+
+        .circle {
+            fill: none;
+            stroke-width: 3;
+            stroke-linecap: round;
+            transition: stroke-dasharray 1s ease;
+        }
+
+        .recyclable .circle {
+            stroke: var(--primary);
+        }
+
+        .organic .circle {
+            stroke: var(--accent);
+        }
+
+        .non-recyclable .circle {
+            stroke: var(--secondary);
+        }
+
+        .hazardous .circle {
+            stroke: var(--danger);
+        }
+
+        .circle-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--white);
+            box-shadow: var(--shadow-sm);
+            z-index: 2;
+        }
+
+        .recyclable .circle-icon i {
+            color: var(--primary);
+        }
+
+        .organic .circle-icon i {
+            color: var(--accent);
+        }
+
+        .non-recyclable .circle-icon i {
+            color: var(--secondary);
+        }
+
+        .hazardous .circle-icon i {
+            color: var(--danger);
+        }
+
+        .circle-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .progress-content {
+            flex: 1;
+        }
+
+        .progress-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .progress-value {
+            color: var(--gray);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .trend {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .trend-up {
+            color: var(--primary);
+        }
+
+        .trend-down {
+            color: var(--danger);
+        }
+
+        .trend-icon {
+            margin-right: 0.25rem;
+        }
+
+        /* Chart cards */
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        .trend-info {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background-color: var(--light);
+            border-radius: var(--radius-md);
+        }
+
+        .trend-data {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .trend-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .trend-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Tab Control */
+        .tab-control {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .tab-item {
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .tab-item:hover {
+            color: var(--primary);
+        }
+
+        .tab-item.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Filter Controls */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            background-color: var(--white);
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .filter-select {
+            background-color: var(--light);
+            border: 1px solid var(--gray-light);
+            border-radius: var(--radius-sm);
+            padding: 0.35rem 0.75rem;
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+        }
+
+        .filter-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Summary Cards */
+        .summary-cards {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-card {
+            flex: 1;
+            background-color: var(--white);
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .summary-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .summary-value {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+        }
+
+        .summary-label {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .summary-trend {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        /* Action Buttons */
+        .action-button {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--secondary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-md);
+            text-align: center;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .action-button:hover {
+            background-color: #3367d6;
+        }
+
+        .action-button-primary {
+            background-color: var(--primary);
+        }
+
+        .action-button-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide-in-up {
+            animation: slideInUp 0.8s ease forwards;
+        }
+
+        @keyframes slideInUp {
+            from { 
+                transform: translateY(30px); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(0); 
+                opacity: 1; 
+            }
+        }
+
+        /* Custom circle animation */
+        @keyframes circleAnimation {
+            from { stroke-dasharray: 0 100; }
+        }
+
+        .animate-circle {
+            animation: circleAnimation 1.5s ease forwards;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .card-lg {
+                grid-column: span 12;
+            }
+            
+            .card-md {
+                grid-column: span 6;
+            }
+            
+            .card-sm {
+                grid-column: span 6;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 1000;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                grid-column: 1;
+                padding: 1.5rem;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .card-md, .card-sm {
+                grid-column: span 12;
+            }
+            
+            .summary-cards {
+                flex-direction: column;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .filter-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--dark);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-right: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+  
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="page-title-wrapper">
+                    <button class="mobile-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Waste Category Analysis</h1>
+                </div>
+                
+                <div class="top-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search...">
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Tab Control -->
+            <div class="tab-control">
+                <div class="tab-item active" data-tab="overview">Overview</div>
+                <div class="tab-item" data-tab="trends">Trends & Analytics</div>
+                <div class="tab-item" data-tab="comparison">Category Comparison</div>
+                <div class="tab-item" data-tab="impact">Environmental Impact</div>
+            </div>
+            
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <span class="filter-label">Time Period:</span>
+                    <select class="filter-select" id="time-period">
+                        <option value="current-month">Current Month</option>
+                        <option value="last-month">Last Month</option>
+                        <option value="quarter">Last Quarter</option>
+                        <option value="year">Last Year</option>
+                        <option value="custom">Custom Range</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <span class="filter-label">Location:</span>
+                    <select class="filter-select" id="location">
+                        <option value="all">All Locations</option>
+                        <option value="north">North District</option>
+                        <option value="south">South District</option>
+                        <option value="east">East District</option>
+                        <option value="west">West District</option>
+                    </select>
+                </div>
+                
+                <button class="filter-btn" id="apply-filters">
+                    <i class="fas fa-filter"></i>
+                    <span>Apply Filters</span>
+                </button>
+            </div>
+            
+            <!-- Summary Cards -->
+            <div class="summary-cards fade-in">
+                <div class="summary-card">
+                    <div class="summary-icon" style="background-color: rgba(52, 168, 83, 0.2); color: var(--primary);">
+                        <i class="fas fa-dumpster"></i>
+                    </div>
+                    <div class="summary-value">1,200 kg</div>
+                    <div class="summary-label">Total Waste Collected</div>
+                    <div class="summary-trend trend-up">
+                        <i class="fas fa-arrow-up trend-icon"></i>
+                        <span>8% from last month</span>
+                    </div>
+                </div>
+                
+                <div class="summary-card">
+                    <div class="summary-icon" style="background-color: rgba(66, 133, 244, 0.2); color: var(--secondary);">
+                        <i class="fas fa-recycle"></i>
+                    </div>
+                    <div class="summary-value">65%</div>
+                    <div class="summary-label">Recycling Rate</div>
+                    <div class="summary-trend trend-up">
+                        <i class="fas fa-arrow-up trend-icon"></i>
+                        <span>12% from last month</span>
+                    </div>
+                </div>
+                
+                <div class="summary-card">
+                    <div class="summary-icon" style="background-color: rgba(251, 188, 5, 0.2); color: var(--accent);">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="summary-value">25%</div>
+                    <div class="summary-label">Organic Waste</div>
+                    <div class="summary-trend trend-down">
+                        <i class="fas fa-arrow-down trend-icon"></i>
+                        <span>8% from last month</span>
+                    </div>
+                </div>
+                
+                <div class="summary-card">
+                    <div class="summary-icon" style="background-color: rgba(234, 67, 53, 0.2); color: var(--danger);">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                    <div class="summary-value">10%</div>
+                    <div class="summary-label">Non-recyclable Waste</div>
+                    <div class="summary-trend trend-down trend-up">
+                        <i class="fas fa-arrow-down trend-icon"></i>
+                        <span>15% from last month</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard">
+                <!-- Main Chart Card -->
+                <div class="card card-lg slide-in-up" style="--delay: 0.2s">
+                    <div class="section-header">
+                        <h2 class="section-title">Waste Composition</h2>
+                        <a href="#" class="view-link">
+                            <span>View Details</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="wasteCompositionChart"></canvas>
+                    </div>
+                    
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: var(--primary);"></div>
+                            <span>Recyclables</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: var(--accent);"></div>
+                            <span>Organic Waste</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: var(--secondary);"></div>
+                            <span>Non-recyclables</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: var(--danger);"></div>
+                            <span>Hazardous</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Monthly Trend Card -->
+                <div class="card card-lg slide-in-up" style="--delay: 0.3s">
+                    <div class="section-header">
+                        <h2 class="section-title">Monthly Trends</h2>
+                        <a href="#" class="view-link">
+                            <span>View History</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="monthlyTrendChart"></canvas>
+                    </div>
+                    
+                    <div class="trend-info">
+                        <div class="trend-data">
+                            <span class="trend-label">Highest Month</span>
+                            <span class="trend-value">March <i class="fas fa-arrow-up" style="color: var(--primary); font-size: 0.8rem; margin-left: 0.35rem;"></i></span>
+                        </div>
+                        
+                        <div class="trend-data">
+                            <span class="trend-label">Lowest Month</span>
+                            <span class="trend-value">January <i class="fas fa-arrow-down" style="color: var(--danger); font-size: 0.8rem; margin-left: 0.35rem;"></i></span>
+                        </div>
+                        
+                        <div class="trend-data">
+                            <span class="trend-label">Average</span>
+                            <span class="trend-value">980 kg</span>
+                        </div>
+                        
+                        <div class="trend-data">
+                            <span class="trend-label">Overall Trend</span>
+                            <span class="trend-value" style="color: var(--primary);">Increasing</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Category Details Cards -->
+                <div class="card card-md slide-in-up" style="--delay: 0.4s">
+                    <div class="section-header">
+                        <h2 class="section-title">Category Breakdown</h2>
+                    </div>
+                    
+                    <!-- Recyclables -->
+                    <div class="progress-item recyclable">
+                        <div class="progress-container">
+                            <svg class="progress-svg">
+                                <circle class="circle-bg" cx="18" cy="18" r="16"></circle>
+                                <circle class="circle animate-circle" cx="18" cy="18" r="16" stroke-dasharray="65, 100"></circle>
+                            </svg>
+                            <div class="circle-icon">
+                                <i class="fas fa-recycle"></i>
+                            </div>
+                        </div>
+                        <div class="progress-content">
+                            <h3 class="progress-title">Recyclables</h3>
+                            <p class="progress-value">780 kg collected this month</p>
+                            <div class="trend trend-up">
+                                <i class="fas fa-arrow-up trend-icon"></i>
+                                <span>12% increase from last month</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Organic Waste -->
+                    <div class="progress-item organic">
+                        <div class="progress-container">
+                            <svg class="progress-svg">
+                                <circle class="circle-bg" cx="18" cy="18" r="16"></circle>
+                                <circle class="circle animate-circle" cx="18" cy="18" r="16" stroke-dasharray="25, 100"></circle>
+                            </svg>
+                            <div class="circle-icon">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                        </div>
+                        <div class="progress-content">
+                            <h3 class="progress-title">Organic Waste</h3>
+                            <p class="progress-value">300 kg collected this month</p>
+                            <div class="trend trend-down">
+                                <i class="fas fa-arrow-down trend-icon"></i>
+                                <span>8% decrease from last month</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="action-button">
+                        <i class="fas fa-list-ul"></i>
+                        <span>View All Categories</span>
+                    </a>
+                </div>
+                
+                <!-- Performance Card -->
+                <div class="card card-md slide-in-up" style="--delay: 0.5s">
+                    <div class="section-header">
+                        <h2 class="section-title">Performance Metrics</h2>
+                    </div>
+                    
+                    <!-- Non-recyclables -->
+                    <div class="progress-item non-recyclable">
+                        <div class="progress-container">
+                            <svg class="progress-svg">
+                                <circle class="circle-bg" cx="18" cy="18" r="16"></circle>
+                                <circle class="circle animate-circle" cx="18" cy="18" r="16" stroke-dasharray="10, 100"></circle>
+                            </svg>
+                            <div class="circle-icon">
+                                <i class="fas fa-trash-alt"></i>
+                            </div>
+                        </div>
+                        <div class="progress-content">
+                            <h3 class="progress-title">Non-recyclables</h3>
+                            <p class="progress-value">120 kg collected this month</p>
+                            <div class="trend trend-down trend-up">
+                                <i class="fas fa-arrow-down trend-icon"></i>
+                                <span>15% decrease from last month</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hazardous Waste -->
+                    <div class="progress-item hazardous">
+                        <div class="progress-container">
+                            <svg class="progress-svg">
+                                <circle class="circle-bg" cx="18" cy="18" r="16"></circle>
+                                <circle class="circle animate-circle" cx="18" cy="18" r="16" stroke-dasharray="5, 100"></circle>
+                            </svg>
+                            <div class="circle-icon">
+                                <i class="fas fa-radiation"></i>
+                            </div>
+                        </div>
+                        <div class="progress-content">
+                            <h3 class="progress-title">Hazardous Waste</h3>
+                            <p class="progress-value">60 kg collected this month</p>
+                            <div class="trend trend-down trend-up">
+                                <i class="fas fa-arrow-down trend-icon"></i>
+                                <span>10% decrease from last month</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="action-button action-button-primary">
+                        <i class="fas fa-chart-line"></i>
+                        <span>View Performance Report</span>
+                    </a>
+                </div>
+                
+                <!-- Environmental Impact Card -->
+                <div class="card card-lg slide-in-up" style="--delay: 0.6s">
+                    <div class="section-header">
+                        <h2 class="section-title">Environmental Impact</h2>
+                        <a href="#" class="view-link">
+                            <span>View Details</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="environmentalImpactChart"></canvas>
+                    </div>
+                    
+                    <div class="trend-info">
+                        <div class="trend-data">
+                            <span class="trend-label">CO₂ Reduction</span>
+                            <span class="trend-value">2.4 tons</span>
+                        </div>
+                        
+                        <div class="trend-data">
+                            <span class="trend-label">Trees Saved</span>
+                            <span class="trend-value">42</span>
+                        </div>
+                        
+                        <div class="trend-data">
+                            <span class="trend-label">Water Saved</span>
+                            <span class="trend-value">12,500 L</span>
+                        </div>
+                        
+                        <div class="trend-data">
+                            <span class="trend-label">Energy Saved</span>
+                            <span class="trend-value">850 kWh</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Call to Action Cards -->
+                <div class="card card-md slide-in-up" style="--delay: 0.7s">
+                    <div class="section-header">
+                        <h2 class="section-title">Optimization Opportunities</h2>
+                    </div>
+                    
+                    <div style="padding: 1rem; background-color: var(--light); border-radius: var(--radius-md); margin-bottom: 1rem;">
+                        <h3 style="font-size: 1rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-lightbulb" style="color: var(--accent);"></i>
+                            Improve Organic Waste Collection
+                        </h3>
+                        <p style="font-size: 0.9rem; color: var(--gray); margin-bottom: 0.5rem;">Organic waste collection can be improved by 15% by focusing on residential areas in the North District.</p>
+                        <a href="#" style="color: var(--primary); font-size: 0.85rem; font-weight: 500; text-decoration: none; display: flex; align-items: center; gap: 0.35rem;">
+                            <span>View Action Plan</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                    
+                    <div style="padding: 1rem; background-color: var(--light); border-radius: var(--radius-md);">
+                        <h3 style="font-size: 1rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i>
+                            Address Hazardous Waste Spike
+                        </h3>
+                        <p style="font-size: 0.9rem; color: var(--gray); margin-bottom: 0.5rem;">Recent increase in electronic waste detected. Implement special collection days for electronics recycling.</p>
+                        <a href="#" style="color: var(--primary); font-size: 0.85rem; font-weight: 500; text-decoration: none; display: flex; align-items: center; gap: 0.35rem;">
+                            <span>View Recommendation</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                    
+                    <a href="#" class="action-button" style="margin-top: 1rem;">
+                        <i class="fas fa-tasks"></i>
+                        <span>View All Recommendations</span>
+                    </a>
+                </div>
+                
+                <!-- Educational Resources Card -->
+                <div class="card card-md slide-in-up" style="--delay: 0.8s">
+                    <div class="section-header">
+                        <h2 class="section-title">Resources & Education</h2>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: var(--radius-md); background-color: var(--light);">
+                            <div style="width: 40px; height: 40px; border-radius: var(--radius-md); background-color: var(--primary-light); color: var(--primary-dark); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 0.95rem; font-weight: 500; margin-bottom: 0.25rem;">Waste Sorting Guide</h3>
+                                <p style="font-size: 0.85rem; color: var(--gray);">Updated comprehensive guide for waste categorization</p>
+                            </div>
+                            <a href="#" style="color: var(--primary); font-size: 1.25rem;">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: var(--radius-md); background-color: var(--light);">
+                            <div style="width: 40px; height: 40px; border-radius: var(--radius-md); background-color: var(--secondary-light); color: var(--secondary); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 0.95rem; font-weight: 500; margin-bottom: 0.25rem;">Training Video: Waste Analysis</h3>
+                                <p style="font-size: 0.85rem; color: var(--gray);">Learn how to use waste analysis data effectively</p>
+                            </div>
+                            <a href="#" style="color: var(--primary); font-size: 1.25rem;">
+                                <i class="fas fa-play-circle"></i>
+                            </a>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; padding: 0.75rem; border-radius: var(--radius-md); background-color: var(--light);">
+                            <div style="width: 40px; height: 40px; border-radius: var(--radius-md); background-color: rgba(251, 188, 5, 0.2); color: var(--accent); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-clipboard-list"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 0.95rem; font-weight: 500; margin-bottom: 0.25rem;">Best Practices Checklist</h3>
+                                <p style="font-size: 0.85rem; color: var(--gray);">Optimize your waste management workflow</p>
+                            </div>
+                            <a href="#" style="color: var(--primary); font-size: 1.25rem;">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="action-button" style="margin-top: 1rem;">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>View Resource Library</span>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // DOM Elements
+        const sidebar = document.querySelector('.sidebar');
+        const mobileToggle = document.querySelector('.mobile-toggle');
+        const tabItems = document.querySelectorAll('.tab-item');
+        const filterBtn = document.getElementById('apply-filters');
+        const timePeriodSelect = document.getElementById('time-period');
+        const locationSelect = document.getElementById('location');
+        
+        // Mobile toggle functionality
+        mobileToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+        
+        // Tab functionality
+        tabItems.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                tabItems.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // In a real app, you would switch content based on tab here
+                console.log(`Switched to ${tab.dataset.tab} tab`);
+                
+                // For demo, update the charts when switching tabs
+                updateCharts();
+            });
+        });
+        
+        // Filter functionality
+        filterBtn?.addEventListener('click', () => {
+            const timePeriod = timePeriodSelect.value;
+            const location = locationSelect.value;
+            
+            console.log(`Applying filters: Time period = ${timePeriod}, Location = ${location}`);
+            
+            // In a real app, you would fetch data based on filters here
+            
+            // For demo, update the charts when filters change
+            updateCharts();
+            
+            // Show notification
+            showNotification(`Filters applied: ${timePeriod} for ${location === 'all' ? 'All Locations' : location}`);
+        });
+        
+        // Animation for circular progress
+        function animateCircles() {
+            const circles = document.querySelectorAll('.animate-circle');
+            
+            circles.forEach(circle => {
+                // Get the stroke-dasharray value from the element
+                const dashArray = circle.getAttribute('stroke-dasharray').split(',')[0];
+                
+                // First set it to 0
+                circle.setAttribute('stroke-dasharray', '0, 100');
+                
+                // Then animate to the actual value
+                setTimeout(() => {
+                    circle.setAttribute('stroke-dasharray', `${dashArray}, 100`);
+                    circle.style.transition = 'stroke-dasharray 1.5s ease';
+                }, 300);
+            });
+        }
+        
+        // Chart Initialization
+        function initCharts() {
+            // Waste Composition Chart
+            const wasteCompositionCtx = document.getElementById('wasteCompositionChart').getContext('2d');
+            const wasteCompositionChart = new Chart(wasteCompositionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Recyclables', 'Organic Waste', 'Non-recyclables', 'Hazardous'],
+                    datasets: [{
+                        data: [65, 25, 10, 5],
+                        backgroundColor: [
+                            '#34A853',  // Primary (Green)
+                            '#FBBC05',  // Accent (Yellow)
+                            '#4285F4',  // Secondary (Blue)
+                            '#EA4335'   // Danger (Red)
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true
+                    }
+                }
+            });
+            
+            // Monthly Trend Chart
+            const monthlyTrendCtx = document.getElementById('monthlyTrendChart').getContext('2d');
+            const monthlyTrendChart = new Chart(monthlyTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Recyclables',
+                        data: [650, 700, 780, 720, 750, 780],
+                        borderColor: '#34A853',
+                        backgroundColor: 'rgba(52, 168, 83, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Organic Waste',
+                        data: [320, 350, 300, 280, 270, 300],
+                        borderColor: '#FBBC05',
+                        backgroundColor: 'rgba(251, 188, 5, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Non-recyclables',
+                        data: [180, 160, 150, 140, 130, 120],
+                        borderColor: '#4285F4',
+                        backgroundColor: 'rgba(66, 133, 244, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Waste (kg)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        intersect: false
+                    },
+                    animation: {
+                        duration: 1500
+                    }
+                }
+            });
+            
+            // Environmental Impact Chart
+            const environmentalImpactCtx = document.getElementById('environmentalImpactChart').getContext('2d');
+            const environmentalImpactChart = new Chart(environmentalImpactCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'CO₂ Reduction (kg)',
+                        data: [320, 380, 420, 450, 480, 520],
+                        backgroundColor: 'rgba(52, 168, 83, 0.7)'
+                    },
+                    {
+                        label: 'Water Saved (kL)',
+                        data: [8.5, 9.2, 10.5, 11.0, 11.8, 12.5],
+                        backgroundColor: 'rgba(66, 133, 244, 0.7)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Impact Values'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    animation: {
+                        duration: 1500
+                    }
+                }
+            });
+            
+            // Store chart references for later updates
+            window.appCharts = {
+                wasteComposition: wasteCompositionChart,
+                monthlyTrend: monthlyTrendChart,
+                environmentalImpact: environmentalImpactChart
+            };
+        }
+        
+        // Update Charts with new data (simulated)
+        function updateCharts() {
+            if (!window.appCharts) return;
+            
+            // Get the selected time period and location
+            const timePeriod = timePeriodSelect.value;
+            const location = locationSelect.value;
+            
+            // Simulate different data based on filters
+            let wasteData, trendData, impactData;
+            
+            if (timePeriod === 'last-month') {
+                wasteData = [60, 28, 12, 5];
+                trendData = {
+                    recyclables: [620, 640, 650, 670, 690, 700],
+                    organic: [340, 330, 320, 310, 320, 330],
+                    nonRecyclable: [200, 190, 180, 170, 160, 150]
+                };
+                impactData = {
+                    co2: [300, 320, 350, 370, 390, 410],
+                    water: [7.5, 8.2, 8.8, 9.5, 10.2, 10.8]
+                };
+            } else if (timePeriod === 'quarter') {
+                wasteData = [58, 30, 8, 4];
+                trendData = {
+                    recyclables: [580, 600, 620, 640, 680, 720],
+                    organic: [300, 310, 320, 330, 320, 310],
+                    nonRecyclable: [120, 110, 100, 90, 85, 80]
+                };
+                impactData = {
+                    co2: [350, 380, 410, 440, 470, 500],
+                    water: [9.0, 9.5, 10.0, 10.5, 11.0, 11.5]
+                };
+            } else {
+                // Default (current month)
+                wasteData = [65, 25, 10, 5];
+                trendData = {
+                    recyclables: [650, 700, 780, 720, 750, 780],
+                    organic: [320, 350, 300, 280, 270, 300],
+                    nonRecyclable: [180, 160, 150, 140, 130, 120]
+                };
+                impactData = {
+                    co2: [320, 380, 420, 450, 480, 520],
+                    water: [8.5, 9.2, 10.5, 11.0, 11.8, 12.5]
+                };
+            }
+            
+            // If location filter is applied, modify data slightly
+            if (location !== 'all') {
+                wasteData = wasteData.map(val => val * (0.9 + Math.random() * 0.2));
+                
+                Object.keys(trendData).forEach(key => {
+                    trendData[key] = trendData[key].map(val => val * (0.9 + Math.random() * 0.2));
+                });
+                
+                Object.keys(impactData).forEach(key => {
+                    impactData[key] = impactData[key].map(val => val * (0.9 + Math.random() * 0.2));
+                });
+            }
+            
+            // Update waste composition chart
+            window.appCharts.wasteComposition.data.datasets[0].data = wasteData;
+            window.appCharts.wasteComposition.update();
+            
+            // Update monthly trend chart
+            window.appCharts.monthlyTrend.data.datasets[0].data = trendData.recyclables;
+            window.appCharts.monthlyTrend.data.datasets[1].data = trendData.organic;
+            window.appCharts.monthlyTrend.data.datasets[2].data = trendData.nonRecyclable;
+            window.appCharts.monthlyTrend.update();
+            
+            // Update environmental impact chart
+            window.appCharts.environmentalImpact.data.datasets[0].data = impactData.co2;
+            window.appCharts.environmentalImpact.data.datasets[1].data = impactData.water;
+            window.appCharts.environmentalImpact.update();
+            
+            // Also update the summary cards
+            updateSummaryCards(wasteData);
+            
+            // And animate the circular progress
+            animateCircles();
+        }
+        
+        function updateSummaryCards(wasteData) {
+            // Update the summary cards with the new data
+            const [recyclables, organic, nonRecyclable] = wasteData;
+            
+            // Calculate total waste
+            const total = Math.round((recyclables / 100 * 1200) + (organic / 100 * 1200) + (nonRecyclable / 100 * 1200));
+            
+            // Update the summary cards
+            document.querySelector('.summary-cards .summary-card:nth-child(1) .summary-value').textContent = `${total} kg`;
+            document.querySelector('.summary-cards .summary-card:nth-child(2) .summary-value').textContent = `${recyclables}%`;
+            document.querySelector('.summary-cards .summary-card:nth-child(3) .summary-value').textContent = `${organic}%`;
+            document.querySelector('.summary-cards .summary-card:nth-child(4) .summary-value').textContent = `${nonRecyclable}%`;
+        }
+        
+        // Notification system
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.right = '20px';
+            notification.style.backgroundColor = 'var(--white)';
+            notification.style.padding = '15px 20px';
+            notification.style.borderRadius = 'var(--radius-md)';
+            notification.style.boxShadow = 'var(--shadow-lg)';
+            notification.style.zIndex = '2000';
+            notification.style.display = 'flex';
+            notification.style.alignItems = 'center';
+            notification.style.gap = '15px';
+            notification.style.maxWidth = '350px';
+            notification.style.transform = 'translateY(100px)';
+            notification.style.opacity = '0';
+            notification.style.transition = 'all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55)';
+            
+            // Notification icon
+            const icon = document.createElement('div');
+            icon.style.width = '40px';
+            icon.style.height = '40px';
+            icon.style.backgroundColor = 'var(--primary-light)';
+            icon.style.color = 'var(--primary-dark)';
+            icon.style.borderRadius = '50%';
+            icon.style.display = 'flex';
+            icon.style.alignItems = 'center';
+            icon.style.justifyContent = 'center';
+            icon.style.flexShrink = '0';
+            
+            const iconElement = document.createElement('i');
+            iconElement.className = 'fas fa-filter';
+            icon.appendChild(iconElement);
+            
+            // Notification content
+            const content = document.createElement('div');
+            content.style.flex = '1';
+            
+            const title = document.createElement('div');
+            title.style.fontWeight = '500';
+            title.style.marginBottom = '5px';
+            title.textContent = 'Filters Applied';
+            
+            const text = document.createElement('div');
+            text.style.fontSize = '0.9rem';
+            text.style.color = 'var(--gray)';
+            text.textContent = message;
+            
+            content.appendChild(title);
+            content.appendChild(text);
+            
+            // Close button
+            const closeBtn = document.createElement('button');
+            closeBtn.style.background = 'none';
+            closeBtn.style.border = 'none';
+            closeBtn.style.color = 'var(--gray)';
+            closeBtn.style.cursor = 'pointer';
+            closeBtn.style.fontSize = '1rem';
+            closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            
+            closeBtn.addEventListener('click', () => {
+                removeNotification();
+            });
+            
+            // Append all elements
+            notification.appendChild(icon);
+            notification.appendChild(content);
+            notification.appendChild(closeBtn);
+            
+            // Add to body
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateY(0)';
+                notification.style.opacity = '1';
+            }, 100);
+            
+            // Auto-remove after 5 seconds
+            const timeout = setTimeout(() => {
+                removeNotification();
+            }, 5000);
+            
+            function removeNotification() {
+                clearTimeout(timeout);
+                notification.style.transform = 'translateY(100px)';
+                notification.style.opacity = '0';
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        document.body.removeChild(notification);
+                    }
+                }, 500);
+            }
+        }
+        
+        // Initialize on document load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize charts
+            initCharts();
+            
+            // Animate circles
+            animateCircles();
+            
+            // Simulate data loading
+            setTimeout(() => {
+                document.querySelectorAll('.card').forEach(card => {
+                    card.classList.add('fade-in');
+                });
+            }, 300);
+            
+            // Add hover effect to progress items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    item.style.transform = 'translateY(-5px)';
+                    item.style.boxShadow = 'var(--shadow-md)';
+                    const circle = item.querySelector('.circle');
+                    if (circle) {
+                        circle.style.strokeWidth = '4';
+                    }
+                });
+                
+                item.addEventListener('mouseleave', () => {
+                    item.style.transform = 'translateY(0)';
+                    item.style.boxShadow = 'none';
+                    const circle = item.querySelector('.circle');
+                    if (circle) {
+                        circle.style.strokeWidth = '3';
+                    }
+                });
+            });
+            
+            // Show sample notification after page load
+            setTimeout(() => {
+                showNotification('Showing data for Current Month in All Locations');
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Anime Video Generator - Real Time</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f5ff;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #4a6ee0;
+            margin-bottom: 10px;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .input-section, .output-section {
+            margin-bottom: 30px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            resize: vertical;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .settings-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        select, input[type="range"], input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4a6ee0;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #3a5bc0;
+        }
+        button:disabled {
+            background-color: #b0b0b0;
+            cursor: not-allowed;
+        }
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .progress-container {
+            margin: 20px 0;
+            display: none;
+        }
+        .progress-bar {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            width: 0%;
+            background-color: #4a6ee0;
+            transition: width 0.3s;
+        }
+        .status {
+            text-align: center;
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            display: none;
+        }
+        video {
+            width: 100%;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .api-key-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .api-key-section h3 {
+            margin-top: 0;
+            color: #4a6ee0;
+        }
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin: 10px 0;
+            display: none;
+        }
+        .tab-container {
+            margin-bottom: 20px;
+        }
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #555;
+        }
+        .tab-btn.active {
+            border-bottom: 3px solid #4a6ee0;
+            color: #4a6ee0;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .storyboard-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .storyboard-frame {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+        }
+        .storyboard-frame img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 3px;
+        }
+        .storyboard-frame p {
+            margin: 5px 0 0 0;
+            font-size: 12px;
+            color: #666;
+        }
+        .advanced-options {
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .advanced-toggle {
+            background: none;
+            border: none;
+            color: #4a6ee0;
+            cursor: pointer;
+            padding: 0;
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .advanced-toggle::before {
+            content: '►';
+            display: inline-block;
+            margin-right: 5px;
+            font-size: 10px;
+            transition: transform 0.3s;
+        }
+        .advanced-toggle.open::before {
+            transform: rotate(90deg);
+        }
+        .advanced-content {
+            display: none;
+        }
+        .advanced-content.open {
+            display: block;
+        }
+        .disclaimer {
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Text to Anime Video Generator</h1>
+        <p>Create high-quality anime videos from your text descriptions - 3-4 minute duration</p>
+    </header>
+
+    <div class="container">
+        <div class="api-key-section">
+            <h3>API Configuration</h3>
+            <p>Enter your API key to connect to the anime generation service:</p>
+            <div class="controls">
+                <div class="settings-group">
+                    <label for="api-service">Select API Service:</label>
+                    <select id="api-service">
+                        <option value="stability">Stability AI</option>
+                        <option value="runwayml">RunwayML</option>
+                        <option value="replicate">Replicate</option>
+                        <option value="custom">Custom API Endpoint</option>
+                    </select>
+                </div>
+                <div class="settings-group">
+                    <label for="api-key">API Key:</label>
+                    <input type="text" id="api-key" placeholder="Enter your API key here">
+                </div>
+            </div>
+            <div id="custom-endpoint" style="display: none; margin-top: 15px;">
+                <label for="custom-api-url">Custom API Endpoint URL:</label>
+                <input type="text" id="custom-api-url" placeholder="https://your-api-endpoint.com/generate">
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="prompt-tab">Script & Settings</button>
+                <button class="tab-btn" data-tab="storyboard-tab">Storyboard</button>
+                <button class="tab-btn" data-tab="result-tab">Result</button>
+            </div>
+
+            <div id="prompt-tab" class="tab-content active">
+                <div class="input-section">
+                    <label for="prompt">Describe your anime scene in detail:</label>
+                    <textarea id="prompt" placeholder="Write a detailed description of the anime video you want to generate. Include character descriptions, settings, actions, and style preferences. The more details you provide, the better the result."></textarea>
+                    
+                    <div class="controls">
+                        <div class="settings-group">
+                            <label for="style">Animation Style:</label>
+                            <select id="style">
+                                <option value="anime-standard">Classic Anime</option>
+                                <option value="anime-cinematic">Cinematic Anime</option>
+                                <option value="anime-ghibli">Studio Ghibli Style</option>
+                                <option value="anime-cyberpunk">Cyberpunk Anime</option>
+                                <option value="anime-fantasy">Fantasy Anime</option>
+                                <option value="anime-scifi">Sci-Fi Anime</option>
+                                <option value="anime-noir">Anime Noir</option>
+                            </select>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <label for="duration">Duration (minutes):</label>
+                            <input type="range" id="duration" min="1" max="5" step="0.5" value="3" oninput="durationOutput.value = this.value">
+                            <output id="durationOutput">3</output>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <label for="quality">Rendering Quality:</label>
+                            <select id="quality">
+                                <option value="standard">Standard (Faster)</option>
+                                <option value="high" selected>High (Recommended)</option>
+                                <option value="ultra">Ultra HD (Slower)</option>
+                            </select>
+                        </div>
+
+                        <div class="settings-group">
+                            <label for="resolution">Resolution:</label>
+                            <select id="resolution">
+                                <option value="720p">720p (1280×720)</option>
+                                <option value="1080p" selected>1080p (1920×1080)</option>
+                                <option value="1440p">1440p (2560×1440)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="advanced-options">
+                        <button class="advanced-toggle" id="advanced-toggle">Advanced Options</button>
+                        <div class="advanced-content" id="advanced-content">
+                            <div class="controls">
+                                <div class="settings-group">
+                                    <label for="fps">Frame Rate (FPS):</label>
+                                    <select id="fps">
+                                        <option value="24">24 FPS (Cinematic)</option>
+                                        <option value="30" selected>30 FPS (Standard)</option>
+                                        <option value="60">60 FPS (Smooth)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="settings-group">
+                                    <label for="guidance-scale">Style Guidance Scale:</label>
+                                    <input type="range" id="guidance-scale" min="1" max="20" value="7" oninput="guidanceOutput.value = this.value">
+                                    <output id="guidanceOutput">7</output>
+                                    <small>Higher values adhere more strictly to your prompt</small>
+                                </div>
+                                
+                                <div class="settings-group">
+                                    <label for="seed">Random Seed (optional):</label>
+                                    <input type="number" id="seed" placeholder="Leave empty for random">
+                                    <small>Set for reproducible results</small>
+                                </div>
+                            </div>
+                            
+                            <div class="controls">
+                                <div class="settings-group">
+                                    <label for="negative-prompt">Negative Prompt (things to avoid):</label>
+                                    <textarea id="negative-prompt" placeholder="Elements you want to avoid in the generated video..." style="min-height: 60px;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="button-container">
+                        <button id="generate-btn">Generate Anime Video</button>
+                    </div>
+                    
+                    <div class="progress-container" id="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress" id="progress"></div>
+                        </div>
+                        <div class="status" id="status">Initializing...</div>
+                    </div>
+                    
+                    <div class="error-message" id="error-message"></div>
+                </div>
+            </div>
+            
+            <div id="storyboard-tab" class="tab-content">
+                <h3>Storyboard Preview</h3>
+                <p>Key frames from your generated anime video will appear here as they are processed.</p>
+                <div class="storyboard-container" id="storyboard-container">
+                    <!-- Storyboard frames will be added here dynamically -->
+                </div>
+            </div>
+
+            <div id="result-tab" class="tab-content">
+                <div class="output-section">
+                    <h3>Generated Anime Video</h3>
+                    <div class="video-container" id="video-container">
+                        <video id="result-video" controls>
+                            Your browser does not support the video element.
+                        </video>
+                    </div>
+                    <div class="button-container">
+                        <button id="download-btn" style="display: none;">Download Video</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            <p>Note: This tool connects to external AI video generation services. Usage may incur costs according to the API provider's pricing. Please ensure you have the necessary rights for any content you generate.</p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle advanced options
+        document.getElementById('advanced-toggle').addEventListener('click', function() {
+            const advancedContent = document.getElementById('advanced-content');
+            this.classList.toggle('open');
+            advancedContent.classList.toggle('open');
+        });
+        
+        // Tab functionality
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                
+                // Remove active class from all buttons and contents
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to current button and content
+                button.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Show/hide custom endpoint field based on API service selection
+        document.getElementById('api-service').addEventListener('change', function() {
+            const customEndpointDiv = document.getElementById('custom-endpoint');
+            if (this.value === 'custom') {
+                customEndpointDiv.style.display = 'block';
+            } else {
+                customEndpointDiv.style.display = 'none';
+            }
+        });
+        
+        // Generate video function
+        document.getElementById('generate-btn').addEventListener('click', function() {
+            // Get all input values
+            const apiService = document.getElementById('api-service').value;
+            const apiKey = document.getElementById('api-key').value;
+            const customApiUrl = document.getElementById('custom-api-url').value;
+            const prompt = document.getElementById('prompt').value;
+            const style = document.getElementById('style').value;
+            const duration = parseFloat(document.getElementById('duration').value);
+            const quality = document.getElementById('quality').value;
+            const resolution = document.getElementById('resolution').value;
+            const fps = document.getElementById('fps').value;
+            const guidanceScale = document.getElementById('guidance-scale').value;
+            const seed = document.getElementById('seed').value || Math.floor(Math.random() * 1000000);
+            const negativePrompt = document.getElementById('negative-prompt').value;
+            
+            // Validate inputs
+            if (!apiKey) {
+                showError('Please enter your API key');
+                return;
+            }
+            
+            if (apiService === 'custom' && !customApiUrl) {
+                showError('Please enter your custom API endpoint URL');
+                return;
+            }
+            
+            if (!prompt.trim()) {
+                showError('Please enter a description for your anime video');
+                return;
+            }
+            
+            // Hide any previous errors
+            document.getElementById('error-message').style.display = 'none';
+            
+            // Show progress container
+            document.getElementById('progress-container').style.display = 'block';
+            
+            // Reset progress bar
+            document.getElementById('progress').style.width = '0%';
+            document.getElementById('status').textContent = 'Initializing...';
+            
+            // Disable the generate button
+            document.getElementById('generate-btn').disabled = true;
+            
+            // Clear previous storyboard
+            document.getElementById('storyboard-container').innerHTML = '';
+            
+            // Select the prompt tab to show progress
+            document.querySelector('[data-tab="prompt-tab"]').click();
+            
+            // Create request payload based on selected API
+            let apiEndpoint;
+            let payload;
+            
+            if (apiService === 'custom') {
+                apiEndpoint = customApiUrl;
+            } else if (apiService === 'stability') {
+                apiEndpoint = 'https://api.stability.ai/v2/generation/video';
+                payload = {
+                    text_prompts: [
+                        { text: prompt, weight: 1.0 }
+                    ],
+                    height: getResolutionHeight(resolution),
+                    width: getResolutionWidth(resolution),
+                    output_format: 'mp4',
+                    duration_in_seconds: duration * 60,
+                    cfg_scale: parseFloat(guidanceScale),
+                    seed: parseInt(seed),
+                    fps: parseInt(fps)
+                };
+                
+                if (negativePrompt) {
+                    payload.text_prompts.push({ text: negativePrompt, weight: -1.0 });
+                }
+            } else if (apiService === 'runwayml') {
+                apiEndpoint = 'https://api.runwayml.com/v1/inference';
+                payload = {
+                    model: 'runway/gen-2',
+                    input: {
+                        prompt: prompt,
+                        negative_prompt: negativePrompt || undefined,
+                        num_frames: duration * 60 * parseInt(fps),
+                        width: getResolutionWidth(resolution),
+                        height: getResolutionHeight(resolution),
+                        guidance_scale: parseFloat(guidanceScale),
+                        seed: parseInt(seed)
+                    }
+                };
+            } else if (apiService === 'replicate') {
+                apiEndpoint = 'https://api.replicate.com/v1/predictions';
+                payload = {
+                    version: "2b017d9b67edd2ee1401238df49d75da53c523f36e363881e057f5dc3ed3c5b2", // Example model version
+                    input: {
+                        prompt: prompt,
+                        negative_prompt: negativePrompt || undefined,
+                        num_frames: duration * 60 * parseInt(fps),
+                        width: getResolutionWidth(resolution),
+                        height: getResolutionHeight(resolution),
+                        guidance_scale: parseFloat(guidanceScale),
+                        seed: parseInt(seed),
+                        fps: parseInt(fps)
+                    }
+                };
+            }
+            
+            // In a real implementation, we would make an API call here
+            // For this demo, we'll simulate the video generation process
+            
+            // Simulate API call and progress updates
+            simulateVideoGeneration(apiService, duration);
+        });
+        
+        // Function to simulate video generation (in a real implementation, this would be an actual API call)
+        function simulateVideoGeneration(apiService, duration) {
+            const totalFrames = Math.floor(duration * 60 * 30); // Assuming 30fps
+            const storyboardFrames = 12; // Number of storyboard frames to show
+            const storyboardInterval = Math.floor(totalFrames / storyboardFrames);
+            
+            let frameCount = 0;
+            const storyboardContainer = document.getElementById('storyboard-container');
+            
+            // Realistic generation steps with timings based on video length
+            const baseTime = duration * 10000; // Base time in ms scaled by duration
+            
+            const steps = [
+                { status: 'Analyzing prompt and generating concept...', progress: 5, time: baseTime * 0.1 },
+                { status: 'Creating storyboard...', progress: 15, time: baseTime * 0.15 },
+                { status: 'Developing character models...', progress: 25, time: baseTime * 0.1 },
+                { status: 'Generating background environments...', progress: 35, time: baseTime * 0.1 },
+                { status: 'Rendering initial frames...', progress: 45, time: baseTime * 0.15 },
+                { status: 'Processing animation sequences...', progress: 65, time: baseTime * 0.2 },
+                { status: 'Applying visual effects and style adjustments...', progress: 80, time: baseTime * 0.1 },
+                { status: 'Compositing final video...', progress: 90, time: baseTime * 0.05 },
+                { status: 'Finalizing export...', progress: 95, time: baseTime * 0.05 },
+                { status: 'Completed!', progress: 100, time: 1000 }
+            ];
+            
+            const progressBar = document.getElementById('progress');
+            const statusElem = document.getElementById('status');
+            
+            // Function to process each step
+            function processStep(stepIndex) {
+                if (stepIndex >= steps.length) {
+                    // All steps completed, show the video
+                    showGeneratedVideo();
+                    document.getElementById('generate-btn').disabled = false;
+                    return;
+                }
+                
+                const step = steps[stepIndex];
+                
+                // Update status text
+                statusElem.textContent = step.status;
+                
+                // Animate progress bar
+                progressBar.style.width = step.progress + '%';
+                
+                // If this is the storyboard step or beyond, start adding storyboard frames
+                if (stepIndex >= 1 && stepIndex < steps.length - 1) {
+                    // Calculate how many frames to add during this step
+                    const startFrame = frameCount;
+                    const endFrame = stepIndex === steps.length - 2 ? 
+                                   totalFrames : 
+                                   Math.floor(totalFrames * (step.progress / 100));
+                    const framesToAdd = Math.min(3, Math.floor((endFrame - startFrame) / storyboardInterval));
+                    
+                    // Add storyboard frames periodically
+                    for (let i = 0; i < framesToAdd; i++) {
+                        frameCount += storyboardInterval;
+                        if (frameCount <= totalFrames) {
+                            setTimeout(() => {
+                                addStoryboardFrame(frameCount);
+                            }, (step.time / framesToAdd) * i);
+                        }
+                    }
+                }
+                
+                // Schedule the next step
+                setTimeout(() => {
+                    processStep(stepIndex + 1);
+                }, step.time);
+            }
+            
+            // Start processing from the first step
+            processStep(0);
+        }
+        
+        // Function to add a storyboard frame
+        function addStoryboardFrame(frameNumber) {
+            const storyboardContainer = document.getElementById('storyboard-container');
+            const totalFrames = Math.floor(parseFloat(document.getElementById('duration').value) * 60 * 30);
+            
+            // Calculate timestamp for this frame
+            const seconds = Math.floor((frameNumber / totalFrames) * parseFloat(document.getElementById('duration').value) * 60);
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            const timestamp = `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+            
+            // Create storyboard frame element
+            const frameElement = document.createElement('div');
+            frameElement.className = 'storyboard-frame';
+            frameElement.innerHTML = `
+                <img src="/api/placeholder/320/180" alt="Frame ${frameNumber}">
+                <p>Frame ${frameNumber} (${timestamp})</p>
+            `;
+            
+            // Add to storyboard container
+            storyboardContainer.appendChild(frameElement);
+            
+            // Switch to storyboard tab occasionally
+            if (Math.random() > 0.7) {
+                document.querySelector('[data-tab="storyboard-tab"]').click();
+            }
+        }
+        
+        // Function to show the generated video
+        function showGeneratedVideo() {
+            // Set the video source to a placeholder
+            const videoElement = document.getElementById('result-video');
+            videoElement.src = '/api/placeholder/1920/1080';
+            
+            // Show the video container and download button
+            document.getElementById('video-container').style.display = 'block';
+            document.getElementById('download-btn').style.display = 'inline-block';
+            
+            // Switch to the result tab
+            document.querySelector('[data-tab="result-tab"]').click();
+            
+            // Update status
+            document.getElementById('status').textContent = 'Video generated successfully!';
+        }
+        
+        // Function to show error messages
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+        
+        // Helper function to get resolution dimensions
+        function getResolutionWidth(resolution) {
+            switch(resolution) {
+                case '720p': return 1280;
+                case '1080p': return 1920;
+                case '1440p': return 2560;
+                default: return 1920;
+            }
+        }
+        
+        function getResolutionHeight(resolution) {
+            switch(resolution) {
+                case '720p': return 720;
+                case '1080p': return 1080;
+                case '1440p': return 1440;
+                default: return 1080;
+            }
+        }
+        
+        // Add download button functionality
+        document.getElementById('download-btn').addEventListener('click', function() {
+            alert('In a real implementation, this would download the generated video.');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BiogasPro: Ernakulam Monitoring System</title>
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --secondary: #8BC34A;
+            --success: #43a047;
+            --warning: #FFC107;
+            --danger: #F44336;
+            --dark: #1B5E20;
+            --light: #E8F5E9;
+            --text: #212121;
+            --bg: #F1F8E9;
+            --accent: #009688;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(to right, var(--accent), var(--primary));
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 150, 136, 0.3);
+            z-index: 10;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-50%) translateX(-5px);
+            box-shadow: 0 6px 15px rgba(0, 150, 136, 0.4);
+        }
+        
+        .back-button svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: 80px; /* Make room for back button */
+        }
+        
+        .logo h1 {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.8rem;
+            background: linear-gradient(to right, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            fill: var(--accent);
+        }
+        
+        .location-badge {
+            background: linear-gradient(to right, var(--accent), var(--primary));
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-left: 10px;
+            position: relative;
+            top: -2px;
+        }
+        
+        .status-panel {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .status-badge {
+            background-color: var(--success);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 10px rgba(67, 160, 71, 0.3);
+        }
+        
+        .status-badge.online::before {
+            content: '';
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .plant-selector {
+            position: relative;
+        }
+        
+        .plant-selector select {
+            background-color: var(--light);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 8px 35px 8px 15px;
+            border-radius: 8px;
+            appearance: none;
+            font-size: 0.9rem;
+            color: var(--text);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .plant-selector select:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .plant-selector::after {
+            content: '';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid var(--primary);
+            pointer-events: none;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--accent), var(--primary));
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card h3 {
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .card-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: white;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            box-shadow: 0 6px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .methane .card-icon {
+            background: linear-gradient(135deg, #4CAF50, #81C784);
+            box-shadow: 0 6px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .pressure .card-icon {
+            background: linear-gradient(135deg, #FFC107, #FFD54F);
+            box-shadow: 0 6px 15px rgba(255, 193, 7, 0.3);
+        }
+        
+        .temperature .card-icon {
+            background: linear-gradient(135deg, #F44336, #EF9A9A);
+            box-shadow: 0 6px 15px rgba(244, 67, 54, 0.3);
+        }
+        
+        .ph .card-icon {
+            background: linear-gradient(135deg, #43a047, #81c784);
+            box-shadow: 0 6px 15px rgba(67, 160, 71, 0.3);
+        }
+        
+        .flow .card-icon {
+            background: linear-gradient(135deg, #009688, #4DB6AC);
+            box-shadow: 0 6px 15px rgba(0, 150, 136, 0.3);
+        }
+        
+        .value {
+            font-size: 2.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: baseline;
+            transition: color 0.3s ease;
+        }
+        
+        .value span {
+            font-size: 1.1rem;
+            margin-left: 5px;
+            color: #78909c;
+            font-weight: 400;
+        }
+        
+        .trend {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.04);
+            width: fit-content;
+        }
+        
+        .trend.up {
+            color: var(--success);
+            background-color: rgba(67, 160, 71, 0.1);
+        }
+        
+        .trend.down {
+            color: var(--danger);
+            background-color: rgba(244, 67, 54, 0.1);
+        }
+        
+        .graph-container {
+            width: 100%;
+            height: 100px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .graph {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+        }
+        
+        .bar {
+            flex: 1;
+            margin: 0 2px;
+            border-radius: 4px 4px 0 0;
+            animation: rise 1s ease-out forwards;
+            opacity: 0.7;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .bar:hover {
+            opacity: 1;
+            transform: scaleY(1.05);
+        }
+        
+        .methane .bar {
+            background: linear-gradient(to top, #4CAF50, #81C784);
+        }
+        
+        .pressure .bar {
+            background: linear-gradient(to top, #FFC107, #FFD54F);
+        }
+        
+        .temperature .bar {
+            background: linear-gradient(to top, #F44336, #EF9A9A);
+        }
+        
+        .ph .bar {
+            background: linear-gradient(to top, #43a047, #81c784);
+        }
+        
+        .flow .bar {
+            background: linear-gradient(to top, #009688, #4DB6AC);
+        }
+        
+        .chart-container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--accent), var(--primary));
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .chart-header h2 {
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .chart-legend {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+        
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+        }
+        
+        .legend-methane {
+            background-color: var(--primary);
+        }
+        
+        .legend-temp {
+            background-color: var(--danger);
+        }
+        
+        .legend-ph {
+            background-color: var(--success);
+        }
+        
+        .chart-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chart-control {
+            padding: 8px 16px;
+            border-radius: 8px;
+            background-color: var(--light);
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .chart-control.active {
+            background: linear-gradient(to right, var(--accent), var(--primary));
+            color: white;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            border: none;
+        }
+        
+        .chart {
+            width: 100%;
+            height: 340px;
+            position: relative;
+            margin-top: 10px;
+        }
+        
+        .chart-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .line {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke-width: 3;
+            stroke-linecap: round;
+            animation: drawLine 2s ease-in-out forwards;
+        }
+        
+        .methane-line {
+            stroke: var(--primary);
+        }
+        
+        .temperature-line {
+            stroke: var(--danger);
+        }
+        
+        .ph-line {
+            stroke: var(--success);
+        }
+        
+        .flow-line {
+            stroke: var(--accent);
+        }
+        
+        .chart-tooltips {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .tooltip-point {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: white;
+            border: 3px solid var(--primary);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .tooltip-point.visible {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+        
+        .tooltip-box {
+            position: absolute;
+            background-color: rgba(33, 33, 33, 0.95);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            transform: translate(-50%, -120%);
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tooltip-box.visible {
+            opacity: 1;
+            transform: translate(-50%, -130%);
+        }
+        
+        .tooltip-value {
+            font-weight: 600;
+        }
+        
+        .alerts-panel {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+        
+        .alerts {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .alerts::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--accent), var(--primary));
+        }
+        
+        .alerts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .alerts-header h2 {
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .alert-badge {
+            background: linear-gradient(to right, var(--danger), #C62828);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            animation: pulse 2s infinite;
+            box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+        }
+        
+        .alert-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 450px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .alert-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .alert-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 3px;
+        }
+        
+        .alert-list::-webkit-scrollbar-thumb {
+            background: rgba(76, 175, 80, 0.5);
+            border-radius: 3px;
+        }
+        
+        .alert-item {
+            display: flex;
+            gap: 15px;
+            padding: 18px;
+            border-radius: 12px;
+            background-color: rgba(244, 67, 54, 0.05);
+            border-left: 4px solid var(--danger);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+        
+        .alert-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .alert-item.warning {
+            background-color: rgba(255, 193, 7, 0.05);
+            border-left: 4px solid var(--warning);
+        }
+        
+        .alert-item.info {
+            background-color: rgba(76, 175, 80, 0.05);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .alert-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            background: linear-gradient(135deg, var(--danger), #C62828);
+            box-shadow: 0 6px 15px rgba(244, 67, 54, 0.3);
+        }
+        
+        .alert-item.warning .alert-icon {
+            background: linear-gradient(135deg, var(--warning), #FFA000);
+            box-shadow: 0 6px 15px rgba(255, 193, 7, 0.3);
+        }
+        
+        .alert-item.info .alert-icon {
+            background: linear-gradient(135deg, var(--primary), #388E3C);
+            box-shadow: 0 6px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .alert-content {
+            flex: 1;
+        }
+        
+        .alert-title {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        
+        .alert-message {
+            font-size: 0.9rem;
+            color: #546e7a;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .alert-time {
+            font-size: 0.8rem;
+            color: #78909c;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .alert-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .alert-actions button {
+            background: none;
+            border: none;
+            font-size: 0.8rem;
+            color: var(--accent);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .alert-actions button:hover {
+            background-color: rgba(0, 150, 136, 0.1);
+        }
+        
+        .system-status {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .system-status::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--accent), var(--primary));
+        }
+        
+        .status-header {
+            margin-bottom: 25px;
+        }
+        
+        .status-header h2 {
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .system-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .system-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-radius: 12px;
+            background-color: var(--light);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+        
+        .system-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .system-name {
+            font-weight: 500;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .system-name svg {
+            width: 22px;
+            height: 22px;
+            color: var(--accent);
+        }
+        
+        .system-status-badge {
+            font-size: 0.75rem;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            color: white;
+            background-color: var(--success);
+            box-shadow: 0 3px 8px rgba(67, 160, 71, 0.2);
+        }
+        
+        .system-status-badge.error {
+            background-color: var(--danger);
+            box-shadow: 0 3px 8px rgba(244, 67, 54, 0.2);
+        }
+        
+        .system-status-badge.warning {
+            background-color: var(--warning);
+            box-shadow: 0 3px 8px rgba(255, 193, 7, 0.2);
+        }
+        
+        .system-progress {
+            width: 100%;
+            height: 8px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .system-progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--accent), var(--primary));
+            transition: width 0.3s ease;
+        }
+        
+        .bubbles-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+        
+        .bubble {
+            position: absolute;
+            bottom: -50px;
+            background-color: rgba(0, 150, 136, 0.05);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                opacity: 0.5;
+                transform: scale(0.95);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 0.5;
+                transform: scale(0.95);
+            }
+        }
+        
+        @keyframes rise {
+            0% {
+                height: 0;
+            }
+            100% {
+                height: var(--height);
+            }
+        }
+        
+        @keyframes drawLine {
+            0% {
+                stroke-dashoffset: 1200;
+            }
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                bottom: -50px;
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                bottom: 120%;
+                opacity: 0;
+            }
+        }
+        
+        /* Controls and interactive elements */
+        .control-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+        
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .date-range svg {
+            color: var(--accent);
+        }
+        
+        .date-range span {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .control-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: white;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text);
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .control-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .export-btn {
+            background: linear-gradient(to right, var(--accent), var(--primary));
+            color: white;
+            border: none;
+        }
+        
+        .refresh-btn svg {
+            color: var(--accent);
+        }
+        
+        .refresh-btn.spin svg {
+            animation: spin 1s linear;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .alerts-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .control-panel {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .date-range {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+            
+            .back-button {
+                padding: 6px 12px;
+            }
+            
+            .location-badge {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <!-- <button class="back-button" id="back-button">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back
+            </button> -->
+            <div class="logo">
+                <svg viewBox="0 0 24 24">
+                    <path d="M4,10V14H6V10H4M8,10V14H10V10H8M12,10V14H14V10H12M16,10V14H18V10H16M20,10V14H22V10H20M3,3H21V8H3V3M3,16H21V21H3V16Z"></path>
+                </svg>
+                <h1>Biogas Monitor <span class="location-badge">Ernakulam</span></h1>
+            </div>
+            <div class="status-panel">
+                <div class="plant-selector">
+                    <select id="plant-selector">
+                        <option value="plant1">Ernakulam Central Plant</option>
+                        <option value="plant2">Kakkanad Facility</option>
+                        <option value="plant3">Aluva Municipal Plant</option>
+                        <option value="plant4">Kochi Port Terminal</option>
+                    </select>
+                </div>
+                <div class="status-badge online" id="system-status">System Online</div>
+            </div>
+        </header>
+        
+        <div class="control-panel">
+            <div class="date-range">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>March 15, 2025 - March 21, 2025</span>
+            </div>
+            <div class="controls">
+                <button class="control-btn refresh-btn" id="refresh-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 4v6h-6"></path>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    Refresh
+                </button>
+                <!-- <button class="control-btn export-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Export Data
+                </button> -->
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="card methane">
+                <div class="card-header">
+                    <h3>Methane Level</h3>
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="value" id="methane-value">68.5<span>%</span></div>
+                <div class="trend up" id="methane-trend">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                    2.3% from last hour
+                </div>
+                <div class="graph-container">
+                    <div class="graph methane-graph" id="methane-graph"></div>
+                </div>
+            </div>
+            
+            <div class="card pressure">
+                <div class="card-header">
+                    <h3>Pressure</h3>
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M16.2 7.8l-2 6.3-6.4 2.1 2-6.3z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="value" id="pressure-value">2.4<span>bar</span></div>
+                <div class="trend up" id="pressure-trend">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                    0.2 bar from last hour
+                </div>
+                <div class="graph-container">
+                    <div class="graph pressure-graph" id="pressure-graph"></div>
+                </div>
+            </div>
+            
+            <div class="card temperature">
+                <div class="card-header">
+                    <h3>Temperature</h3>
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="value" id="temp-value">42.3<span>°C</span></div>
+                <div class="trend down" id="temp-trend">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    1.2°C from last hour
+                </div>
+                <div class="graph-container">
+                    <div class="graph temperature-graph" id="temp-graph"></div>
+                </div>
+            </div>
+            
+            <div class="card ph">
+                <div class="card-header">
+                    <h3>pH Level</h3>
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                    </div>
+                </div>
+                <div class="value" id="ph-value">6.8<span>pH</span></div>
+                <div class="trend up" id="ph-trend">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                    0.2 from last hour
+                </div>
+                <div class="graph-container">
+                    <div class="graph ph-graph" id="ph-graph"></div>
+                </div>
+            </div>
+            
+            <div class="card flow">
+                <div class="card-header">
+                    <h3>Gas Flow Rate</h3>
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="value" id="flow-value">15.8<span>m³/h</span></div>
+                <div class="trend up" id="flow-trend">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                    1.2 m³/h from last hour
+                </div>
+                <div class="graph-container">
+                    <div class="graph flow-graph" id="flow-graph"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-header">
+                <h2>Production Analytics</h2>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-color legend-methane"></div>
+                        <span>Methane</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-temp"></div>
+                        <span>Temperature</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-ph"></div>
+                        <span>pH Level</span>
+                    </div>
+                </div>
+                <div class="chart-controls">
+                    <button class="chart-control active" data-period="24h">24h</button>
+                    <button class="chart-control" data-period="7d">7d</button>
+                    <button class="chart-control" data-period="30d">30d</button>
+                </div>
+            </div>
+            <div class="chart">
+                <div class="chart-line">
+                    <svg width="100%" height="100%" viewBox="0 0 1000 300">
+                        <!-- Methane Line -->
+                        <path class="line methane-line" d="M0,250 C50,240 100,220 150,180 C200,140 250,120 300,150 C350,180 400,190 450,170 C500,150 550,130 600,120 C650,110 700,90 750,70 C800,50 850,80 900,100 C950,120 1000,110 1000,100" stroke-dasharray="1200" stroke-dashoffset="1200"></path>
+                        
+                        <!-- Temperature Line -->
+                        <path class="line temperature-line" d="M0,150 C50,160 100,180 150,190 C200,200 250,210 300,190 C350,170 400,160 450,180 C500,200 550,210 600,220 C650,230 700,220 750,210 C800,200 850,190 900,180 C950,170 1000,160 1000,150" stroke-dasharray="1200" stroke-dashoffset="1200"></path>
+                        
+                        <!-- pH Line -->
+                        <path class="line ph-line" d="M0,200 C50,205 100,210 150,200 C200,190 250,180 300,185 C350,190 400,195 450,200 C500,205 550,210 600,205 C650,200 700,195 750,190 C800,185 850,180 900,185 C950,190 1000,195 1000,200" stroke-dasharray="1200" stroke-dashoffset="1200"></path>
+                        
+                        <!-- Grid Lines -->
+                        <line x1="0" y1="0" x2="1000" y2="0" stroke="#eceff1" stroke-width="1"></line>
+                        <line x1="0" y1="75" x2="1000" y2="75" stroke="#eceff1" stroke-width="1"></line>
+                        <line x1="0" y1="150" x2="1000" y2="150" stroke="#eceff1" stroke-width="1"></line>
+                        <line x1="0" y1="225" x2="1000" y2="225" stroke="#eceff1" stroke-width="1"></line>
+                        <line x1="0" y1="300" x2="1000" y2="300" stroke="#eceff1" stroke-width="1"></line>
+                        
+                        <line x1="0" y1="0" x2="0" y2="300" stroke="#eceff1" stroke-width="1"></line>
+                        <line x1="250" y1="0" x2="250" y2="300" stroke="#eceff1" stroke-width="1"></line>
+                        <line x1="500" y1="0" x2="500" y2="300" stroke="#eceff1" stroke-width="1"></line>
+                        <line x1="750" y1="0" x2="750" y2="300" stroke="#eceff1" stroke-width="1"></line>
+                        <line x1="1000" y1="0" x2="1000" y2="300" stroke="#eceff1" stroke-width="1"></line>
+                        
+                        <!-- Time Labels -->
+                        <text x="0" y="320" font-size="12" fill="#78909c">00:00</text>
+                        <text x="250" y="320" font-size="12" fill="#78909c">06:00</text>
+                        <text x="500" y="320" font-size="12" fill="#78909c">12:00</text>
+                        <text x="750" y="320" font-size="12" fill="#78909c">18:00</text>
+                        <text x="980" y="320" font-size="12" fill="#78909c">00:00</text>
+                        
+                        <!-- Value Labels -->
+                        <text x="0" y="15" font-size="12" fill="#78909c">100%</text>
+                        <text x="0" y="90" font-size="12" fill="#78909c">75%</text>
+                        <text x="0" y="165" font-size="12" fill="#78909c">50%</text>
+                        <text x="0" y="240" font-size="12" fill="#78909c">25%</text>
+                        <text x="0" y="295" font-size="12" fill="#78909c">0%</text>
+                    </svg>
+                </div>
+                <div class="chart-tooltips" id="chart-tooltips"></div>
+            </div>
+        </div>
+        
+        <div class="alerts-panel">
+            <div class="alerts">
+                <div class="alerts-header">
+                    <h2>Recent Alerts</h2>
+                    <div class="alert-badge" id="alert-count">3 New</div>
+                </div>
+                <div class="alert-list" id="alert-list">
+                    <div class="alert-item">
+                        <div class="alert-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </div>
+                        <div class="alert-content">
+                            <div class="alert-title">Temperature exceeded threshold (45°C)</div>
+                            <div class="alert-message">Digester #2 temperature reached critical level. Automatic cooling system activated.</div>
+                            <div class="alert-time">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                2 hours ago
+                            </div>
+                            <div class="alert-actions">
+                                <button>Mark as resolved</button>
+                                <button>View details</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert-item warning">
+                        <div class="alert-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </div>
+                        <div class="alert-content">
+                            <div class="alert-title">Methane production rate decreased by 15%</div>
+                            <div class="alert-message">Possible substrate composition issue. Recommended action: Check feed quality and adjust C/N ratio.</div>
+                            <div class="alert-time">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                5 hours ago
+                            </div>
+                            <div class="alert-actions">
+                                <button>Mark as resolved</button>
+                                <button>View details</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert-item info">
+                        <div class="alert-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                        </div>
+                        <div class="alert-content">
+                            <div class="alert-title">Scheduled maintenance reminder</div>
+                            <div class="alert-message">Gas analyzer calibration due in 2 days. Please schedule technician visit.</div>
+                            <div class="alert-time">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                Yesterday
+                            </div>
+                            <div class="alert-actions">
+                                <button>Mark as resolved</button>
+                                <button>View details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="system-status">
+                <div class="status-header">
+                    <h2>System Status</h2>
+                </div>
+                <div class="system-items">
+                    <div class="system-item">
+                        <div class="system-name">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                            </svg>
+                            Primary Digester
+                        </div>
+                        <div class="system-status-badge">Operational</div>
+                    </div>
+                    <div class="system-item">
+                        <div class="system-name">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M16.2 7.8l-2 6.3-6.4 2.1 2-6.3z"></path>
+                            </svg>
+                            Gas Purification
+                        </div>
+                        <div class="system-status-badge">Operational</div>
+                    </div>
+                    <div class="system-item">
+                        <div class="system-name">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            </svg>
+                            Storage Tank
+                        </div>
+                        <div class="system-status-badge">Operational</div>
+                        <div class="system-progress">
+                            <div class="system-progress-bar" style="width: 75%;"></div>
+                        </div>
+                    </div>
+                    <div class="system-item">
+                        <div class="system-name">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                            CHP Unit
+                        </div>
+                        <div class="system-status-badge warning">Maintenance</div>
+                    </div>
+                    <div class="system-item">
+                        <div class="system-name">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                                <line x1="6" y1="1" x2="6" y2="4"></line>
+                                <line x1="10" y1="1" x2="10" y2="4"></line>
+                                <line x1="14" y1="1" x2="14" y2="4"></line>
+                            </svg>
+                            Feed System
+                        </div>
+                        <div class="system-status-badge">Operational</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bubbles-container" id="bubbles"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize graphs
+            createBars(document.getElementById('methane-graph'), [60, 62, 65, 64, 63, 67, 68.5], 'methane');
+            createBars(document.getElementById('pressure-graph'), [2.0, 2.1, 2.2, 2.3, 2.3, 2.2, 2.4], 'pressure');
+            createBars(document.getElementById('temp-graph'), [45, 44.5, 44, 43.5, 42.5, 42, 42.3], 'temperature');
+            createBars(document.getElementById('ph-graph'), [6.5, 6.6, 6.7, 6.7, 6.7, 6.8, 6.8], 'ph');
+            createBars(document.getElementById('flow-graph'), [12.5, 13.2, 14.1, 14.5, 15.0, 15.5, 15.8], 'flow');
+            
+            // Create bubbles animation
+            createBubbles();
+            
+            // Add chart interactivity
+            setupChartInteractivity();
+            
+            // Setup chart controls
+            setupChartControls();
+            
+            // Setup refresh button
+            document.getElementById('refresh-btn').addEventListener('click', function() {
+                this.classList.add('spin');
+                setTimeout(() => {
+                    this.classList.remove('spin');
+                    updateAllValues();
+                }, 1000);
+            });
+            
+            // Setup plant selector
+            document.getElementById('plant-selector').addEventListener('change', function() {
+                updateAllValues();
+            });
+            
+            // Setup back button
+            document.getElementById('back-button').addEventListener('click', function() {
+                // Simulate going back
+                alert('Navigating back to dashboard selection...');
+                // In a real application, you would use window.location.href or history.back()
+            });
+            
+            // Start real-time data simulation
+            startRealTimeUpdates();
+        });
+        
+        function createBars(container, values, type) {
+            container.innerHTML = '';
+            const maxValue = Math.max(...values);
+            
+            for (let i = 0; i < values.length; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                
+                const heightPercentage = (values[i] / maxValue) * 100;
+                bar.style.setProperty('--height', `${heightPercentage}%`);
+                
+                // Add hover effect tooltip
+                bar.addEventListener('mouseenter', function() {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'tooltip';
+                    tooltip.textContent = values[i].toFixed(1);
+                    tooltip.style.position = 'absolute';
+                    tooltip.style.bottom = '100%';
+                    tooltip.style.left = '50%';
+                    tooltip.style.transform = 'translateX(-50%)';
+                    tooltip.style.backgroundColor = 'rgba(0,0,0,0.7)';
+                    tooltip.style.color = 'white';
+                    tooltip.style.padding = '4px 8px';
+                    tooltip.style.borderRadius = '4px';
+                    tooltip.style.fontSize = '12px';
+                    tooltip.style.pointerEvents = 'none';
+                    this.appendChild(tooltip);
+                });
+                
+                bar.addEventListener('mouseleave', function() {
+                    const tooltip = this.querySelector('.tooltip');
+                    if (tooltip) {
+                        this.removeChild(tooltip);
+                    }
+                });
+                
+                container.appendChild(bar);
+            }
+        }
+        
+        function createBubbles() {
+            const container = document.getElementById('bubbles');
+            const containerWidth = window.innerWidth;
+            
+            for (let i = 0; i < 50; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                
+                const size = Math.random() * 30 + 5;
+                const left = Math.random() * containerWidth;
+                const duration = Math.random() * 12 + 8;
+                const delay = Math.random() * 10;
+                
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.left = `${left}px`;
+                bubble.style.animationDuration = `${duration}s`;
+                bubble.style.animationDelay = `${delay}s`;
+                
+                container.appendChild(bubble);
+            }
+        }
+        
+        function setupChartInteractivity() {
+            const chart = document.querySelector('.chart');
+            const tooltips = document.getElementById('chart-tooltips');
+            
+            // Create tooltip points along the methane line
+            const points = [
+                { x: 0, y: 250, value: 25 },
+                { x: 150, y: 180, value: 55 },
+                { x: 300, y: 150, value: 62 },
+                { x: 450, y: 170, value: 58 },
+                { x: 600, y: 120, value: 68 },
+                { x: 750, y: 70, value: 76 },
+                { x: 1000, y: 100, value: 70 }
+            ];
+            
+            points.forEach(point => {
+                const tooltipPoint = document.createElement('div');
+                tooltipPoint.className = 'tooltip-point';
+                tooltipPoint.style.left = `${point.x / 10}%`;
+                tooltipPoint.style.top = `${point.y}px`;
+                
+                const tooltipBox = document.createElement('div');
+                tooltipBox.className = 'tooltip-box';
+                tooltipBox.style.left = `${point.x / 10}%`;
+                tooltipBox.style.top = `${point.y}px`;
+                tooltipBox.innerHTML = `
+                    <div>Methane: <span class="tooltip-value">${point.value}%</span></div>
+                    <div>Time: ${formatTime(point.x)}</div>
+                `;
+                
+                tooltipPoint.addEventListener('mouseenter', () => {
+                    tooltipPoint.classList.add('visible');
+                    tooltipBox.classList.add('visible');
+                });
+                
+                tooltipPoint.addEventListener('mouseleave', () => {
+                    tooltipPoint.classList.remove('visible');
+                    tooltipBox.classList.remove('visible');
+                });
+                
+                tooltips.appendChild(tooltipPoint);
+                tooltips.appendChild(tooltipBox);
+            });
+        }
+        
+        function formatTime(x) {
+            const hour = Math.floor((x / 1000) * 24);
+            const minute = Math.floor(((x / 1000) * 24 * 60) % 60);
+            return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+        }
+        
+        function setupChartControls() {
+            const controls = document.querySelectorAll('.chart-control');
+            controls.forEach(control => {
+                control.addEventListener('click', function() {
+                    controls.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Reset animation
+                    const lines = document.querySelectorAll('.line');
+                    lines.forEach(line => {
+                        line.style.strokeDashoffset = '1200';
+                        setTimeout(() => {
+                            line.style.animation = 'none';
+                            setTimeout(() => {
+                                line.style.animation = 'drawLine 2s ease-in-out forwards';
+                            }, 10);
+                        }, 10);
+                    });
+                    
+                    // Update chart data based on selected period
+                    const period = this.getAttribute('data-period');
+                    updateChartData(period);
+                });
+            });
+        }
+        
+        function updateChartData(period) {
+            // Simulate different data for different time periods
+            let methanePath, temperaturePath, phPath;
+            
+            switch(period) {
+                case '7d':
+                    methanePath = "M0,200 C100,180 200,160 300,170 C400,180 500,190 600,180 C700,160 800,150 900,120 C950,100 1000,90 1000,90";
+                    temperaturePath = "M0,170 C100,180 200,190 300,200 C400,180 500,170 600,190 C700,210 800,200 900,190 C950,180 1000,170 1000,170";
+                    phPath = "M0,190 C100,195 200,200 300,190 C400,180 500,185 600,190 C700,195 800,190 900,185 C950,180 1000,185 1000,185";
+                    break;
+                case '30d':
+                    methanePath = "M0,180 C100,170 200,160 300,140 C400,120 500,100 600,80 C700,90 800,100 900,110 C950,115 1000,120 1000,120";
+                    temperaturePath = "M0,120 C100,130 200,140 300,150 C400,160 500,170 600,180 C700,170 800,160 900,150 C950,140 1000,130 1000,130";
+                    phPath = "M0,180 C100,185 200,190 300,185 C400,180 500,175 600,180 C700,185 800,190 900,185 C950,180 1000,175 1000,175";
+                    break;
+                default: // 24h
+                    methanePath = "M0,250 C50,240 100,220 150,180 C200,140 250,120 300,150 C350,180 400,190 450,170 C500,150 550,130 600,120 C650,110 700,90 750,70 C800,50 850,80 900,100 C950,120 1000,110 1000,100";
+                    temperaturePath = "M0,150 C50,160 100,180 150,190 C200,200 250,210 300,190 C350,170 400,160 450,180 C500,200 550,210 600,220 C650,230 700,220 750,210 C800,200 850,190 900,180 C950,170 1000,160 1000,150";
+                    phPath = "M0,200 C50,205 100,210 150,200 C200,190 250,180 300,185 C350,190 400,195 450,200 C500,205 550,210 600,205 C650,200 700,195 750,190 C800,185 850,180 900,185 C950,190 1000,195 1000,200";
+                    break;
+            }
+            
+            document.querySelector('.methane-line').setAttribute('d', methanePath);
+            document.querySelector('.temperature-line').setAttribute('d', temperaturePath);
+            document.querySelector('.ph-line').setAttribute('d', phPath);
+        }
+        
+        function startRealTimeUpdates() {
+            setInterval(() => {
+                if (Math.random() > 0.7) { // Occasionally update values
+                    updateRandomValues();
+                }
+                
+                // Occasionally trigger alerts
+                if (Math.random() < 0.08) {
+                    triggerAlert();
+                }
+            }, 5000);
+        }
+        
+        function updateRandomValues() {
+            // Update a random parameter
+            const parameters = ['methane', 'pressure', 'temp', 'ph', 'flow'];
+            const parameter = parameters[Math.floor(Math.random() * parameters.length)];
+            
+            switch(parameter) {
+                case 'methane':
+                    updateMethane();
+                    break;
+                case 'pressure':
+                    updatePressure();
+                    break;
+                case 'temp':
+                    updateTemperature();
+                    break;
+                case 'ph':
+                    updatePH();
+                    break;
+                case 'flow':
+                    updateFlow();
+                    break;
+            }
+        }
+        
+        function updateAllValues() {
+            updateMethane();
+            updatePressure();
+            updateTemperature();
+            updatePH();
+            updateFlow();
+        }
+        
+        function updateMethane() {
+            const methaneValue = document.getElementById('methane-value');
+            const methaneTrend = document.getElementById('methane-trend');
+            
+            let currentMethane = parseFloat(methaneValue.textContent);
+            const methaneDelta = (Math.random() * 1.4) - 0.7; // More variation
+            currentMethane += methaneDelta;
+            currentMethane = Math.min(Math.max(currentMethane, 50), 80);
+            methaneValue.innerHTML = currentMethane.toFixed(1) + '<span>%</span>';
+            
+            // Update Color based on value - fixed the variable reference
+            if (currentMethane < 55) {
+                methaneValue.style.color = '#FFC107'; // warning color
+            } else if (currentMethane > 75) {
+                methaneValue.style.color = '#43a047'; // success color
+            } else {
+                methaneValue.style.color = '#212121'; // text color
+            }
+            
+            // Update Trend
+            if (methaneDelta > 0) {
+                methaneTrend.className = 'trend up';
+                methaneTrend.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                    ${Math.abs(methaneDelta).toFixed(1)}% from last hour
+                `;
+            } else {
+                methaneTrend.className = 'trend down';
+                methaneTrend.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    ${Math.abs(methaneDelta).toFixed(1)}% from last hour
+                `;
+            }
+            
+            // Update Graph
+            const values = [];
+            for (let i = 0; i < 6; i++) {
+                values.push(currentMethane - Math.random() * 5 + Math.random() * 5);
+            }
+            values.push(currentMethane);
+            createBars(document.getElementById('methane-graph'), values, 'methane');
+        }
+        
+        function updatePressure() {
+            const pressureValue = document.getElementById('pressure-value');
+            const pressureTrend = document.getElementById('pressure-trend');
+            
+            let currentPressure = parseFloat(pressureValue.textContent);
+            const pressureDelta = (Math.random() * 0.4) - 0.2;
+            currentPressure += pressureDelta;
+            currentPressure = Math.min(Math.max(currentPressure, 1.8), 3.0);
+            pressureValue.innerHTML = currentPressure.toFixed(1) + '<span>bar</span>';
+            
+            // Update Color based on value - fixed variable reference
+            if (currentPressure > 2.8) {
+                pressureValue.style.color = '#F44336'; // danger color
+            } else if (currentPressure < 2.0) {
+                pressureValue.style.color = '#FFC107'; // warning color
+            } else {
+                pressureValue.style.color = '#212121'; // text color
+            }
+            
+            // Update Trend
+            if (pressureDelta > 0) {
+                pressureTrend.className = 'trend up';
+                pressureTrend.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                    ${Math.abs(pressureDelta).toFixed(1)} bar from last hour
+                `;
+            } else {
+                pressureTrend.className = 'trend down';
+                pressureTrend.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    ${Math.abs(pressureDelta).toFixed(1)} bar from last hour
+                `;
+            }
+            
+            // Update Graph
+            const values = [];
+            for (let i = 0; i < 6; i++) {
+                values.push(currentPressure - Math.random() * 0.3 + Math.random() * 0.3);
+            }
+            values.push(currentPressure);
+            createBars(document.getElementById('pressure-graph'), values, 'pressure');
+        }
+        
+        function updateTemperature() {
+            const tempValue = document.getElementById('temp-value');
+            const tempTrend = document.getElementById('temp-trend');
+            
+            let currentTemp = parseFloat(tempValue.textContent);
+            const tempDelta = (Math.random() * 1.0) - 0.5;
+            currentTemp += tempDelta;
+            currentTemp = Math.min(Math.max(currentTemp, 35), 50);
+            tempValue.innerHTML = currentTemp.toFixed(1) + '<span>°C</span>';
+            
+            // Update Color based on value - fixed variable reference
+            if (currentTemp > 45) {
+                tempValue.style.color = '#F44336'; // danger color
+            } else if (currentTemp < 38) {
+                tempValue.style.color = '#FFC107'; // warning color
+            } else {
+                tempValue.style.color = '#212121'; // text color
+            }
+            
+            // Update Trend
+            if (tempDelta > 0) {
+                tempTrend.className = 'trend up';
+                tempTrend.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                    ${Math.abs(tempDelta).toFixed(1)}°C from last hour
+                `;
+            } else {
+                tempTrend.className = 'trend down';
+                tempTrend.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    ${Math.abs(tempDelta).toFixed(1)}°C from last hour
+                `;
+            }
+            
+            // Update Graph
+            const values = [];
+            for (let i = 0; i < 6; i++) {
+                values.push(currentTemp - Math.random() * 2 + Math.random() * 2);
+            }
+            values.push(currentTemp);
+            createBars(document.getElementById('temp-graph'), values, 'temperature');
+        }
+        
+        function updatePH() {
+            const phValue = document.getElementById('ph-value');
+            const phTrend = document.getElementById('ph-trend');
+            
+            let currentPH = parseFloat(phValue.textContent);
+            const phDelta = (Math.random() * 0.3) - 0.15;
+            currentPH += phDelta;
+            currentPH = Math.min(Math.max(currentPH, 6.0), 8.0);
+            phValue.innerHTML = currentPH.toFixed(1) + '<span>pH</span>';
+            
+            // Update Color based on value - fixed variable reference
+            if (currentPH < 6.5 || currentPH > 7.5) {
+                phValue.style.color = '#FFC107'; // warning color
+            } else {
+                phValue.style.color = '#212121'; // text color
+            }
+            
+            // Update Trend
+            if (phDelta > 0) {
+                phTrend.className = 'trend up';
+                phTrend.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                    ${Math.abs(phDelta).toFixed(1)} from last hour
+                `;
+            } else {
+                phTrend.className = 'trend down';
+                phTrend.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    ${Math.abs(phDelta).toFixed(1)} from last hour
+                `;
+            }
+            
+            // Update Graph
+            const values = [];
+            for (let i = 0; i < 6; i++) {
+                values.push(currentPH - Math.random() * 0.2 + Math.random() * 0.2);
+            }
+            values.push(currentPH);
+            createBars(document.getElementById('ph-graph'), values, 'ph');
+        }
+        
+        function updateFlow() {
+            const flowValue = document.getElementById('flow-value');
+            const flowTrend = document.getElementById('flow-trend');
+            
+            let currentFlow = parseFloat(flowValue.textContent);
+            const flowDelta = (Math.random() * 1.0) - 0.5;
+            currentFlow += flowDelta;
+            currentFlow = Math.min(Math.max(currentFlow, 10), 20);
+            flowValue.innerHTML = currentFlow.toFixed(1) + '<span>m³/h</span>';
+            
+            // Update Trend
+            if (flowDelta > 0) {
+                flowTrend.className = 'trend up';
+                flowTrend.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                    ${Math.abs(flowDelta).toFixed(1)} m³/h from last hour
+                `;
+            } else {
+                flowTrend.className = 'trend down';
+                flowTrend.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    ${Math.abs(flowDelta).toFixed(1)} m³/h from last hour
+                `;
+            }
+            
+            // Update Graph
+            const values = [];
+            for (let i = 0; i < 6; i++) {
+                values.push(currentFlow - Math.random() * 1.5 + Math.random() * 1.5);
+            }
+            values.push(currentFlow);
+            createBars(document.getElementById('flow-graph'), values, 'flow');
+        }
+        
+        function triggerAlert() {
+            const alertList = document.getElementById('alert-list');
+            const alertBadge = document.getElementById('alert-count');
+            
+            const alertTypes = [
+                {
+                    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                          </svg>`,
+                    title: 'Temperature fluctuation detected',
+                    message: 'Temperature in digester #1 has fluctuated by more than 2°C in the last 30 minutes.',
+                    time: 'Just now',
+                    class: ''
+                },
+                {
+                    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                          </svg>`,
+                    title: 'Methane production below expected range',
+                    message: 'Current methane yield is 15% below the expected production rate for this substrate mix.',
+                    time: 'Just now',
+                    class: 'warning'
+                },
+                {
+                    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                          </svg>`,
+                    title: 'pH level approaching critical range',
+                    message: 'The pH level is trending toward acidic conditions. Consider adjusting the feeding rate.',
+                    time: 'Just now',
+                    class: 'info'
+                },
+                {
+                    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                          </svg>`,
+                    title: 'Pressure increase detected',
+                    message: 'Pressure in the main storage tank has increased rapidly. Check relief valve functionality.',
+                    time: 'Just now',
+                    class: 'warning'
+                }
+            ];
+            
+            const randomAlert = alertTypes[Math.floor(Math.random() * alertTypes.length)];
+            
+            const alertItem = document.createElement('div');
+            alertItem.className = 'alert-item ' + randomAlert.class;
+            alertItem.innerHTML = `
+                <div class="alert-icon">
+                    ${randomAlert.icon}
+                </div>
+                <div class="alert-content">
+                    <div class="alert-title">${randomAlert.title}</div>
+                    <div class="alert-message">${randomAlert.message}</div>
+                    <div class="alert-time">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        ${randomAlert.time}
+                    </div>
+                    <div class="alert-actions">
+                        <button>Mark as resolved</button>
+                        <button>View details</button>
+                    </div>
+                </div>
+            `;
+            
+            // Animation for new alert
+            alertItem.style.animation = 'none';
+            alertItem.style.opacity = '0';
+            alertItem.style.transform = 'translateX(-20px)';
+            
+            // Insert at the top
+            alertList.insertBefore(alertItem, alertList.firstChild);
+            
+            // Trigger animation
+            setTimeout(() => {
+                alertItem.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                alertItem.style.opacity = '1';
+                alertItem.style.transform = 'translateX(0)';
+            }, 10);
+            
+            // Remove the last one if there are more than 5
+            if (alertList.children.length > 5) {
+                alertList.removeChild(alertList.lastChild);
+            }
+            
+            // Update alert badge
+            const currentCount = parseInt(alertBadge.textContent.split(' ')[0]) || 0;
+            Badge.textContent = `${currentCount + 1} New`;
+            
+            // Add click event to mark as resolved
+            const resolveButtons = alertItem.querySelectorAll('.alert-actions button');
+            resolveButtons[0].addEventListener('click', function(e) {
+                e.stopPropagation();
+                alertItem.style.opacity = '0';
+                alertItem.style.transform = 'translateX(20px)';
+                setTimeout(() => {
+                    alertList.removeChild(alertItem);
+                    // Update alert badge
+                    const currentCount = parseInt(alertBadge.textContent.split(' ')[0]) || 0;
+                    if (currentCount > 1) {
+                        alertBadge.textContent = `${currentCount - 1} New`;
+                    } else {
+                        alertBadge.textContent = `0 New`;
+                    }
+                }, 500);
+            });
+        }
+        
+        // Set the system status to occasionally change
+        setInterval(() => {
+            if (Math.random() < 0.05) { // 5% chance to change status
+                const statusBadge = document.getElementById('system-status');
+                const isOnline = statusBadge.classList.contains('online');
+                
+                if (isOnline) {
+                    statusBadge.classList.remove('online');
+                    statusBadge.textContent = 'System Degraded';
+                    statusBadge.style.backgroundColor = '#FFC107'; // warning color
+                    
+                    // Create special alert
+                    triggerSystemAlert();
+                } else {
+                    statusBadge.classList.add('online');
+                    statusBadge.textContent = 'System Online';
+                    statusBadge.style.backgroundColor = '';
+                }
+            }
+        }, 60000); // Check every minute
+        
+        function triggerSystemAlert() {
+            const alertList = document.getElementById('alert-list');
+            const alertBadge = document.getElementById('alert-count');
+            
+            const systemAlert = document.createElement('div');
+            systemAlert.className = 'alert-item warning';
+            systemAlert.innerHTML = `
+                <div class="alert-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </div>
+                <div class="alert-content">
+                    <div class="alert-title">System performance degraded</div>
+                    <div class="alert-message">Some monitoring systems are experiencing connection issues. Technician has been notified.</div>
+                    <div class="alert-time">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Just now
+                    </div>
+                    <div class="alert-actions">
+                        <button>Acknowledge</button>
+                        <button>View details</button>
+                    </div>
+                </div>
+            `;
+            
+            // Animation for system alert
+            systemAlert.style.animation = 'none';
+            systemAlert.style.opacity = '0';
+            systemAlert.style.transform = 'translateX(-20px)';
+            
+            // Insert at the top
+            alertList.insertBefore(systemAlert, alertList.firstChild);
+            
+            // Trigger animation
+            setTimeout(() => {
+                systemAlert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                systemAlert.style.opacity = '1';
+                systemAlert.style.transform = 'translateX(0)';
+            }, 10);
+            
+            // Update alert badge
+            const currentCount = parseInt(alertBadge.textContent.split(' ')[0]) || 0;
+            alert
+        }
+    </script>
+</body>
+</html>

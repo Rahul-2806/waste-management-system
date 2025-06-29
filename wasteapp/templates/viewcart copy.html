@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #6b48ff;
+            --secondary: #00ddeb;
+            --accent: #ff6b81;
+            --dark: #1a1b2e;
+            --light: #f5f7fa;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --accent-gradient: linear-gradient(135deg, var(--accent), #ff9a8b);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: linear-gradient(45deg, #f5f7fa 0%, #e4e9f0 100%);
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .back-home-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-home-btn:hover {
+            background: rgba(107, 72, 255, 0.1);
+            transform: translateX(-5px);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-logo i {
+            font-size: 1.8rem;
+            color: var(--primary);
+            animation: spin 4s linear infinite;
+        }
+
+        .nav-logo span {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-icon {
+            position: relative;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-icon i {
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+
+        .nav-icon:hover {
+            transform: scale(1.1);
+            color: var(--primary);
+        }
+
+        .badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            animation: pulse 2s infinite;
+        }
+
+        /* Back to top button */
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(107, 72, 255, 0.3);
+            z-index: 100;
+            transition: all 0.3s ease;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .back-button.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        .back-button i {
+            font-size: 1.2rem;
+        }
+
+        .back-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(107, 72, 255, 0.4);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 100px auto 0;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: var(--gradient);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(107, 72, 255, 0.2);
+            animation: slideUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+        }
+
+        .header-shapes {
+            position: absolute;
+            bottom: -20px;
+            right: 0;
+            width: 100%;
+            height: 60px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' opacity='.25' fill='%23FFFFFF'%3E%3C/path%3E%3Cpath d='M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z' opacity='.5' fill='%23FFFFFF'%3E%3C/path%3E%3Cpath d='M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z' fill='%23FFFFFF'%3E%3C/path%3E%3C/svg%3E");
+            background-size: cover;
+            z-index: 1;
+        }
+
+        .cart-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            animation: floatIn 1s ease-out 0.2s backwards;
+            transition: all 0.5s ease;
+        }
+
+        .cart-card:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .cart-table th {
+            padding: 1.2rem 1.5rem;
+            background: rgba(107, 72, 255, 0.08);
+            color: var(--dark);
+            font-weight: 600;
+            text-align: left;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .cart-table td {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            vertical-align: middle;
+        }
+
+        .cart-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .product-info {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .product-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.5s ease;
+        }
+
+        .cart-card:hover .product-img {
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+            transition: all 0.3s ease;
+        }
+
+        tr:hover .product-name {
+            color: var(--primary);
+        }
+
+        .price {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+
+        .total-price {
+            font-weight: 700;
+            font-size: 1.2rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .quantity-form {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .quantity-input {
+            width: 80px;
+            padding: 0.8rem;
+            border: 2px solid rgba(107, 72, 255, 0.1);
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--dark);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(107, 72, 255, 0.1);
+        }
+
+        .update-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .update-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(107, 72, 255, 0.2);
+        }
+
+        .remove-btn {
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 107, 129, 0.2);
+        }
+
+        .total-row td {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+            background: rgba(107, 72, 255, 0.03);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .checkout-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        .checkout-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(107, 72, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .checkout-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: -1;
+        }
+
+        .checkout-btn:hover::before {
+            opacity: 1;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(107, 72, 255, 0.3);
+        }
+
+        .checkout-btn i {
+            font-size: 1.2rem;
+        }
+
+        .empty-cart {
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .empty-cart-icon {
+            font-size: 5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .empty-cart-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .empty-cart-text {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .continue-shopping-btn {
+            display: inline-flex;
+            padding: 1rem 2.5rem;
+            background: var(--gradient);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(107, 72, 255, 0.3);
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .continue-shopping-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(107, 72, 255, 0.4);
+        }
+
+        /* Success notification */
+        .success-message {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            background-color: #4CAF50;
+            color: white;
+            margin-top: 0.5rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .success-message.show {
+            display: flex;
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes floatIn {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 0; }
+            .container { 
+                margin-top: 70px;
+                padding: 0 1rem;
+            }
+            .page-header { 
+                padding: 1.5rem; 
+                margin-top: 1rem;
+            }
+            .page-title { font-size: 1.5rem; }
+            .cart-table { display: block; overflow-x: auto; }
+            .product-info { 
+                flex-direction: column; 
+                text-align: center; 
+                gap: 1rem; 
+            }
+            .product-img { width: 80px; height: 80px; }
+            .quantity-form { 
+                flex-direction: column; 
+                gap: 0.5rem; 
+            }
+            .cart-table td { padding: 1rem; }
+            .checkout-btn { 
+                padding: 0.8rem 2rem; 
+                width: 100%; 
+                justify-content: center; 
+            }
+            .nav-bar {
+                padding: 0.7rem 1rem;
+            }
+            .nav-logo span {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-left">
+            <a href="/viewcustpro" class="back-home-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Products
+            </a>
+        </div>
+        <div class="nav-logo">
+            <i class="fas fa-shopping-bag"></i>
+            <span>Product Catalog</span>
+        </div>
+        <div class="nav-actions">
+            <div class="nav-icon" onclick="goToSearch()">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="nav-icon" onclick="goToCart()">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-badge" class="badge">0</span>
+            </div>
+            <div class="nav-icon" onclick="goToProfile()">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Back button -->
+    <!-- <div class="back-button" id="backButton" onclick="goBack()">
+        <i class="fas fa-arrow-left"></i>
+    </div> -->
+
+    <div class="container">
+        <header class="page-header">
+            <h1 class="page-title">Your Shopping Cart</h1>
+            <p class="page-subtitle">Review your items, update quantities, or proceed to checkout</p>
+            <div class="header-shapes"></div>
+        </header>
+
+        <div class="cart-card">
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if tt %}
+                        {% for t in tt %}
+                        <tr>
+                            <td>
+                                <div class="product-info">
+                                    <img src="/Uploads/{{ t.Img }}" class="product-img" alt="{{ t.Item }}">
+                                    <span class="product-name">{{ t.Item }}</span>
+                                </div>
+                            </td>
+                            <td><span class="price">₹{{ t.Amnt }}</span></td>
+                            <td><span class="total-price">₹{{ t.item_total }}</span></td>
+                            <td>
+                                <form action="/updatecart/" class="quantity-form" onsubmit="showSuccess(event, '{{ t.Cartid }}')">
+                                    <input type="hidden" name="bi" value="{{ t.Cartid }}">
+                                    <input type="number" name="qty" min="1" max="{{ t.Stock }}" value="{{ t.Cqty }}" required class="quantity-input">
+                                    <button type="submit" class="update-btn"><i class="fas fa-sync-alt"></i> Update</button>
+                                </form>
+                            </td>
+                            <td><a href="/deletecart?id={{ t.Cartid }}" class="remove-btn"><i class="fas fa-trash-alt"></i> Remove</a></td>
+                        </tr>
+
+                        <div class="checkout-container">
+                            <a href="/payment?id={{ t.Cartid }}" class="checkout-btn">
+                                <i class="fas fa-credit-card"></i>
+                                Proceed to Checkout
+                            </a>
+                        </div>
+                        {% endfor %}
+                        <tr class="total-row">
+                            <td colspan="2">Order Total:</td>
+                            <td colspan="3" class="total-amount">₹{{ total }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-cart">
+                                    <div class="empty-cart-illustration">
+                                        <i class="fas fa-shopping-cart empty-cart-icon"></i>
+                                    </div>
+                                    <h2 class="empty-cart-title">Your Cart is Empty</h2>
+                                    <p class="empty-cart-text">Looks like you haven't added any products to your cart yet.</p>
+                                    <a href="/viewcustpro" class="continue-shopping-btn">
+                                        <i class="fas fa-store"></i> Continue Shopping
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if tt %}
+        <div class="checkout-container">
+            <a href="/payment?id={{ t.Cartid }}" class="checkout-btn">
+                <i class="fas fa-credit-card"></i>
+                Proceed to Checkout
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update cart badge count
+            updateCartCount();
+            
+            // Handle back button visibility
+            const backButton = document.getElementById('backButton');
+            let lastScrollTop = 0;
+            
+            // Scroll event for hiding/showing back button
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                // Determine scroll direction
+                if (scrollTop > lastScrollTop && scrollTop > 100) {
+                    // Scrolling down
+                    backButton.classList.add('hidden');
+                } else {
+                    // Scrolling up or at top
+                    backButton.classList.remove('hidden');
+                }
+                
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            });
+            
+            // Go back function
+            window.goBack = function() {
+                if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    window.location.href = '/viewcustpro'; // Fallback to products page
+                }
+            };
+            
+            // Navigation functions
+            window.goToSearch = function() {
+                window.location.href = '/search';
+            };
+            
+            window.goToCart = function() {
+                window.location.href = '/viewcart';
+            };
+            
+            window.goToProfile = function() {
+                window.location.href = '/profile';
+            };
+            
+            // Show success message for update form
+            window.showSuccess = function(event, productId) {
+                event.preventDefault();
+                
+                // Get form data
+                const form = event.target;
+                const formData = new FormData(form);
+                const quantity = formData.get('qty');
+                
+                // Create URL with parameters
+                const url = `/updatecart/?bi=${productId}&qty=${quantity}`;
+                
+                // Send AJAX request
+                fetch(url)
+                    .then(response => {
+                        if (response.ok) {
+                            // Create and show success message
+                            const productCard = form.closest('tr');
+                            
+                            // Show notification
+                            showNotification('Cart updated successfully!', 'success');
+                            
+                            // Update cart count
+                            updateCartCount();
+                            
+                            // Refresh the page after a short delay
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            showNotification('Failed to update cart', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        showNotification('An error occurred', 'error');
+                    });
+            };
+            
+            // Update cart badge
+            function updateCartCount() {
+                // In a real implementation, you would get this from your server
+                // For now using a placeholder count from the page
+                const cartCount = document.querySelectorAll('.cart-table tbody tr:not(.total-row)').length || 0;
+                const cartBadge = document.getElementById('cart-badge');
+                
+                if (cartBadge) {
+                    cartBadge.textContent = cartCount;
+                    cartBadge.style.display = cartCount > 0 ? 'flex' : 'none';
+                }
+            }
+            
+            // Notification function
+            function showNotification(message, type = 'success') {
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 1rem 2rem;
+                    border-radius: 12px;
+                    color: white;
+                    z-index: 1001;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                    animation: slideIn 0.5s ease forwards, slideOut 0.5s ease 2.5s forwards;
+                `;
+                
+                if (type === 'success') {
+                    notification.style.background = 'var(--gradient)';
+                } else {
+                    notification.style.background = 'var(--accent-gradient)';
+                }
+                
+                const icon = document.createElement('i');
+                icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+                
+                notification.appendChild(icon);
+                notification.appendChild(document.createTextNode(message));
+                document.body.appendChild(notification);
+                
+                setTimeout(() => notification.remove(), 3000);
+            }
+        });
+    </script>
+</body>
+</html>

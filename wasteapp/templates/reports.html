@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waste Management Weekly Report</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #e6f7e9 0%, #c3e6d3 100%);
+      padding: 20px;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      animation: fadeIn 1s ease-in-out;
+      position: relative;
+    }
+    
+    h1 {
+      color: #1d6329;
+      margin-bottom: 10px;
+      font-size: 2.5rem;
+    }
+    
+    .date {
+      font-size: 1.2rem;
+      color: #5a7860;
+    }
+    
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      padding: 20px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: slideUp 0.5s ease-out forwards;
+      opacity: 0;
+    }
+    
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1d6329;
+    }
+    
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    
+    .progress-container {
+      width: 100%;
+      height: 10px;
+      background-color: #f1f1f1;
+      border-radius: 5px;
+      margin-top: 15px;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      border-radius: 5px;
+      width: 0;
+      transition: width 1.5s ease-in-out;
+    }
+    
+    .metrics {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+    
+    .metric {
+      text-align: center;
+      flex: 1;
+      min-width: 100px;
+      padding: 10px;
+    }
+    
+    .metric-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: #1d6329;
+    }
+    
+    .metric-label {
+      font-size: 0.9rem;
+      color: #5a7860;
+    }
+    
+    .team-section {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      padding: 25px;
+      margin-bottom: 30px;
+      animation: fadeIn 1s ease-in-out 0.5s forwards;
+      opacity: 0;
+    }
+    
+    .team-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .team-members {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .member {
+      display: flex;
+      align-items: center;
+      background-color: #f3f9f4;
+      padding: 10px 15px;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+    
+    .member:hover {
+      transform: translateY(-5px);
+      background-color: #e3f2e7;
+    }
+    
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #ddd;
+      margin-right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    
+    .member-info {
+      flex: 1;
+    }
+    
+    .member-name {
+      font-weight: 600;
+      color: #1d6329;
+    }
+    
+    .member-role {
+      font-size: 0.8rem;
+      color: #5a7860;
+    }
+    
+    .chart-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .chart-card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      padding: 20px;
+      animation: slideUp 0.5s ease-out forwards;
+      opacity: 0;
+    }
+    
+    .chart-container {
+      width: 100%;
+      height: 300px;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { 
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    footer {
+      text-align: center;
+      padding: 20px 0;
+      color: #5a7860;
+      font-size: 0.9rem;
+      animation: fadeIn 1s ease-in-out 1s forwards;
+      opacity: 0;
+    }
+    
+    .waste-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    
+    .waste-table th, .waste-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .waste-table th {
+      background-color: #f3f9f4;
+      font-weight: 600;
+      color: #1d6329;
+    }
+    
+    .trend {
+      padding: 5px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 110px;
+    }
+    
+    .trend-up {
+      background-color: #ffe8e8;
+      color: #e74c3c;
+    }
+    
+    .trend-down {
+      background-color: #d4f7e7;
+      color: #0d8a53;
+    }
+    
+    .trend-stable {
+      background-color: #fff8e1;
+      color: #f39c12;
+    }
+    
+    .trend:before {
+      margin-right: 5px;
+    }
+    
+    .trend-up:before {
+      content: "↑";
+    }
+    
+    .trend-down:before {
+      content: "↓";
+    }
+    
+    .trend-stable:before {
+      content: "→";
+    }
+    
+    .sustainability-tips {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      padding: 25px;
+      margin-bottom: 30px;
+      animation: fadeIn 1s ease-in-out 0.7s forwards;
+      opacity: 0;
+    }
+    
+    .tips-list {
+      margin-top: 15px;
+      padding-left: 20px;
+    }
+    
+    .tips-list li {
+      margin-bottom: 10px;
+      position: relative;
+      padding-left: 15px;
+    }
+    
+    .tips-list li:before {
+      content: "•";
+      color: #2ecc71;
+      font-size: 1.5em;
+      position: absolute;
+      left: -10px;
+      top: -5px;
+    }
+    
+    @media (max-width: 768px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+      
+      .chart-section {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .highlight {
+      background-color: #fdfce5;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 0 8px 8px 0;
+    }
+    
+    .highlight-title {
+      color: #b28704;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    /* New Back Button Styles */
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: #1d6329;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    
+    .back-button:hover {
+      background-color: #164e20;
+      transform: scale(1.1);
+    }
+    
+    .back-button.hidden {
+      opacity: 0;
+      transform: translateY(-20px);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Back Button -->
+  <button class="back-button" onclick="goBack()">←</button>
+
+  <div class="container">
+    <header>
+      <h1>Waste Management Weekly Report</h1>
+      <p class="date" id="report-date">-</p>
+    </header>
+    
+    <div class="dashboard">
+      <div class="card" style="animation-delay: 0.1s;">
+        <div class="card-header">
+          <h2 class="card-title">Recycling Rate</h2>
+          <div class="card-icon" style="background-color: #2ecc71;">♻️</div>
+        </div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-value" id="recycle-value">0%</div>
+            <div class="metric-label">Current Week</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value" id="recycle-prev">0%</div>
+            <div class="metric-label">Previous Week</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value" id="recycle-target">0%</div>
+            <div class="metric-label">Target</div>
+          </div>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar" style="background-color: #2ecc71;" id="recycle-progress"></div>
+        </div>
+      </div>
+      
+      <div class="card" style="animation-delay: 0.2s;">
+        <div class="card-header">
+          <h2 class="card-title">Waste Reduction</h2>
+          <div class="card-icon" style="background-color: #3498db;">📉</div>
+        </div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-value" id="reduction-value">0%</div>
+            <div class="metric-label">Reduction</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value" id="landfill-value">0</div>
+            <div class="metric-label">Landfill (tons)</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value" id="diverted-value">0</div>
+            <div class="metric-label">Diverted (tons)</div>
+          </div>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar" style="background-color: #3498db;" id="reduction-progress"></div>
+        </div>
+      </div>
+      
+      <div class="card" style="animation-delay: 0.3s;">
+        <div class="card-header">
+          <h2 class="card-title">Composting Progress</h2>
+          <div class="card-icon" style="background-color: #8e44ad;">🌱</div>
+        </div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-value" id="compost-value">0</div>
+            <div class="metric-label">Tons</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value" id="compost-percent">0%</div>
+            <div class="metric-label">Of Total Waste</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value" id="compost-increase">0%</div>
+            <div class="metric-label">Weekly Increase</div>
+          </div>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar" style="background-color: #8e44ad;" id="compost-progress"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="chart-section">
+      <div class="chart-card" style="animation-delay: 0.4s;">
+        <div class="card-header">
+          <h2 class="card-title">Waste Composition</h2>
+        </div>
+        <div class="chart-container">
+          <canvas id="compositionChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-card" style="animation-delay: 0.5s;">
+        <div class="card-header">
+          <h2 class="card-title">Weekly Waste Trend</h2>
+        </div>
+        <div class="chart-container">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+    </div>
+    
+    <div class="chart-card" style="animation-delay: 0.6s;">
+      <div class="card-header">
+        <h2 class="card-title">Collection Points Performance</h2>
+      </div>
+      <table class="waste-table" id="collection-table">
+        <thead>
+          <tr>
+            <th>Location</th>
+            <th>Waste (tons)</th>
+            <th>Recycling Rate</th>
+            <th>Contamination</th>
+            <th>Weekly Trend</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table rows will be generated from data -->
+        </tbody>
+      </table>
+      
+      <div class="highlight">
+        <h3 class="highlight-title" id="top-performer-title">Top Performer: -</h3>
+        <p id="top-performer-description">-</p>
+      </div>
+    </div>
+    
+    <div class="team-section">
+      <div class="team-header">
+        <h2 class="card-title">Waste Management Heroes</h2>
+      </div>
+      <div class="team-members" id="team-members-container">
+        <!-- Team members will be generated from data -->
+      </div>
+    </div>
+    
+    <div class="sustainability-tips">
+      <div class="card-header">
+        <h2 class="card-title">This Week's Sustainability Tips</h2>
+      </div>
+      <ul class="tips-list" id="tips-list">
+        <!-- Tips will be generated from data -->
+      </ul>
+    </div>
+    
+    <div class="chart-section">
+      <div class="chart-card" style="animation-delay: 0.7s;">
+        <div class="card-header">
+          <h2 class="card-title">Cost Savings from Waste Reduction</h2>
+        </div>
+        <div class="chart-container">
+          <canvas id="savingsChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-card" style="animation-delay: 0.8s;">
+        <div class="card-header">
+          <h2 class="card-title">Carbon Footprint Reduction</h2>
+        </div>
+        <div class="chart-container">
+          <canvas id="carbonChart"></canvas>
+        </div>
+      </div>
+    </div>
+    
+    <footer>
+      <p id="footer-text">-</p>
+    </footer>
+  </div>
+  
+  <script>
+    // ==========================================
+    // WEEKLY DATA - UPDATE THIS SECTION EACH WEEK
+    // ==========================================
+    const weeklyData = {
+      // Date information
+      weekStart: "March 17", // Start of current week
+      weekEnd: "March 23", // End of current week
+      reportDate: "March 23, 2025", // Report generation date
+      nextReportDate: "March 30, 2025", // Next report date
+      
+      // Recycling metrics
+      recycling: {
+        currentRate: 72, // Current week recycling rate (%)
+        previousRate: 68, // Previous week recycling rate (%)
+        target: 75, // Target recycling rate (%)
+      },
+      
+      // Waste reduction metrics
+      wasteReduction: {
+        reduction: 18, // Waste reduction percentage (%)
+        landfill: 17, // Landfill waste (tons)
+        diverted: 36, // Diverted waste (tons)
+        reductionProgress: 72, // Progress bar percentage (0-100)
+      },
+      
+      // Composting metrics
+      composting: {
+        tons: 14, // Tons of compost
+        percentOfTotal: 26, // Percentage of total waste
+        weeklyIncrease: 16, // Weekly increase (%)
+        progress: 78, // Progress bar percentage (0-100)
+      },
+      
+      // Waste composition
+      wasteComposition: {
+        labels: ['Paper', 'Plastic', 'Glass', 'Metal', 'Organic', 'Non-recyclable'],
+        data: [24, 17, 12, 9, 26, 12],
+      },
+      
+      // Weekly waste trend
+      wasteTrend: {
+        labels: ['February 17', 'February 24', 'March 3', 'March 10', 'March 17'],
+        totalWaste: [58, 55, 53, 50, 47],
+        recycled: [36, 35, 36, 34, 36],
+      },
+      
+      // Collection points performance - UPDATED FOR ERNAKULAM LOCATIONS
+      collectionPoints: [
+        {
+          location: "Kakkanad",
+          waste: 4.2,
+          recyclingRate: 68,
+          contamination: 6,
+          trend: -8,
+        },
+        {
+          location: "Fort Kochi",
+          waste: 4.8,
+          recyclingRate: 63,
+          contamination: 9,
+          trend: -4,
+        },
+        {
+          location: "Edappally",
+          waste: 3.3,
+          recyclingRate: 78,
+          contamination: 4,
+          trend: -5,
+        },
+        {
+          location: "Aluva",
+          waste: 3.8,
+          recyclingRate: 70,
+          contamination: 6,
+          trend: -5,
+        },
+        {
+          location: "Marine Drive",
+          waste: 2.1,
+          recyclingRate: 85,
+          contamination: 2,
+          trend: -4,
+        },
+      ],
+      
+      // Top performer - UPDATED FOR ERNAKULAM
+      topPerformer: {
+        name: "Marine Drive",
+        description: "The Marine Drive collection point continues to lead with the highest recycling rate and lowest contamination. Their new system of color-coded bins and daily education reminders has yielded excellent results."
+      },
+      
+      // Team members
+      teamMembers: [
+        {
+          initials: "RT",
+          name: "Rachel Torres",
+          role: "Recycling Coordinator",
+          color: "#27ae60"
+        },
+        {
+          initials: "MB",
+          name: "Marcus Bell",
+          role: "Waste Reduction Specialist",
+          color: "#2980b9"
+        },
+        {
+          initials: "SL",
+          name: "Sophia Lee",
+          role: "Composting Manager",
+          color: "#8e44ad"
+        },
+        {
+          initials: "DJ",
+          name: "Daniel Jackson",
+          role: "Education Specialist",
+          color: "#16a085"
+        },
+        {
+          initials: "AK",
+          name: "Aisha Khan",
+          role: "Logistics Coordinator",
+          color: "#d35400"
+        }
+      ],
+      
+      // Sustainability tips
+      sustainabilityTips: [
+        "Consolidate your printing tasks to reduce paper waste. Each week, the average office worker uses more than 10,000 sheets of paper.",
+        "Use concentrated cleaning products to reduce packaging waste and transportation emissions.",
+        "When purchasing new equipment, look for ENERGY STAR certified models which use less energy and often have extended lifespans.",
+        "Before recycling paper, remove plastic elements like bubble mailers, window envelopes, and plastic tape.",
+        "Consider adding plants to your workspace to improve air quality and reduce stress, which can lead to more mindful consumption habits."
+      ],
+      
+      // Cost savings
+      costSavings: {
+        labels: ['January', 'February', 'March'],
+        data: [3200, 4100, 5250],
+      },
+      
+      // Carbon footprint
+      carbonFootprint: {
+        labels: ['Q2 2024', 'Q3 2024', 'Q4 2024', 'Q1 2025'],
+        data: [85, 75, 60, 42],
+      }
+    };
+    
+    // ==========================================
+    // DISPLAY FUNCTIONS - DO NOT MODIFY BELOW
+    // ==========================================
+    
+    // Animation for metrics
+    function animateValue(id, start, end, duration, prefix = '', suffix = '') {
+      const obj = document.getElementById(id);
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        let value = Math.floor(progress * (end - start) + start);
+        
+        if (id.includes('percent') || id.includes('value') && id.includes('recycle') || id.includes('prev') || id.includes('target') || id.includes('reduction')) {
+          obj.innerHTML = value + '%';
+        } else {
+          obj.innerHTML = prefix + value.toLocaleString() + suffix;
+        }
+        
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+    
+    // Animate progress bars
+    function animateProgressBar(id, percent) {
+      setTimeout(() => {
+        document.getElementById(id).style.width = percent + '%';
+      }, 300);
+    }
+    
+    // Generate trend class based on value
+    function getTrendClass(trend) {
+      if (trend < 0) return "trend-down";
+      if (trend > 0) return "trend-up";
+      return "trend-stable";
+    }
+    
+    // Format trend display
+    function formatTrend(trend) {
+      if (trend > 0) return "+" + trend + "%";
+      if (trend < 0) return trend + "%";
+      return "0%";
+    }
+    
+    // Populate collection points table
+    function populateCollectionTable() {
+      const tableBody = document.querySelector('#collection-table tbody');
+      tableBody.innerHTML = '';
+      
+      weeklyData.collectionPoints.forEach(point => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${point.location}</td>
+          <td>${point.waste.toFixed(1)}</td>
+          <td>${point.recyclingRate}%</td>
+          <td>${point.contamination}%</td>
+          <td><span class="trend ${getTrendClass(point.trend)}">${formatTrend(point.trend)}</span></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+    
+    // Populate team members
+    function populateTeamMembers() {
+      const container = document.getElementById('team-members-container');
+      container.innerHTML = '';
+      
+      weeklyData.teamMembers.forEach(member => {
+        const div = document.createElement('div');
+        div.className = 'member';
+        div.innerHTML = `
+          <div class="avatar" style="background-color: ${member.color};">${member.initials}</div>
+          <div class="member-info">
+            <div class="member-name">${member.name}</div>
+            <div class="member-role">${member.role}</div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+    
+    // Populate sustainability tips
+    function populateSustainabilityTips() {
+      const list = document.getElementById('tips-list');
+      list.innerHTML = '';
+      
+      weeklyData.sustainabilityTips.forEach(tip => {
+        const li = document.createElement('li');
+        li.textContent = tip;
+        list.appendChild(li);
+      });
+    }
+    
+    // Back button functionality
+    function goBack() {
+      window.history.back();
+    }
+    
+    // Handle scroll to hide/show back button
+    let lastScrollTop = 0;
+    window.addEventListener('scroll', function() {
+      const backButton = document.querySelector('.back-button');
+      const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+      
+      if (currentScroll > lastScrollTop && currentScroll > 100) {
+        // Scrolling down
+        backButton.classList.add('hidden');
+      } else {
+        // Scrolling up or at top
+        backButton.classList.remove('hidden');
+      }
+      
+      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+    }, false);
+    
+    // Initialize animations after page load
+    window.addEventListener('load', () => {
+      // Update report date
+      document.getElementById('report-date').textContent = `Week of ${weeklyData.weekStart} - ${weeklyData.weekEnd}, 2025`;
+      
+      // Animate metrics
+      animateValue('recycle-value', 0, weeklyData.recycling.currentRate, 1500);
+      animateValue('recycle-prev', 0, weeklyData.recycling.previousRate, 1500);
+      animateValue('recycle-target', 0, weeklyData.recycling.target, 1500);
+      animateValue('reduction-value', 0, weeklyData.wasteReduction.reduction, 1500);
+      animateValue('landfill-value', 0, weeklyData.wasteReduction.landfill, 1500);
+      animateValue('diverted-value', 0, weeklyData.wasteReduction.diverted, 1500);
+      animateValue('compost-value', 0, weeklyData.composting.tons, 1500);
+      animateValue('compost-percent', 0, weeklyData.composting.percentOfTotal, 1500);
+      animateValue('compost-increase', 0, weeklyData.composting.weeklyIncrease, 1500);
+      
+      // Animate progress bars
+      animateProgressBar('recycle-progress', weeklyData.recycling.currentRate);
+      animateProgressBar('reduction-progress', weeklyData.wasteReduction.reductionProgress);
+      animateProgressBar('compost-progress', weeklyData.composting.progress);
+      
+      // Populate dynamic content
+      populateCollectionTable();
+      populateTeamMembers();
+      populateSustainabilityTips();
+      
+      // Set top performer
+      document.getElementById('top-performer-title').textContent = `Top Performer: ${weeklyData.topPerformer.name}`;
+      document.getElementById('top-performer-description').textContent = weeklyData.topPerformer.description;
+      
+      // Set footer text
+      document.getElementById('footer-text').textContent = `Generated on ${weeklyData.reportDate} • Next report: ${weeklyData.nextReportDate} • Contact Environmental Services for questions`;
+      
+      // Initialize charts
+      const compositionCtx = document.getElementById('compositionChart').getContext('2d');
+      const compositionChart = new Chart(compositionCtx, {
+        type: 'doughnut',
+        data: {
+          labels: weeklyData.wasteComposition.labels,
+          datasets: [{
+            data: weeklyData.wasteComposition.data,
+            backgroundColor: [
+              'rgba(52, 152, 219, 0.7)',
+              'rgba(231, 76, 60, 0.7)',
+              'rgba(46, 204, 113, 0.7)',
+              'rgba(243, 156, 18, 0.7)',
+              'rgba(155, 89, 182, 0.7)',
+              'rgba(149, 165, 166, 0.7)'
+            ],
+            borderColor: 'rgba(255, 255, 255, 0.8)',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          animation: {
+            animateRotate: true,
+            animateScale: true,
+            duration: 2000,
+            easing: 'easeOutQuart'
+          },
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                padding: 20,
+                usePointStyle: true,
+                pointStyle: 'circle'
+              }
+            }
+          }
+        }
+      });
+      
+      const trendCtx = document.getElementById('trendChart').getContext('2d');
+      const trendChart = new Chart(trendCtx, {
+        type: 'line',
+        data: {
+          labels: weeklyData.wasteTrend.labels,
+          datasets: [
+            {
+              label: 'Total Waste (tons)',
+              data: weeklyData.wasteTrend.totalWaste,
+              backgroundColor: 'rgba(231, 76, 60, 0.2)',
+              borderColor: 'rgba(231, 76, 60, 1)',
+              borderWidth: 2,
+              tension: 0.4
+            },
+            {
+              label: 'Recycled (tons)',
+              data: weeklyData.wasteTrend.recycled,
+              backgroundColor: 'rgba(46, 204, 113, 0.2)',
+              borderColor: 'rgba(46, 204, 113, 1)',
+              borderWidth: 2,
+              tension: 0.4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 2000,
+            easing: 'easeOutQuart'
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(0, 0, 0, 0.05)'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+      
+      const savingsCtx = document.getElementById('savingsChart').getContext('2d');
+      const savingsChart = new Chart(savingsCtx, {
+        type: 'bar',
+        data: {
+          labels: weeklyData.costSavings.labels,
+          datasets: [{
+            label: 'Monthly Savings ($)',
+            data: weeklyData.costSavings.data,
+            backgroundColor: 'rgba(39, 174, 96, 0.7)',
+            borderColor: 'rgba(39, 174, 96, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 2000,
+            easing: 'easeOutQuart'
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(0, 0, 0, 0.05)'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+      
+      const carbonCtx = document.getElementById('carbonChart').getContext('2d');
+      const carbonChart = new Chart(carbonCtx, {
+        type: 'line',
+        data: {
+          labels: weeklyData.carbonFootprint.labels,
+          datasets: [{
+            label: 'CO2 Equivalent (tons)',
+            data: weeklyData.carbonFootprint.data,
+            backgroundColor: 'rgba(41, 128, 185, 0.2)',
+            borderColor: 'rgba(41, 128, 185, 1)',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 2000,
+            easing: 'easeOutQuart'
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(0, 0, 0, 0.05)'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+      
+      // Apply staggered animations to cards
+      const cards = document.querySelectorAll('.card, .chart-card');
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${0.1 * index}s`;
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Error</title>
+    <style>
+        /* Popup animation */
+        @keyframes popup {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #f44336;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            animation: popup 0.5s ease-out;
+            text-align: center;
+        }
+
+        .popup h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .popup p {
+            margin: 10px 0 0;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="popup">
+        <h2>Payment Error!</h2>
+        <p>An error occurred. Please try again.</p>
+    </div>
+
+    <script>
+        // Redirect after 3 seconds
+        setTimeout(function() {
+            window.location.href = "/error/";
+        }, 3000);
+    </script>
+</body>
+</html>

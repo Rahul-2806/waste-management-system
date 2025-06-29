@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waste Segregation Benefits</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      /*background-image: url("assets/img/bg/top-bg.jpg");*/
+       background: linear-gradient(135deg, #090909, #96e6a1);
+      color: #333;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+      min-height: 100vh;
+      perspective: 1000px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      animation: fadeInRotate 1.5s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+      );
+      transform: rotate(45deg);
+      animation: shine 3s infinite;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 3rem;
+      color: #2c3e50;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 2px;
+      animation: titleAnimation 3s infinite;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      color: #27ae60;
+      font-size: 1.8rem;
+      margin-top: 30px;
+      position: relative;
+      padding-bottom: 10px;
+      animation: slideInScale 1s ease-out;
+    }
+
+    h2::after {
+      content: '';
+      width: 50px;
+      height: 4px;
+      background: #27ae60;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: expandLine 1s ease-out forwards;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin: 15px 0;
+      animation: fadeInUp 1s ease-out;
+      position: relative;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background: #ecf0f1;
+      margin: 15px 0;
+      padding: 20px;
+      border-radius: 10px;
+      transition: all 0.4s ease;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      animation: slideInFromRight 0.5s ease-out;
+      transform-origin: right;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    li:hover {
+      transform: scale(1.05) translateX(10px);
+      background: linear-gradient(135deg, #dff9fb, #c7ecee);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .icon {
+      font-size: 1.8rem;
+      margin-right: 15px;
+      color: #27ae60;
+      animation: rotateIcon 2s infinite linear;
+    }
+
+    .example {
+      background: #e8f6f3;
+      padding: 15px;
+      border-left: 6px solid #1abc9c;
+      margin: 25px 0;
+      font-style: italic;
+      font-size: 1.1rem;
+      animation: slideInFromLeft 1s ease-out;
+      border-radius: 8px;
+      transform: perspective(1000px) rotateX(0deg);
+      transition: transform 0.5s ease;
+    }
+
+    .example:hover {
+      transform: perspective(1000px) rotateX(2deg);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .conclusion {
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #34495e;
+      margin-top: 40px;
+      padding: 25px;
+      background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      animation: pulse 2s infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .conclusion::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+      );
+      transform: rotate(45deg);
+      animation: shine 3s infinite;
+    }
+
+    .cta-button {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 18px 35px;
+      font-size: 1.2rem;
+      color: #fff;
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      border: none;
+      border-radius: 50px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      box-shadow: 0 6px 15px rgba(39, 174, 96, 0.3);
+      position: relative;
+      overflow: hidden;
+      animation: floatButton 3s infinite;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+    }
+
+    .cta-button::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transform: rotate(45deg);
+      animation: shine 3s infinite;
+    }
+
+    /* Enhanced Animations */
+    @keyframes fadeInRotate {
+      0% { opacity: 0; transform: rotateY(-10deg) translateY(50px); }
+      100% { opacity: 1; transform: rotateY(0) translateY(0); }
+    }
+
+    @keyframes titleAnimation {
+      0% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-10px) scale(1.02); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    @keyframes slideInScale {
+      0% { transform: translateX(-100%) scale(0.5); opacity: 0; }
+      100% { transform: translateX(0) scale(1); opacity: 1; }
+    }
+
+    @keyframes expandLine {
+      0% { width: 0; }
+      100% { width: 50px; }
+    }
+
+    @keyframes fadeInUp {
+      0% { transform: translateY(30px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes slideInFromRight {
+      0% { transform: translateX(100px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes rotateIcon {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes slideInFromLeft {
+      0% { transform: translateX(-100px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes floatButton {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0); }
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) rotate(45deg); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌱 Waste Segregation Benefits 🌍</h1>
+
+    <h2>1. Facilitates Recycling ♻️</h2>
+    <p>Proper segregation ensures that recyclable materials like paper, plastic, metal, and glass do not mix with organic or hazardous waste.</p>
+    <ul>
+      <li><span class="icon">✅</span> Increases the efficiency of recycling plants, reducing processing costs and energy consumption.</li>
+      <li><span class="icon">🔄</span> Encourages a circular economy, where materials are reused instead of ending up in landfills.</li>
+    </ul>
+    <!-- <div class="example">
+      🔹 Example: Segregating plastic bottles at the source allows recycling plants to directly process them into new products.
+    </div> -->
+
+    <h2>2. Reduces Environmental Pollution 🌍</h2>
+    <p>Prevents harmful substances from contaminating soil, water, and air.</p>
+    <ul>
+      <li><span class="icon">💨</span> Reduces landfill overflows, which release methane (a potent greenhouse gas).</li>
+      <li><span class="icon">🌊</span> Keeps plastic waste out of oceans and rivers, protecting marine life.</li>
+    </ul>
+    <!-- <div class="example">
+      🔹 Example: Separating electronic waste prevents toxic chemicals like mercury and lead from polluting the environment.
+    </div> -->
+
+    <h2>3. Enhances Public Health 🏥</h2>
+    <p>Minimizes exposure to toxic chemicals and disease-causing bacteria.</p>
+    <ul>
+      <li><span class="icon">🐀</span> Reduces pests and rodents that thrive in mixed waste piles.</li>
+      <li><span class="icon">🚰</span> Lowers the risk of waterborne and respiratory diseases caused by open waste dumping.</li>
+    </ul>
+
+    <div class="conclusion">
+      🌟 Efficient waste collection and segregation create a cleaner, healthier, and more sustainable world! 🌿
+    </div>
+
+    <a href="#" class="cta-button">Learn More</a>
+  </div>
+</body>
+</html>

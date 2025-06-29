@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biogas Production from Organic Waste</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --secondary: #1565c0;
+            --accent: #f9a825;
+            --dark: #333333;
+            --light: #f5f5f5;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --info: #2196f3;
+            --danger: #f44336;
+            --gray: #9e9e9e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--accent);
+            color: var(--dark);
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 1rem;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Introduction Section */
+        .intro-section {
+            background-color: white;
+            border-radius: 15px;
+            margin-top: -50px;
+            padding: 40px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .intro-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .intro-content h2 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .intro-image {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .intro-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Benefits Section */
+        .benefits-section {
+            padding: 5rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.2rem;
+            color: var(--primary);
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .section-title h2:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 3px;
+            background: var(--accent);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .benefit-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .benefit-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: var(--light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .benefit-card:hover .benefit-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        .benefit-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        /* Process Section */
+        .process-section {
+            background-color: #f0f8f0;
+            padding: 5rem 0;
+        }
+
+        .process-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .process-step {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .process-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            width: 100px;
+            height: 100px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .process-line {
+            position: absolute;
+            top: 50px;
+            bottom: -50px;
+            left: 50px;
+            width: 4px;
+            background: var(--primary);
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        .process-step:last-child .process-line {
+            display: none;
+        }
+
+        /* Applications Section */
+        .applications-section {
+            padding: 5rem 0;
+        }
+
+        .applications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .application-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .application-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .application-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .application-content {
+            padding: 25px;
+        }
+
+        .application-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        /* Statistics Section */
+        .stats-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 5rem 0;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            padding: 20px;
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Case Studies */
+        .case-studies {
+            padding: 5rem 0;
+        }
+
+        .case-study-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .case-study {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .case-study-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .case-study-content {
+            padding: 25px;
+        }
+
+        .case-study-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .case-study-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .case-stat {
+            text-align: center;
+        }
+
+        .case-stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .case-stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%232e7d32" fill-opacity="1" d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,224C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-repeat: no-repeat;
+            background-position: top;
+            background-size: cover;
+            padding: 10rem 0 5rem;
+            margin-top: -5rem;
+            color: white;
+            text-align: center;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 5rem;
+        }
+
+        .cta-title {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+
+        .cta-description {
+            margin-bottom: 30px;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .cta-primary {
+            background: white;
+            color: var(--primary);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 5rem 0;
+            background-color: #f8f9fa;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 20px 30px;
+            background: white;
+            color: var(--dark);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-size: 1.1rem;
+        }
+
+        .faq-question:hover {
+            background-color: #f9f9f9;
+        }
+
+        .faq-answer {
+            padding: 0 30px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-answer.active {
+            padding: 0 30px 20px;
+            max-height: 500px;
+        }
+
+        .faq-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .faq-question.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .float {
+            animation: float 5s infinite ease-in-out;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .intro-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .intro-image {
+                order: -1;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .process-step {
+                grid-template-columns: 80px 1fr;
+                gap: 20px;
+            }
+
+            .step-number {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+
+            .process-line {
+                left: 40px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-pattern"></div>
+        <div class="container">
+            <div class="header-content">
+                <h1>Biogas Production from Organic Waste</h1>
+                <p class="tagline">Converting organic waste into biogas – a renewable energy source that can be used for heating, electricity generation, and as a clean fuel alternative.</p>
+                <a href="#learn-more" class="cta-button">Learn More</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="intro-section" id="learn-more">
+            <div class="intro-grid">
+                <div class="intro-content">
+                    <h2>Sustainable Energy from Waste</h2>
+                    <p>Biogas production represents a sustainable approach to waste management that transforms organic materials into valuable renewable energy while reducing landfill waste and greenhouse gas emissions.</p>
+                    <p>Through anaerobic digestion – a natural biological process – microorganisms break down organic matter in the absence of oxygen, producing biogas primarily composed of methane and carbon dioxide.</p>
+                    <p>This clean energy solution addresses multiple environmental challenges simultaneously while providing a reliable energy source for various applications, from cooking and heating to electricity generation and vehicle fuel.</p>
+                </div>
+                <div class="intro-image">
+                    <img src="/api/placeholder/600/400" alt="Biogas production facility with digester tanks">
+                </div>
+            </div>
+        </section>
+
+        <section class="benefits-section">
+            <div class="section-title">
+                <h2>Benefits of Biogas Production</h2>
+            </div>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3 class="benefit-title">Renewable Energy Source</h3>
+                    <p>Biogas is a fully renewable energy source that can be continuously produced as long as organic waste is available.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                    <h3 class="benefit-title">Waste Reduction</h3>
+                    <p>Diverts organic waste from landfills, reducing waste volume and associated environmental problems.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <h3 class="benefit-title">Carbon Emission Reduction</h3>
+                    <p>Reduces greenhouse gas emissions by capturing methane that would otherwise be released into the atmosphere.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3 class="benefit-title">Digestate as Fertilizer</h3>
+                    <p>Produces nutrient-rich digestate as a byproduct, which can be used as an organic fertilizer for agriculture.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3 class="benefit-title">Energy Independence</h3>
+                    <p>Provides local energy production, reducing dependency on imported fossil fuels and enhancing energy security.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <h3 class="benefit-title">Economic Opportunities</h3>
+                    <p>Creates green jobs and new revenue streams for farms, municipalities, and waste management sectors.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section class="process-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>The Biogas Production Process</h2>
+            </div>
+            <div class="process-container">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="process-line"></div>
+                    <div class="step-content">
+                        <h3 class="step-title">Collection & Preparation</h3>
+                        <p>Organic waste materials such as food waste, agricultural residues, manure, sewage sludge, and crop residues are collected. These materials are sorted to remove contaminants and then shredded or ground to increase the surface area for faster digestion.</p>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="process-line"></div>
+                    <div class="step-content">
+                        <h3 class="step-title">Anaerobic Digestion</h3>
+                        <p>The prepared organic material is fed into an anaerobic digester – an oxygen-free tank where microorganisms break down the waste. This biological process occurs in four stages: hydrolysis, acidogenesis, acetogenesis, and methanogenesis, resulting in the production of biogas.</p>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="process-line"></div>
+                    <div class="step-content">
+                        <h3 class="step-title">Biogas Collection</h3>
+                        <p>The produced biogas, consisting primarily of methane (50-75%) and carbon dioxide (25-50%), is collected at the top of the digester. Depending on the intended use, it may undergo purification to remove impurities like hydrogen sulfide, moisture, and carbon dioxide.</p>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="process-line"></div>
+                    <div class="step-content">
+                        <h3 class="step-title">Biogas Utilization</h3>
+                        <p>The collected biogas can be used directly for cooking and heating, combusted in boilers to generate heat, burned in engines or turbines to produce electricity, upgraded to biomethane for injection into natural gas grids, or compressed for use as vehicle fuel.</p>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Digestate Management</h3>
+                        <p>After digestion, the remaining material (digestate) is rich in nutrients. It can be separated into solid and liquid fractions. The solid fraction can be composted or used directly as soil conditioner, while the liquid fraction serves as a valuable liquid fertilizer for crops.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="applications-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Applications of Biogas</h2>
+            </div>
+            <div class="applications-grid">
+                <div class="application-card">
+                    <div class="application-image" style="background-image: url('/api/placeholder/600/400');"></div>
+                    <div class="application-content">
+                        <h3 class="application-title">Thermal Energy</h3>
+                        <p>Biogas can be burned directly in boilers or stoves to provide heat for residential, commercial, or industrial applications. This is one of the simplest and most efficient uses, with thermal efficiency up to 90%.</p>
+                    </div>
+                </div>
+                <div class="application-card">
+                    <div class="application-image" style="background-image: url('/api/placeholder/600/400');"></div>
+                    <div class="application-content">
+                        <h3 class="application-title">Electricity Generation</h3>
+                        <p>Using combustion engines, gas turbines, or fuel cells, biogas can be converted into electricity. Combined heat and power (CHP) systems generate both electricity and useful heat, achieving overall efficiencies of 80-90%.</p>
+                    </div>
+                </div>
+                <div class="application-card">
+                    <div class="application-image" style="background-image: url('/api/placeholder/600/400');"></div>
+                    <div class="application-content">
+                        <h3 class="application-title">Biomethane for Gas Grid</h3>
+                        <p>Purified biogas (biomethane) can be injected into natural gas networks, providing a renewable alternative to fossil-based natural gas. This enables the utilization of existing infrastructure for renewable energy distribution.</p>
+                    </div>
+                </div>
+                <div class="application-card">
+                    <div class="application-image" style="background-image: url('/api/placeholder/600/400');"></div>
+                    <div class="application-content">
+                        <h3 class="application-title">Vehicle Fuel</h3>
+                        <p>Compressed biomethane can power natural gas vehicles, offering a low-carbon alternative to gasoline and diesel. It produces significantly fewer emissions and can be used in both light and heavy-duty vehicles.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">60-70%</div>
+                    <div class="stat-label">Methane Content</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">6 kWh</div>
+                    <div class="stat-label">Energy per m³</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">90%</div>
+                    <div class="stat-label">Emission Reduction</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">132M</div>
+                    <div class="stat-label">Global Biogas Plants</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="case-studies">
+        <div class="container">
+            <div class="section-title">
+                <h2>Success Stories</h2>
+            </div>
+            <div class="case-study-grid">
+                <div class="case-study">
+                    <div class="case-study-image" style="background-image: url('/api/placeholder/600/400');"></div>
+                    <div class="case-study-content">
+                        <h3 class="case-study-title">Farm-Based Biogas in Denmark</h3>
+                        <p>A network of centralized biogas plants in Denmark processes agricultural waste from multiple farms, producing renewable energy while providing farmers with additional income and reducing nutrient runoff.</p>
+                        <div class="case-study-stats">
+                            <div class="case-stat">
+                                <div class="case-stat-value">28%</div>
+                                <div class="case-stat-label">of National Gas</div>
+                            </div>
+                            <div class="case-stat">
+                                <div class="case-stat-value">120+</div>
+                                <div class="case-stat-label">Biogas Plants</div>
+                            </div>
+                            <div class="case-stat">
+                                <div class="case-stat-value">4,200</div>
+                                <div class="case-stat-label">Jobs Created</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="case-study">
+                    <div class="case-study-image" style="background-image: url('/api/placeholder/600/400');"></div>
+                    <div class="case-study-content">
+                        <h3 class="case-study-title">Municipal Waste to Energy in Sweden</h3>
+                        <p>Stockholm's Henriksdal wastewater treatment plant processes sewage from 800,000 residents, producing biomethane that fuels the city's public transport system, taxis, and private vehicles.</p>
+                        <div class="case-study-stats">
+                            <div class="case-stat">
+                                <div class="case-stat-value">20M</div>
+                                <div class="case-stat-label">m³ Gas Yearly</div>
+                            </div>
+                            <div class="case-stat">
+                                <div class="case-stat-value">400</div>
+                                <div class="case-stat-label">Buses Powered</div>
+                            </div>
+                            <div class="case-stat">
+                                <div class="case-stat-value">95%</div>
+                                <div class="case-stat-label">Carbon Reduction</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="case-study">
+                    <div class="case-study-image" style="background-image: url('/api/placeholder/600/400');"></div>
+                    <div class="case-study-content">
+                        <h3 class="case-study-title">Food Waste Digestion in South Korea</h3>
+                        <p>South Korea's food waste-to-energy facilities process urban food waste into biogas, supporting the country's renewable energy targets while addressing waste management challenges in densely populated areas.</p>
+                        <div class="case-study-stats">
+                            <div class="case-stat">
+                                <div class="case-stat-value">95%</div>
+                                <div class="case-stat-label">Food Waste Recycled</div>
+                            </div>
+                            <div class="case-stat">
+                                <div class="case-stat-value">60+</div>
+                                <div class="case-stat-label">Biogas Facilities</div>
+                            </div>
+                            <div class="case-stat">
+                                <div class="case-stat-value">30%</div>
+                                <div class="case-stat-label">Cost Savings</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Frequently Asked Questions</h2>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        What types of organic waste can be used for biogas production?
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Nearly any organic material can be used for biogas production, including food waste, agricultural residues, animal manure, sewage sludge, crop residues, dedicated energy crops, food processing waste, and organic industrial waste. Materials with higher fat and protein content typically yield more biogas than fibrous materials like straw or wood.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        How does biogas compare to natural gas?
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Raw biogas contains 50-75% methane compared to natural gas which is typically 90%+ methane. However, biogas can be upgraded to biomethane (95%+ methane) through purification processes, making it equivalent to natural gas in quality. The key difference is that biogas is renewable and carbon-neutral, whereas natural gas is a fossil fuel that contributes to climate change.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        What size biogas system would suit a small farm?
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Small farm biogas systems typically range from 10-100 cubic meters in digester size. A farm with 50-100 livestock animals (cattle, pigs) could support a system producing enough biogas to meet basic farm energy needs. These small-scale systems typically cost between $10,000-$50,000 depending on complexity and can generate 5-20 kW of electrical capacity when connected to a generator.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        How can the digestate byproduct be utilized?
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Digestate is a nutrient-rich byproduct that can be used as an organic fertilizer. It can be separated into liquid and solid fractions. The liquid portion contains readily available nitrogen and potassium for immediate plant uptake, making it excellent for crop fertilization. The solid portion is rich in phosphorus and organic matter, beneficial for soil structure improvement. Digestate typically has lower odor than raw manure and reduced pathogen content due to the digestion process.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        What are the challenges in biogas production?
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Challenges include high initial investment costs, technical complexity requiring skilled operation, ensuring a consistent feedstock supply, managing process stability (pH, temperature, mixing), handling hydrogen sulfide which can be corrosive to equipment, seasonal variability in some feedstocks, and the need for appropriate regulatory frameworks for grid injection or transportation fuel use. Despite these challenges, continuous technological improvements and supportive policies are making biogas increasingly viable worldwide.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Convert Waste into Energy?</h2>
+                <p class="cta-description">Join the growing number of farms, municipalities, and businesses generating renewable energy from organic waste while creating environmental and economic benefits.</p>
+                <div class="cta-buttons">
+                    <a href="#" class="cta-button cta-primary">Get a Feasibility Study</a>
+                    <a href="#" class="cta-button cta-secondary">Contact Our Experts</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3 class="footer-title">BiogasTech Solutions</h3>
+                    <p>Providing innovative biogas production technologies and solutions for sustainable waste management and renewable energy generation.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-title">Solutions</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Farm-Scale Systems</a></li>
+                        <li><a href="#">Industrial Plants</a></li>
+                        <li><a href="#">Municipal Waste Solutions</a></li>
+                        <li><a href="#">Food Waste Digesters</a></li>
+                        <li><a href="#">Biogas Upgrading</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-title">Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Case Studies</a></li>
+                        <li><a href="#">Technical Guides</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Research Papers</a></li>
+                        <li><a href="#">Feasibility Tools</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-title">Contact</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Green Energy Way, Eco Park</li>
+                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-envelope"></i> info@biogastech.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 BiogasTech Solutions. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', () => {
+                    const answer = question.nextElementSibling;
+                    const isActive = question.classList.contains('active');
+                    
+                    // Close all other questions
+                    faqQuestions.forEach(q => {
+                        if (q !== question) {
+                            q.classList.remove('active');
+                            q.nextElementSibling.classList.remove('active');
+                        }
+                    });
+                    
+                    // Toggle current question
+                    if (isActive) {
+                        question.classList.remove('active');
+                        answer.classList.remove('active');
+                    } else {
+                        question.classList.add('active');
+                        answer.classList.add('active');
+                    }
+                });
+            });
+            
+            // Animation on scroll
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+            
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            // Select all elements to animate
+            const animatedElements = document.querySelectorAll('.benefit-card, .process-step, .application-card, .case-study');
+            
+            // Set initial style
+            animatedElements.forEach(el => {
+                el.style.opacity = 0;
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'all 0.6s ease-out';
+                observer.observe(el);
+            });
+            
+            // Smooth scroll
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // CTA notifications
+            document.querySelectorAll('.cta-button').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showNotification('Thank you for your interest! We will contact you shortly.');
+                });
+            });
+            
+            function showNotification(message) {
+                const notification = document.createElement('div');
+                notification.style.position = 'fixed';
+                notification.style.bottom = '20px';
+                notification.style.right = '20px';
+                notification.style.backgroundColor = 'var(--primary)';
+                notification.style.color = 'white';
+                notification.style.padding = '15px 25px';
+                notification.style.borderRadius = '10px';
+                notification.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.2)';
+                notification.style.zIndex = '1000';
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(50px)';
+                notification.style.transition = 'all 0.3s ease';
+                notification.innerHTML = message + ' <span style="margin-left: 10px; cursor: pointer;">✕</span>';
+                
+                document.body.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => {
+                    notification.style.opacity = '1';
+                    notification.style.transform = 'translateY(0)';
+                }, 100);
+                
+                // Close button
+                notification.querySelector('span').addEventListener('click', () => {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateY(50px)';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                });
+                
+                // Auto close
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateY(50px)';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 300);
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>

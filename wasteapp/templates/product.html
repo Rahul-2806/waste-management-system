@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6b48ff;      /* Purple */
+            --secondary: #00ddeb;    /* Cyan/Turquoise */
+            --accent: #ff6b81;       /* Pink/Coral */
+            --dark: #1a1b2e;         /* Dark blue-gray */
+            --light: #f5f7fa;        /* Very light gray-blue */
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.1);
+            --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, #f5f7fa 0%, #e4e9f0 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background-color: white;
+            color: var(--primary);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-bounce);
+            z-index: 100;
+            border: 2px solid transparent;
+            text-decoration: none;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            background-color: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .page-container {
+            width: 100%;
+            max-width: 700px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.7s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+        }
+        
+        .page-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+            z-index: 10;
+        }
+        
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            background: var(--gradient);
+            padding: 2.5rem 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .animated-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            right: -50px;
+            animation: float 15s infinite alternate ease-in-out;
+        }
+        
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            left: 10%;
+            animation: float 20s infinite alternate-reverse ease-in-out;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            100% {
+                transform: translate(50px, 50px) rotate(360deg);
+            }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            margin-right: 0.75rem;
+            animation: pulse 2s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.1);
+            }
+        }
+        
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 2.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+            animation: formElementFadeIn 0.5s ease-out backwards;
+        }
+        
+        @keyframes formElementFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+            color: var(--dark);
+            position: relative;
+            padding-left: 0.5rem;
+        }
+        
+        .form-label::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 16px;
+            background: var(--gradient);
+            border-radius: 3px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition-normal);
+            background: white;
+            color: var(--dark);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(107, 72, 255, 0.15);
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            color: var(--primary);
+            pointer-events: none;
+            z-index: 1;
+            font-size: 1.1rem;
+            transition: var(--transition-normal);
+        }
+        
+        .form-control:focus + .input-icon {
+            color: var(--primary);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .icon-input {
+            padding-left: 3rem;
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        /* Number input styling */
+        .number-input-wrapper {
+            position: relative;
+            display: flex;
+            width: 100%;
+        }
+        
+        .number-input-wrapper input {
+            text-align: center;
+            border-radius: 12px;
+        }
+        
+        .number-input-wrapper input::-webkit-outer-spin-button,
+        .number-input-wrapper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .number-btn {
+            background-color: var(--light);
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            user-select: none;
+            border: 2px solid #E0E0E0;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 3;
+            color: var(--primary);
+            border-radius: 50%;
+        }
+        
+        .number-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .dec-btn {
+            left: -8px;
+        }
+        
+        .inc-btn {
+            right: -8px;
+        }
+        
+        .number-input {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        
+        /* Form grid layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        /* File input styling */
+        .file-input-wrapper {
+            position: relative;
+            margin-top: 0.5rem;
+        }
+        
+        .custom-file-input {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .custom-file-label {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.5rem 0.85rem 1rem;
+            border: 2px dashed #E0E0E0;
+            border-radius: 12px;
+            background-color: var(--light);
+            color: var(--dark);
+            transition: var(--transition-normal);
+            height: 56px;
+            overflow: hidden;
+        }
+        
+        .custom-file-input:hover + .custom-file-label,
+        .custom-file-input:focus + .custom-file-label {
+            border-color: var(--primary);
+            background-color: rgba(107, 72, 255, 0.05);
+        }
+        
+        .custom-file-label i {
+            color: var(--primary);
+            font-size: 1.25rem;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+        
+        .file-chosen {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-grow: 1;
+        }
+        
+        .file-browse-btn {
+            background: var(--gradient);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin-left: 0.75rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        /* Submit button */
+        .submit-btn {
+            background: var(--gradient);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            width: 100%;
+            margin-top: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s ease-out;
+        }
+        
+        .submit-btn:hover::after {
+            transform: translate(-50%, -50%) scale(2);
+        }
+        
+        .submit-btn i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        /* Alert Container */
+        .alert-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            max-width: 400px;
+            width: 100%;
+            z-index: 1100;
+        }
+        
+        .alert {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            display: flex;
+            align-items: stretch;
+            animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 4s;
+            transform: translateX(120%);
+            opacity: 0;
+        }
+        
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOut {
+            to {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+        }
+        
+        .alert-color {
+            width: 5px;
+        }
+        
+        .alert-success .alert-color {
+            background-color: var(--primary);
+        }
+        
+        .alert-error .alert-color {
+            background-color: var(--accent);
+        }
+        
+        .alert-warning .alert-color {
+            background-color: #FF9800;
+        }
+        
+        .alert-content {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            flex-grow: 1;
+        }
+        
+        .alert-icon {
+            margin-right: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .alert-success .alert-icon {
+            color: var(--primary);
+        }
+        
+        .alert-error .alert-icon {
+            color: var(--accent);
+        }
+        
+        .alert-warning .alert-icon {
+            color: #FF9800;
+        }
+        
+        .alert-message {
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .alert-close {
+            color: #9E9E9E;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-left: 0.5rem;
+        }
+        
+        /* Selected form control styling */
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236b48ff'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.5rem;
+            padding-right: 3rem;
+        }
+        
+        /* Ripple effect */
+        .ripple {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: rippleEffect 0.6s linear;
+        }
+        
+        @keyframes rippleEffect {
+            to {
+                transform: scale(30);
+                opacity: 0;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .page-container {
+                max-width: 100%;
+            }
+            
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .header {
+                padding: 2rem 1.5rem;
+            }
+            
+            .content {
+                padding: 1.5rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-label::before {
+                height: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back Button -->
+    <a href="/viewproduct" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    
+    <!-- Main Page Container -->
+    <div class="page-container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="animated-bg">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+            </div>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-recycle"></i>
+                    <h1 class="text-2xl font-bold">Waste Management System</h1>
+                </div>
+                <h2 class="title">Add Product</h2>
+                <p class="subtitle">Create a new recycled product in your inventory</p>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <div class="content">
+            <form action="/prodaction/" method="POST" enctype="multipart/form-data" id="product-form">{% csrf_token%}
+                <div class="form-grid">
+                    <div class="form-group" style="animation-delay: 0.1s;">
+                        <label for="Item" class="form-label">Item Name</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="Item" name="Item" class="form-control icon-input" required>
+                            <i class="fas fa-box input-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.2s;">
+                        <label for="category" class="form-label">Category</label>
+                        <div class="input-wrapper">
+                            <select id="category" name="category" class="form-control icon-input" required>
+                                {% for t in tt %}
+                                <option value="{{t.Category}}">{{t.Category}}</option>
+                                {% endfor %}
+                            </select>
+                            <i class="fas fa-tag input-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.3s;">
+                        <label for="subcat" class="form-label">Subcategory</label>
+                        <div class="input-wrapper">
+                            <select id="subcat" name="subcat" class="form-control icon-input" required>
+                                {% for t in tt %}
+                                <option value="{{t.Subcategoryname}}">{{t.Subcategoryname}}</option>
+                                {% endfor %}
+                            </select>
+                            <i class="fas fa-tags input-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.4s;">
+                        <label for="amount" class="form-label">Price Amount</label>
+                        <div class="number-input-wrapper">
+                            <input type="number" id="amount" name="amount" class="form-control number-input" min="0" value="0" required>
+                            <div class="number-btn dec-btn" id="decAmount">
+                                <i class="fas fa-minus"></i>
+                            </div>
+                            <div class="number-btn inc-btn" id="incAmount">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.5s;">
+                        <label for="stock" class="form-label">Stock Quantity</label>
+                        <div class="number-input-wrapper">
+                            <input type="number" id="stock" name="stock" class="form-control number-input" min="0" value="0" required>
+                            <div class="number-btn dec-btn" id="decStock">
+                                <i class="fas fa-minus"></i>
+                            </div>
+                            <div class="number-btn inc-btn" id="incStock">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.6s;">
+                        <label for="Img" class="form-label">Product Image</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="Img" name="Img" class="custom-file-input" required>
+                            <label class="custom-file-label" for="Img">
+                                <i class="fas fa-image"></i>
+                                <span id="file-chosen" class="file-chosen">Choose product image...</span>
+                                <span class="file-browse-btn">Browse</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="animation-delay: 0.7s;">
+                    <label for="description" class="form-label">Product Description</label>
+                    <textarea id="description" name="description" class="form-control" rows="4" placeholder="Enter detailed description of the product..." required></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn ripple-btn" style="animation-delay: 0.8s;">
+                    <i class="fas fa-plus-circle"></i> Add Product
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Alert Container -->
+    <div id="alert-container" class="alert-container"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Number input functionality for Amount
+            function setupNumberInput(inputId, decBtnId, incBtnId, step = 1) {
+                const input = document.getElementById(inputId);
+                const decBtn = document.getElementById(decBtnId);
+                const incBtn = document.getElementById(incBtnId);
+                
+                if (!input || !decBtn || !incBtn) return;
+                
+                // Initialize with 0
+                if (!input.value) {
+                    input.value = 0;
+                }
+                
+                decBtn.addEventListener('click', function() {
+                    const currentVal = parseInt(input.value) || 0;
+                    input.value = Math.max(0, currentVal - step);
+                    input.dispatchEvent(new Event('change'));
+                });
+                
+                incBtn.addEventListener('click', function() {
+                    const currentVal = parseInt(input.value) || 0;
+                    input.value = currentVal + step;
+                    input.dispatchEvent(new Event('change'));
+                });
+            }
+            
+            setupNumberInput('amount', 'decAmount', 'incAmount', 10);
+            setupNumberInput('stock', 'decStock', 'incStock', 1);
+            
+            // File input display filename
+            const fileInput = document.getElementById('Img');
+            const fileChosen = document.getElementById('file-chosen');
+            
+            if (fileInput && fileChosen) {
+                fileInput.addEventListener('change', function() {
+                    if (fileInput.files.length > 0) {
+                        fileChosen.textContent = fileInput.files[0].name;
+                    } else {
+                        fileChosen.textContent = 'Choose product image...';
+                    }
+                });
+            }
+            
+            // Add ripple effect to buttons
+            document.querySelector('.ripple-btn').addEventListener('click', function(e) {
+                const button = e.currentTarget;
+                const ripple = document.createElement('span');
+                const rect = button.getBoundingClientRect();
+                
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                ripple.className = 'ripple';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                
+                button.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+            
+            // Form submission with validation
+            document.getElementById('product-form').addEventListener('submit', function(event) {
+                const name = document.getElementById('Item').value.trim();
+                const description = document.getElementById('description').value.trim();
+                const amount = parseInt(document.getElementById('amount').value);
+                const stock = parseInt(document.getElementById('stock').value);
+                const fileInput = document.getElementById('Img');
+                
+                let isValid = true;
+                
+                // Simple validation
+                if (!name || name.length < 2) {
+                    showAlert('Please enter a valid product name (at least 2 characters)', 'error');
+                    isValid = false;
+                }
+                
+                if (!description || description.length < 10) {
+                    showAlert('Please enter a more detailed product description (at least 10 characters)', 'error');
+                    isValid = false;
+                }
+                
+                if (isNaN(amount) || amount <= 0) {
+                    showAlert('Please enter a valid price amount greater than zero', 'error');
+                    isValid = false;
+                }
+                
+                if (isNaN(stock) || stock < 0) {
+                    showAlert('Stock quantity cannot be negative', 'error');
+                    isValid = false;
+                }
+                
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    showAlert('Please select a product image', 'error');
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    event.preventDefault();
+                } else {
+                    showAlert('Processing your request...', 'success');
+                }
+            });
+        });
+        
+        // Alert function
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alert-container');
+            if (!alertContainer) return;
+            
+            const icons = {
+                success: '<i class="fas fa-check-circle"></i>',
+                error: '<i class="fas fa-exclamation-circle"></i>',
+                warning: '<i class="fas fa-exclamation-triangle"></i>'
+            };
+            
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <div class="alert-color"></div>
+                <div class="alert-content">
+                    <div class="alert-icon">${icons[type]}</div>
+                    <div class="alert-message">${message}</div>
+                    <button class="alert-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            alertContainer.appendChild(alert);
+            
+            // Close on button click
+            alert.querySelector('.alert-close').addEventListener('click', () => {
+                alert.remove();
+            });
+            
+            // Auto remove after animation completes
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

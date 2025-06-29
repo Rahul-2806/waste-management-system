@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Collection Service Ratings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f8ff;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
+        h1 {
+            color: #2c7873;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: #6c757d;
+            font-size: 1.2rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            width: 220px;
+            text-align: center;
+            margin: 10px;
+            transform: translateY(50px);
+            opacity: 0;
+            animation: slideUp 0.8s ease-out forwards;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.2s; }
+        .stat-card:nth-child(2) { animation-delay: 0.4s; }
+        .stat-card:nth-child(3) { animation-delay: 0.6s; }
+        .stat-card:nth-child(4) { animation-delay: 0.8s; }
+
+        .stat-title {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c7873;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #2c7873;
+            border-radius: 5px;
+            width: 0;
+            animation: progressGrow 1.5s ease-out forwards;
+        }
+
+        .comments-section {
+            margin-top: 40px;
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out forwards;
+            animation-delay: 1s;
+        }
+
+        .comments-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c7873;
+            font-size: 1.8rem;
+        }
+
+        .comment-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            transform: translateX(-50px);
+            opacity: 0;
+            animation: slideRight 0.8s ease-out forwards;
+        }
+
+        .comment-card:nth-child(odd) {
+            transform: translateX(50px);
+            animation: slideLeft 0.8s ease-out forwards;
+        }
+
+        .comment-card:nth-child(2) { animation-delay: 1.2s; }
+        .comment-card:nth-child(3) { animation-delay: 1.4s; }
+        .comment-card:nth-child(4) { animation-delay: 1.6s; }
+        .comment-card:nth-child(5) { animation-delay: 1.8s; }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .commenter {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #2c7873;
+        }
+
+        .comment-date {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .comment-rating {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .star {
+            color: #ffc107;
+            font-size: 1.2rem;
+            margin-right: 2px;
+        }
+
+        .comment-text {
+            line-height: 1.5;
+            color: #495057;
+        }
+
+        .employee-section {
+            margin-top: 60px;
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out forwards;
+            animation-delay: 2s;
+        }
+
+        .employees-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c7873;
+            font-size: 1.8rem;
+        }
+
+        .employees {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .employee-card {
+            background-color: white;
+            border-radius: 15px;
+            width: 250px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transform: scale(0.9);
+            opacity: 0;
+            animation: scaleIn 0.8s ease-out forwards;
+            transition: transform 0.3s ease;
+        }
+
+        .employee-card:hover {
+            transform: scale(1.05);
+        }
+
+        .employee-card:nth-child(1) { animation-delay: 2.2s; }
+        .employee-card:nth-child(2) { animation-delay: 2.4s; }
+        .employee-card:nth-child(3) { animation-delay: 2.6s; }
+
+        .employee-photo {
+            height: 150px;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .employee-info {
+            padding: 20px;
+        }
+
+        .employee-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: #2c7873;
+        }
+
+        .employee-role {
+            color: #6c757d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .employee-rating {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideRight {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideLeft {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes progressGrow {
+            from { width: 0; }
+            to { width: var(--progress-width); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            color: #6c757d;
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out forwards;
+            animation-delay: 3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Waste Collection Service Ratings</h1>
+            <p class="subtitle">Community feedback on our dedicated waste management team</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <p class="stat-title">OVERALL SATISFACTION</p>
+                <p class="stat-value">4.7</p>
+                <div class="progress-bar">
+                    <div class="progress" style="--progress-width: 94%"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <p class="stat-title">PUNCTUALITY</p>
+                <p class="stat-value">4.5</p>
+                <div class="progress-bar">
+                    <div class="progress" style="--progress-width: 90%"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <p class="stat-title">BEHAVIOUR</p>
+                <p class="stat-value">4.8</p>
+                <div class="progress-bar">
+                    <div class="progress" style="--progress-width: 96%"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <p class="stat-title">CUSTOMER SERVICE</p>
+                <p class="stat-value">4.6</p>
+                <div class="progress-bar">
+                    <div class="progress" style="--progress-width: 92%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="comments-section">
+            <h2 class="comments-title">Recent Community Feedback</h2>
+            
+            <div class="comment-card">
+                <div class="comment-header">
+                    <p class="commenter">Sarah Johnson</p>
+                    <p class="comment-date">March 10, 2025</p>
+                </div>
+                <div class="comment-rating">
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                </div>
+                <p class="comment-text">The waste collection team has been absolutely fantastic! They're always on time and so respectful. When my elderly mother couldn't bring her bin to the curb, one of the staff members offered to help. That kind of service deserves recognition.</p>
+            </div>
+
+            <div class="comment-card">
+                <div class="comment-header">
+                    <p class="commenter">Michael Rodriguez</p>
+                    <p class="comment-date">March 8, 2025</p>
+                </div>
+                <div class="comment-rating">
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star" style="color: #e9ecef;">★</span>
+                </div>
+                <p class="comment-text">Very reliable service over the past year. The only issue I've had is occasionally finding some small debris left behind, but when I mentioned it to the staff, they were quick to address it. Appreciate the consistent pickup schedule!</p>
+            </div>
+
+            <div class="comment-card">
+                <div class="comment-header">
+                    <p class="commenter">Lisa Chen</p>
+                    <p class="comment-date">March 5, 2025</p>
+                </div>
+                <div class="comment-rating">
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                </div>
+                <p class="comment-text">The recycling program has improved tremendously since the new team took over. They take the time to ensure everything is properly sorted and have even left helpful notes when items weren't recyclable. This educational approach has made our community much more environmentally aware.</p>
+            </div>
+
+            <div class="comment-card">
+                <div class="comment-header">
+                    <p class="commenter">David Wilson</p>
+                    <p class="comment-date">March 1, 2025</p>
+                </div>
+                <div class="comment-rating">
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                </div>
+                <p class="comment-text">I've been impressed with how quiet the collection team is during early morning pickups. As someone who works nights, I appreciate their consideration. They manage to be efficient without disturbing the neighborhood.</p>
+            </div>
+        </div>
+
+        <!-- <div class="employee-section">
+            <h2 class="employees-title">Our Top-Rated Staff Members</h2>
+            
+            <div class="employees">
+                <div class="employee-card">
+                    <div class="employee-photo">
+                        <img src="/api/placeholder/200/150" alt="placeholder" />
+                    </div>
+                    <div class="employee-info">
+                        <p class="employee-name">James Thompson</p>
+                        <p class="employee-role">Route Supervisor</p>
+                        <div class="employee-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p class="comment-text">Known for his exceptional customer service and problem-solving skills.</p>
+                    </div>
+                </div>
+
+                <div class="employee-card">
+                    <div class="employee-photo">
+                        <img src="/api/placeholder/200/150" alt="placeholder" />
+                    </div>
+                    <div class="employee-info">
+                        <p class="employee-name">Maria Gonzalez</p>
+                        <p class="employee-role">Collection Specialist</p>
+                        <div class="employee-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p class="comment-text">Praised for her attention to detail and friendly demeanor.</p>
+                    </div>
+                </div>
+
+                <div class="employee-card">
+                    <div class="employee-photo">
+                        <img src="/api/placeholder/200/150" alt="placeholder" />
+                    </div>
+                    <div class="employee-info">
+                        <p class="employee-name">Robert Jackson</p>
+                        <p class="employee-role">Recycling Coordinator</p>
+                        <div class="employee-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p class="comment-text">Recognized for his environmental knowledge and community education efforts.</p>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <div class="chart-section" style="margin-top: 60px; opacity: 0; animation: fadeIn 1s ease-in-out forwards; animation-delay: 3.2s;">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #2c7873; font-size: 1.8rem;">Service Rating Trends</h2>
+            
+            <div style="background-color: white; border-radius: 15px; padding: 20px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);">
+                <div style="height: 300px; position: relative;">
+                    <div style="position: absolute; left: 50px; bottom: 50px; height: 200px; width: calc(100% - 100px); display: flex; align-items: flex-end;">
+                        <div style="flex: 1; height: 65%; background-color: #2c7873; margin: 0 10px; border-radius: 5px 5px 0 0; position: relative; animation: barGrow 1s ease-out forwards; animation-delay: 3.4s; transform-origin: bottom; transform: scaleY(0);">
+                            <div style="position: absolute; top: -25px; width: 100%; text-align: center;">4.3</div>
+                            <div style="position: absolute; bottom: -25px; width: 100%; text-align: center;">2022</div>
+                        </div>
+                        <div style="flex: 1; height: 75%; background-color: #2c7873; margin: 0 10px; border-radius: 5px 5px 0 0; position: relative; animation: barGrow 1s ease-out forwards; animation-delay: 3.6s; transform-origin: bottom; transform: scaleY(0);">
+                            <div style="position: absolute; top: -25px; width: 100%; text-align: center;">4.5</div>
+                            <div style="position: absolute; bottom: -25px; width: 100%; text-align: center;">2023</div>
+                        </div>
+                        <div style="flex: 1; height: 85%; background-color: #2c7873; margin: 0 10px; border-radius: 5px 5px 0 0; position: relative; animation: barGrow 1s ease-out forwards; animation-delay: 3.8s; transform-origin: bottom; transform: scaleY(0);">
+                            <div style="position: absolute; top: -25px; width: 100%; text-align: center;">4.6</div>
+                            <div style="position: absolute; bottom: -25px; width: 100%; text-align: center;">2024</div>
+                        </div>
+                        <div style="flex: 1; height: 95%; background-color: #2c7873; margin: 0 10px; border-radius: 5px 5px 0 0; position: relative; animation: barGrow 1s ease-out forwards; animation-delay: 4s; transform-origin: bottom; transform: scaleY(0);">
+                            <div style="position: absolute; top: -25px; width: 100%; text-align: center;">4.7</div>
+                            <div style="position: absolute; bottom: -25px; width: 100%; text-align: center;">2025</div>
+                        </div>
+                    </div>
+                    <div style="position: absolute; left: 0; bottom: 50px; height: 200px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div style="padding-right: 10px; text-align: right; color: #6c757d;">5.0</div>
+                        <div style="padding-right: 10px; text-align: right; color: #6c757d;">4.0</div>
+                        <div style="padding-right: 10px; text-align: right; color: #6c757d;">3.0</div>
+                        <div style="padding-right: 10px; text-align: right; color: #6c757d;">2.0</div>
+                        <div style="padding-right: 10px; text-align: right; color: #6c757d;">1.0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="feedback-section" style="margin-top: 60px; background-color: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); opacity: 0; animation: fadeIn 1s ease-in-out forwards; animation-delay: 4.2s;">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #2c7873; font-size: 1.8rem;">Share Your Experience</h2>
+            
+            <form style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 250px;">
+                        <label style="display: block; margin-bottom: 5px; color: #495057;">Name</label>
+                        <input type="text" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ced4da; font-size: 1rem;">
+                    </div>
+                    <div style="flex: 1; min-width: 250px;">
+                        <label style="display: block; margin-bottom: 5px; color: #495057;">Email</label>
+                        <input type="email" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ced4da; font-size: 1rem;">
+                    </div>
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 5px; color: #495057;">Your Rating</label>
+                    <div style="display: flex; gap: 10px; font-size: 1.5rem; color: #e9ecef;">
+                        <span class="star" style="cursor: pointer;">★</span>
+                        <span class="star" style="cursor: pointer;">★</span>
+                        <span class="star" style="cursor: pointer;">★</span>
+                        <span class="star" style="cursor: pointer;">★</span>
+                        <span class="star" style="cursor: pointer;">★</span>
+                    </div>
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 5px; color: #495057;">Your Feedback</label>
+                    <textarea style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ced4da; font-size: 1rem; min-height: 150px; resize: vertical;"></textarea>
+                </div>
+                
+                <button type="submit" style="background-color: #2c7873; color: white; border: none; padding: 12px 20px; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: background-color 0.3s ease; align-self: flex-start;">Submit Feedback</button>
+            </form>
+        </div> -->
+
+        <footer>
+            <p>© 2025 City Waste Management Services. All rights reserved.</p>
+            <p>Committed to keeping our community clean and sustainable.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Add interactivity to the star rating
+        const stars = document.querySelectorAll('.feedback-section .star');
+        
+        stars.forEach((star, index) => {
+            star.addEventListener('mouseover', () => {
+                for (let i = 0; i <= index; i++) {
+                    stars[i].style.color = '#ffc107';
+                }
+            });
+            
+            star.addEventListener('mouseout', () => {
+                stars.forEach(s => {
+                    if (!s.classList.contains('active')) {
+                        s.style.color = '#e9ecef';
+                    }
+                });
+            });
+            
+            star.addEventListener('click', () => {
+                stars.forEach(s => s.classList.remove('active'));
+                for (let i = 0; i <= index; i++) {
+                    stars[i].classList.add('active');
+                    stars[i].style.color = '#ffc107';
+                }
+            });
+        });
+
+        // Add animation keyframe for bar chart
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes barGrow {
+                from { 
+                    transform: scaleY(0);
+                }
+                to {
+                    transform: scaleY(1);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

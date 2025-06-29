@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="user-info">
+            <div class="avatar">
+                {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="Profile Avatar">
+                {% else %}
+                    <div class="avatar-placeholder">{{ user.username|make_list|first|upper }}</div>
+                {% endif %}
+            </div>
+            <h2>{{ user.get_full_name|default:user.username }}</h2>
+            <p class="email">{{ user.email }}</p>
+        </div>
+        
+        <nav class="profile-nav">
+            <a href="{% url 'customer_profile' %}" class="nav-item active">
+                <i class="fas fa-user"></i> Profile
+            </a>
+            <a href="{% url 'edit_profile' %}" class="nav-item">
+                <i class="fas fa-edit"></i> Edit Profile
+            </a>
+            <a href="{% url 'my_orders' %}" class="nav-item">
+                <i class="fas fa-box"></i> My Orders
+            </a>
+            <a href="{% url 'rate_details' %}" class="nav-item">
+                <i class="fas fa-chart-line"></i> Rate Details
+            </a>
+            <a href="{% url 'make_payment' %}" class="nav-item">
+                <i class="fas fa-credit-card"></i> Make Payment
+            </a>
+            <a href="{% url 'trash_pickup' %}" class="nav-item">
+                <i class="fas fa-trash"></i> Trash Pickup
+            </a>
+            <a href="{% url 'logout' %}" class="nav-item logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation with Cart -->
+        <div class="top-nav">
+            <h1>Welcome, {{ user.first_name|default:user.username }}!</h1>
+            
+            <div class="cart-container" id="cart-wrapper">
+                <div class="cart-icon" onclick="goToCart()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-badge" class="cart-badge">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Information -->
+        <div class="profile-details card">
+            <div class="card-header">
+                <h2>Personal Information</h2>
+            </div>
+            <div class="card-body">
+                <div class="profile-info-grid">
+                    <div class="info-group">
+                        <label>Full Name</label>
+                        <p>{{ user.get_full_name|default:"Not provided" }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Email Address</label>
+                        <p>{{ user.email }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Phone Number</label>
+                        <p>{{ user.profile.phone|default:"Not provided" }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Address</label>
+                        <p>{{ user.profile.address|default:"Not provided" }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>City</label>
+                        <p>{{ user.profile.city|default:"Not provided" }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>State/Province</label>
+                        <p>{{ user.profile.state|default:"Not provided" }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Zip/Postal Code</label>
+                        <p>{{ user.profile.postal_code|default:"Not provided" }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Country</label>
+                        <p>{{ user.profile.country|default:"Not provided" }}</p>
+                    </div>
+                </div>
+                <div class="actions">
+                    <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="recent-orders card">
+            <div class="card-header">
+                <h2>Recent Orders</h2>
+                <a href="{% url 'my_orders' %}" class="view-all">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_orders %}
+                <div class="table-responsive">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                            <tr>
+                                <td>{{ order.order_number }}</td>
+                                <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                <td><span class="status status-{{ order.status|lower }}">{{ order.get_status_display }}</span></td>
+                                <td>${{ order.total|floatformat:2 }}</td>
+                                <td><a href="{% url 'order_detail' order.id %}" class="btn-sm">View</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-shopping-bag"></i>
+                    <p>You haven't placed any orders yet.</p>
+                    <a href="{% url 'products' %}" class="btn btn-primary">Shop Now</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Function to go to cart page when clicking the cart icon
+    function goToCart() {
+        window.location.href = "{% url 'view_cart' %}";
+    }
+
+    // Function to update cart count from backend data
+    function updateCartCount() {
+        fetch("{% url 'cart_count' %}")
+            .then(response => response.json())
+            .then(data => {
+                const cartBadge = document.getElementById('cart-badge');
+                cartBadge.textContent = data.count;
+                
+                // Hide badge if cart is empty
+                if (data.count === 0) {
+                    cartBadge.style.display = 'none';
+                } else {
+                    cartBadge.style.display = 'flex';
+                }
+            })
+            .catch(error => console.error('Error fetching cart count:', error));
+    }
+
+    // Initialize cart count when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCartCount();
+    });
+</script>
+{% endblock %}

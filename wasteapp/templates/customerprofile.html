@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Profile</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #6b48ff;
+            --primary-dark: #5438cc;
+            --secondary: #00ddeb;
+            --accent: #ff6b81;
+            --dark: #1a1b2e;
+            --light: #f5f7fa;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --gradient-hover: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.25s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f9fafc 0%, #e4e9f0 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 50px;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-logo i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .nav-logo span {
+            font-size: 1.6rem;
+            font-weight: 600;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-logout {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            background: var(--gradient);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 5px 15px rgba(107, 72, 255, 0.25);
+        }
+
+        .nav-logout i {
+            margin-right: 0.5rem;
+            font-size: 0.95rem;
+            color: white;
+        }
+
+        .nav-logout:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(107, 72, 255, 0.35);
+            background: var(--gradient-hover);
+        }
+
+        /* Profile Section */
+        .profile-section {
+            padding: 120px 20px 50px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .profile-container {
+            display: flex;
+            width: 100%;
+            max-width: 1100px;
+            gap: 30px;
+        }
+
+        .profile-sidebar {
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        .profile-main {
+            flex: 1;
+        }
+
+        .user-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            animation: fadeInLeft 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--gradient);
+        }
+
+        .user-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 15px auto 20px;
+            border: 5px solid white;
+            box-shadow: var(--shadow-md);
+            transform: translateY(0);
+            transition: all 0.5s ease;
+        }
+
+        .user-image:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .user-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .user-email {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        .sidebar-action {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-action i {
+            margin-right: 12px;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .sidebar-action:hover, .sidebar-action.active {
+            background: var(--gradient);
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(107, 72, 255, 0.2);
+        }
+
+        .sidebar-action:hover i, .sidebar-action.active i {
+            color: white;
+        }
+
+        .profile-nav {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 25px;
+            box-shadow: var(--shadow-md);
+            animation: fadeInLeft 1s ease-out;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            overflow: hidden;
+            animation: fadeInRight 0.8s ease-out;
+        }
+
+        .profile-header {
+            background: var(--gradient);
+            padding: 30px;
+            color: white;
+            position: relative;
+        }
+
+        .profile-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .profile-header p {
+            opacity: 0.9;
+            font-size: 1.05rem;
+        }
+
+        .profile-decorations {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .profile-decorations::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-decorations::after {
+            content: '';
+            position: absolute;
+            bottom: -80px;
+            right: 50px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .profile-form {
+            padding: 30px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 13px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            color: var(--dark);
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(107, 72, 255, 0.1);
+            background: white;
+        }
+
+        .img-preview-container {
+            margin-bottom: 20px;
+        }
+
+        .img-preview {
+            width: 150px;
+            height: 150px;
+            margin-top: 15px;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 3px solid #e2e8f0;
+            position: relative;
+        }
+
+        .img-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.5s ease;
+        }
+
+        .img-preview:hover img {
+            transform: scale(1.1);
+        }
+
+        .img-preview::after {
+            content: 'Current Image';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 8px;
+            background: rgba(26, 27, 46, 0.7);
+            color: white;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .file-input-container {
+            margin-top: 15px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-input-label {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(107, 72, 255, 0.1);
+            color: var(--primary);
+            border-radius: 50px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            background: rgba(107, 72, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .file-input-label i {
+            margin-right: 8px;
+        }
+
+        .form-actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 25px;
+            border-radius: 50px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            background: #f1f5f9;
+            transition: all 0.3s ease;
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        .back-link:hover {
+            background: #e2e8f0;
+            transform: translateX(-5px);
+        }
+
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 30px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(107, 72, 255, 0.3);
+        }
+
+        .submit-btn i {
+            margin-right: 8px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(107, 72, 255, 0.4);
+        }
+
+        /* Animations */
+        @keyframes fadeInLeft {
+            from { 
+                transform: translateX(-50px); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateX(0); 
+                opacity: 1; 
+            }
+        }
+
+        @keyframes fadeInRight {
+            from { 
+                transform: translateX(50px); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateX(0); 
+                opacity: 1; 
+            }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                transform: translateY(30px); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(0); 
+                opacity: 1; 
+            }
+        }
+
+        @keyframes pulse {
+            0% { 
+                box-shadow: 0 0 0 0 rgba(107, 72, 255, 0.4); 
+            }
+            70% { 
+                box-shadow: 0 0 0 15px rgba(107, 72, 255, 0); 
+            }
+            100% { 
+                box-shadow: 0 0 0 0 rgba(107, 72, 255, 0); 
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 950px) {
+            .profile-container {
+                flex-direction: column;
+            }
+            
+            .profile-sidebar {
+                width: 100%;
+                margin-bottom: 30px;
+            }
+            
+            .user-card {
+                display: flex;
+                align-items: center;
+                text-align: left;
+                padding: 20px;
+            }
+            
+            .user-image {
+                margin: 0 20px 0 0;
+                width: 80px;
+                height: 80px;
+            }
+            
+            .user-details {
+                flex: 1;
+            }
+            
+            .profile-nav {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .profile-header {
+                padding: 25px;
+            }
+            
+            .profile-header h1 {
+                font-size: 1.7rem;
+            }
+            
+            .profile-form {
+                padding: 20px;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .submit-btn, .back-link {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .nav-bar {
+                padding: 0.8rem 1rem;
+            }
+            
+            .nav-logo span {
+                font-size: 1.4rem;
+            }
+            
+            .nav-logout {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: white;
+            color: var(--dark);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1100;
+            animation: slideInRight 0.5s ease forwards;
+            max-width: 350px;
+        }
+
+        .toast.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast.success .toast-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .toast.error .toast-icon {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .toast-message {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .toast-close {
+            cursor: pointer;
+            color: #94a3b8;
+            transition: all 0.3s ease;
+        }
+
+        .toast-close:hover {
+            color: var(--dark);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-logo">
+            <i class="fas fa-rocket"></i>
+            <span>Customer Dashboard</span>
+        </div>
+        <div class="nav-actions">
+            <a href="/login" class="nav-logout">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <section class="profile-section">
+        <div class="profile-container">
+            <!-- Sidebar -->
+            <div class="profile-sidebar">
+                <!-- User Card -->
+                <div class="user-card">
+                    {% for customer in a %}
+                    <img src="/Uploads/{{ customer.Img }}" alt="Profile Image" class="user-image">
+                    <div class="user-details">
+                        <h3 class="user-name">{{ customer.Name }}</h3>
+                        <p class="user-email">{{ customer.Email }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Navigation Links -->
+                <div class="profile-nav">
+                    <a href="/customerhome" class="sidebar-action">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                    <a href="#" class="sidebar-action active">
+                        <i class="fas fa-user-edit"></i>
+                        Edit Profile
+                    </a>
+                    <a href="/myorders" class="sidebar-action">
+                        <i class="fas fa-shopping-bag"></i>
+                        My Orders
+                    </a>
+                    <a href="/feedback" class="sidebar-action">
+                        <i class="fas fa-comment-dots"></i>
+                        Send Feedback
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="profile-main">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-decorations"></div>
+                        <div class="profile-header-content">
+                            <h1>Update Your Profile</h1>
+                            <p>Keep your information up to date</p>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-form">
+                        <form method="post" enctype="multipart/form-data" action="/updateCustomerAction/">
+                            {% csrf_token %}
+                            
+                            {% for customer in a %}
+                            <!-- Hidden Field for Customer ID -->
+                            <input type="hidden" name="cid" value="{{ customer.Cid }}">
+                        
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="name">Full Name</label>
+                                    <input type="text" class="form-control" name="name" value="{{ customer.Name }}" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="email">Email Address</label>
+                                    <input type="email" class="form-control" name="email" value="{{ customer.Email }}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="text" class="form-control" name="phone" value="{{ customer.Phone }}" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="gender">Gender</label>
+                                    <input type="text" class="form-control" name="gender" value="{{ customer.Gender }}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" class="form-control" name="address" value="{{ customer.Address }}" required>
+                            </div>
+                        
+                            <div class="form-group">
+                                <label for="img">Profile Image</label>
+                                <div class="img-preview-container">
+                                    <div class="img-preview">
+                                        <img src="/Uploads/{{ customer.Img }}" alt="Profile Image">
+                                    </div>
+                                </div>
+                                <input type="hidden" name="imgw" value="{{ customer.Img }}">
+                                <div class="file-input-container">
+                                    <label for="profile-image" class="file-input-label">
+                                        <i class="fas fa-upload"></i> Choose New Image
+                                    </label>
+                                    <input type="file" id="profile-image" class="file-input" name="Img">
+                                </div>
+                            </div>
+                        
+                            <div class="form-actions">
+                                <a href="/customerhome" class="back-link">
+                                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                                </a>
+                                <button type="submit" class="submit-btn">
+                                    <i class="fas fa-save"></i> Update Profile
+                                </button>
+                            </div>
+                            {% endfor %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Update file input label when file is selected
+            const fileInput = document.getElementById('profile-image');
+            const fileInputLabel = document.querySelector('.file-input-label');
+            
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    if (this.files && this.files.length > 0) {
+                        const fileName = this.files[0].name;
+                        fileInputLabel.innerHTML = `<i class="fas fa-check"></i> ${fileName}`;
+                        
+                        // Show image preview
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const imgPreview = document.querySelector('.img-preview img');
+                            imgPreview.src = e.target.result;
+                        }
+                        reader.readAsDataURL(this.files[0]);
+                        
+                        // Show success toast
+                        showToast('Image Selected', 'Your profile image will be updated when you save.', 'success');
+                    }
+                });
+            }
+            
+            // Form input animations
+            const inputs = document.querySelectorAll('.form-control');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('focused');
+                });
+            });
+
+            // Add animation to form inputs when loading
+            const formGroups = document.querySelectorAll('.form-group');
+            formGroups.forEach((group, index) => {
+                setTimeout(() => {
+                    group.style.opacity = '1';
+                    group.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+        });
+
+        function showToast(title, message, type = 'success') {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.toast');
+            existingToasts.forEach(toast => toast.remove());
+            
+            // Create new toast
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="fas ${type === 'success' ? 'fa-check' : 'fa-exclamation'}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <div class="toast-close" onclick="this.parentElement.style.animation='slideOutRight 0.5s forwards'">
+                    <i class="fas fa-times"></i>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.animation = 'slideOutRight 0.5s forwards';
+                    setTimeout(() => toast.remove(), 500);
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

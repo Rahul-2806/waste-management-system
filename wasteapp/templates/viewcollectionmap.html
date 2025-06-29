@@ -1,0 +1,2190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ernakulam Collection Reports - WasteManage Pro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #34A853;
+            --primary-light: #8FDA9F;
+            --primary-dark: #257E3E;
+            --secondary: #4285F4;
+            --secondary-light: #A2C4FF;
+            --accent: #FBBC05;
+            --danger: #EA4335;
+            --light: #F8F9FA;
+            --dark: #202124;
+            --gray: #70757A;
+            --gray-light: #DFE1E5;
+            --white: #FFFFFF;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Google Sans', 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--white);
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            width: 250px;
+            height: 100vh;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .brand-icon {
+            color: var(--primary);
+            font-size: 1.75rem;
+        }
+
+        .brand-text {
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--dark);
+        }
+
+        .nav-menu {
+            list-style-type: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-item {
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .nav-link i {
+            font-size: 1.25rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        .nav-link:hover:not(.active) {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        .nav-section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray);
+            margin: 1.5rem 0 0.75rem 1rem;
+        }
+
+        .user-profile {
+            margin-top: auto;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            background-color: var(--light);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        .logout-btn {
+            color: var(--gray);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            color: var(--danger);
+        }
+
+        /* Main Content */
+        .main-content {
+            grid-column: 2;
+            padding: 1.5rem 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            background-color: var(--white);
+            border: 1px solid var(--gray-light);
+            border-radius: var(--radius-md);
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            width: 300px;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(52, 168, 83, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            position: relative;
+            color: var(--gray);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: var(--white);
+            font-size: 0.7rem;
+            font-weight: 600;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-btn:hover {
+            color: var(--dark);
+        }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--dark);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-right: 1rem;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-toggle {
+                display: block;
+            }
+        }
+
+        /* Report Content */
+        .report-header {
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .report-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .report-title-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .report-title-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .report-description {
+            color: var(--gray);
+            margin-bottom: 1.25rem;
+        }
+
+        .report-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--gray);
+        }
+
+        .filter-select {
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--gray-light);
+            background-color: var(--white);
+            color: var(--dark);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(52, 168, 83, 0.2);
+        }
+
+        .filter-date {
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--gray-light);
+            background-color: var(--white);
+            color: var(--dark);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .filter-date:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(52, 168, 83, 0.2);
+        }
+
+        .filter-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: var(--radius-md);
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--gray);
+            border: 1px solid var(--gray-light);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light);
+            color: var(--dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card-title {
+            font-size: 0.9rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .stat-card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .icon-primary {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .icon-secondary {
+            background-color: var(--secondary-light);
+            color: var(--secondary);
+        }
+
+        .icon-accent {
+            background-color: rgba(251, 188, 5, 0.2);
+            color: var(--accent);
+        }
+
+        .icon-danger {
+            background-color: rgba(234, 67, 53, 0.2);
+            color: var(--danger);
+        }
+
+        .stat-card-value {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card-desc {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* Report Table */
+        .report-table-container {
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            overflow-x: auto;
+        }
+
+        .report-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .report-table-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .report-table th,
+        .report-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+
+        .report-table th {
+            background-color: var(--light);
+            color: var(--gray);
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+        }
+
+        .report-table tr {
+            border-bottom: 1px solid var(--gray-light);
+            transition: var(--transition);
+        }
+
+        .report-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .report-table tr:hover {
+            background-color: var(--light);
+        }
+
+        .report-table tbody tr:nth-child(even) {
+            background-color: rgba(248, 249, 250, 0.5);
+        }
+
+        .status-tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-completed {
+            background-color: rgba(52, 168, 83, 0.1);
+            color: var(--primary);
+        }
+
+        .status-pending {
+            background-color: rgba(251, 188, 5, 0.1);
+            color: var(--accent);
+        }
+
+        .status-processing {
+            background-color: rgba(66, 133, 244, 0.1);
+            color: var(--secondary);
+        }
+
+        .status-failed {
+            background-color: rgba(234, 67, 53, 0.1);
+            color: var(--danger);
+        }
+
+        .action-cell {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            background-color: var(--light);
+            color: var(--gray);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            background-color: var(--gray-light);
+            color: var(--dark);
+        }
+
+        .action-edit:hover {
+            background-color: rgba(66, 133, 244, 0.1);
+            color: var(--secondary);
+        }
+
+        .action-view:hover {
+            background-color: rgba(52, 168, 83, 0.1);
+            color: var(--primary);
+        }
+
+        .action-delete:hover {
+            background-color: rgba(234, 67, 53, 0.1);
+            color: var(--danger);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .page-info {
+            color: var(--gray);
+        }
+
+        .page-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .page-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--white);
+            color: var(--gray);
+            border: 1px solid var(--gray-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .page-btn:hover {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        .page-btn.active {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .page-btn.disabled {
+            background-color: var(--light);
+            color: var(--gray-light);
+            cursor: not-allowed;
+        }
+
+        /* Map Section */
+        .map-section {
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .map-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .map-container {
+            height: 400px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--gray-light);
+        }
+
+        /* Notification Panel */
+        .notification-panel {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 350px;
+            height: 100vh;
+            background-color: var(--white);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transition: var(--transition);
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .notification-panel.active {
+            right: 0;
+        }
+
+        .notification-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .notification-panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notification-close:hover {
+            color: var(--danger);
+        }
+
+        .notification-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .notification-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            background-color: var(--light);
+            transition: var(--transition);
+        }
+
+        .notification-item:hover {
+            background-color: rgba(52, 168, 83, 0.05);
+        }
+
+        .notification-item.unread {
+            border-left: 3px solid var(--primary);
+        }
+
+        .notification-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-message {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-time {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 500px;
+            max-width: 90%;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .modal.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Detail View */
+        .detail-item {
+            margin-bottom: 1.25rem;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            font-size: 0.95rem;
+        }
+
+        .detail-map {
+            height: 200px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-top: 1rem;
+            border: 1px solid var(--gray-light);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 2000;
+        }
+
+        .toast {
+            background-color: var(--white);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.25rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            width: 350px;
+            max-width: 90vw;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .toast.active {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-message {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .toast-close:hover {
+            color: var(--danger);
+        }
+
+        .toast-success .toast-icon {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .toast-info .toast-icon {
+            background-color: var(--secondary-light);
+            color: var(--secondary);
+        }
+
+        .toast-warning .toast-icon {
+            background-color: rgba(251, 188, 5, 0.2);
+            color: var(--accent);
+        }
+
+        .toast-error .toast-icon {
+            background-color: rgba(234, 67, 53, 0.2);
+            color: var(--danger);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: var(--white);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            width: 180px;
+            padding: 0.5rem 0;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: var(--transition);
+        }
+
+        .dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: var(--gray-light);
+            margin: 0.5rem 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 1000;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                grid-column: 1;
+                padding-left: 1.5rem;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .report-filters {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .table-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .pagination {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .slide-in-up {
+            animation: slideInUp 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- <div class="layout"> -->
+        <!-- Sidebar -->
+        <!-- <aside class="sidebar">
+            <div class="brand">
+                <i class="fas fa-recycle brand-icon"></i>
+                <span class="brand-text">WasteManage Pro</span>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/staff-home" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/viewassignedloc" class="nav-link">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Assigned Locations</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/collection-requests" class="nav-link">
+                        <i class="fas fa-truck"></i>
+                        <span>Collections</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/wastecollectingusers" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        <span>Waste Collectors</span>
+                    </a>
+                </li>
+                
+                <div class="nav-section-title">Reports</div>
+                
+                <li class="nav-item">
+                    <a href="/wastestats" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/reports" class="nav-link active">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Collection Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/stafffeedback" class="nav-link">
+                        <i class="fas fa-star"></i>
+                        <span>Ratings & Feedback</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/staffprofile" class="nav-link">
+                        <i class="fas fa-user-edit"></i>
+                        <span>Edit Profile</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="user-profile">
+                <div class="avatar">JD</div>
+                <div class="user-info">
+                    <div class="user-name">John Doe</div>
+                    <div class="user-role">Waste Management</div>
+                </div>
+                <a href="/login" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </aside> -->
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="page-title-wrapper">
+                    <button class="mobile-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Ernakulam Collection Reports</h1>
+                </div>
+                
+                <div class="top-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search reports...">
+                    </div>
+                    
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">3</span>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Report Filters -->
+            <section class="report-header">
+                <div class="report-title">
+                    <div class="report-title-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h2 class="report-title-text">Collection Report Details</h2>
+                </div>
+                
+                <p class="report-description">
+                    View and analyze waste collection data for Ernakulam region. Filter by date, ward, waste type, and collection status.
+                </p>
+                
+                <div class="report-filters">
+                    <div class="filter-group">
+                        <label class="filter-label">Date Range</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="date" class="filter-date" value="2025-03-01">
+                            <input type="date" class="filter-date" value="2025-03-19">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Ward/Area</label>
+                        <select class="filter-select">
+                            <option value="all">All Wards</option>
+                            <option value="edappally" selected>Edappally</option>
+                            <option value="kaloor">Kaloor</option>
+                            <option value="palarivattom">Palarivattom</option>
+                            <option value="kakkanad">Kakkanad</option>
+                            <option value="marine-drive">Marine Drive</option>
+                            <option value="fort-kochi">Fort Kochi</option>
+                            <option value="kadavanthra">Kadavanthra</option>
+                            <option value="vyttila">Vyttila</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Waste Type</label>
+                        <select class="filter-select">
+                            <option value="all">All Types</option>
+                            <option value="biodegradable">Biodegradable</option>
+                            <option value="plastic">Plastic</option>
+                            <option value="paper">Paper</option>
+                            <option value="metal">Metal</option>
+                            <option value="ewaste">E-waste</option>
+                            <option value="hazardous">Hazardous</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Collection Status</label>
+                        <select class="filter-select">
+                            <option value="all">All Status</option>
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-actions">
+                    <button class="btn btn-outline">
+                        <i class="fas fa-redo"></i>
+                        Reset Filters
+                    </button>
+                    
+                    <button class="btn btn-primary">
+                        <i class="fas fa-filter"></i>
+                        Apply Filters
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Stats Overview -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">Total Collections</div>
+                        <div class="stat-card-icon icon-primary">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value">187</div>
+                    <div class="stat-card-desc">In Edappally this month</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">Waste Collected</div>
+                        <div class="stat-card-icon icon-secondary">
+                            <i class="fas fa-dumpster"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value">3.2 tons</div>
+                    <div class="stat-card-desc">Total waste collected</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">Recycled</div>
+                        <div class="stat-card-icon icon-accent">
+                            <i class="fas fa-recycle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value">64%</div>
+                    <div class="stat-card-desc">Of total collected waste</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">Completion Rate</div>
+                        <div class="stat-card-icon icon-danger">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-value">92%</div>
+                    <div class="stat-card-desc">Collection requests completed</div>
+                </div>
+            </section>
+            
+            <!-- Report Table -->
+            <section class="report-table-container">
+                <div class="report-table-header">
+                    <h3 class="report-table-title">Collection Records</h3>
+                    
+                    <div class="table-actions">
+                        <button class="btn btn-outline">
+                            <i class="fas fa-print"></i>
+                            Print
+                        </button>
+                        
+                        <button class="btn btn-outline">
+                            <i class="fas fa-file-export"></i>
+                            Export
+                        </button>
+                    </div>
+                </div>
+                
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Location</th>
+                            <th>Ward</th>
+                            <th>Waste Type</th>
+                            <th>Quantity</th>
+                            <th>Collector</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ECR-2532</td>
+                            <td>Mar 19, 2025</td>
+                            <td>Oberon Mall</td>
+                            <td>Edappally</td>
+                            <td>Biodegradable</td>
+                            <td>45 kg</td>
+                            <td>Raj Kumar</td>
+                            <td><span class="status-tag status-completed">Completed</span></td>
+                            <td class="action-cell">
+                                <button class="action-btn action-view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn action-edit" title="Edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button class="action-btn action-delete" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ECR-2531</td>
+                            <td>Mar 19, 2025</td>
+                            <td>Lulu Mall</td>
+                            <td>Edappally</td>
+                            <td>Plastic</td>
+                            <td>32 kg</td>
+                            <td>Arun Nair</td>
+                            <td><span class="status-tag status-completed">Completed</span></td>
+                            <td class="action-cell">
+                                <button class="action-btn action-view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn action-edit" title="Edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button class="action-btn action-delete" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ECR-2528</td>
+                            <td>Mar 18, 2025</td>
+                            <td>Metro Station</td>
+                            <td>Edappally</td>
+                            <td>Mixed</td>
+                            <td>67 kg</td>
+                            <td>Meera Krishnan</td>
+                            <td><span class="status-tag status-completed">Completed</span></td>
+                            <td class="action-cell">
+                                <button class="action-btn action-view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn action-edit" title="Edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button class="action-btn action-delete" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ECR-2525</td>
+                            <td>Mar 18, 2025</td>
+                            <td>Edappally Junction</td>
+                            <td>Edappally</td>
+                            <td>Paper</td>
+                            <td>28 kg</td>
+                            <td>Priya Thomas</td>
+                            <td><span class="status-tag status-processing">Processing</span></td>
+                            <td class="action-cell">
+                                <button class="action-btn action-view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn action-edit" title="Edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button class="action-btn action-delete" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ECR-2522</td>
+                            <td>Mar 17, 2025</td>
+                            <td>Rajagiri College</td>
+                            <td>Edappally</td>
+                            <td>E-waste</td>
+                            <td>15 kg</td>
+                            <td>Sandeep Menon</td>
+                            <td><span class="status-tag status-completed">Completed</span></td>
+                            <td class="action-cell">
+                                <button class="action-btn action-view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn action-edit" title="Edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button class="action-btn action-delete" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ECR-2519</td>
+                            <td>Mar 17, 2025</td>
+                            <td>Changampuzha Park</td>
+                            <td>Edappally</td>
+                            <td>Biodegradable</td>
+                            <td>53 kg</td>
+                            <td>Anoop Raj</td>
+                            <td><span class="status-tag status-completed">Completed</span></td>
+                            <td class="action-cell">
+                                <button class="action-btn action-view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn action-edit" title="Edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button class="action-btn action-delete" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ECR-2515</td>
+                            <td>Mar 16, 2025</td>
+                            <td>Edappally Toll</td>
+                            <td>Edappally</td>
+                            <td>Plastic</td>
+                            <td>41 kg</td>
+                            <td>Vishnu Prasad</td>
+                            <td><span class="status-tag status-pending">Pending</span></td>
+                            <td class="action-cell">
+                                <button class="action-btn action-view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn action-edit" title="Edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button class="action-btn action-delete" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ECR-2512</td>
+                            <td>Mar 16, 2025</td>
+                            <td>Ponekkara</td>
+                            <td>Edappally</td>
+                            <td>Mixed</td>
+                            <td>39 kg</td>
+                            <td>Lakshmi Nair</td>
+                            <td><span class="status-tag status-failed">Failed</span></td>
+                            <td class="action-cell">
+                                <button class="action-btn action-view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn action-edit" title="Edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button class="action-btn action-delete" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ECR-2509</td>
+                            <td>Mar 15, 2025</td>
+                            <td>Padamugal</td>
+                            <td>Edappally</td>
+                            <td>Metal</td>
+                            <td>23 kg</td>
+                            <td>Joseph Thomas</td>
+                            <td><span class="status-tag status-completed">Completed</span></td>
+                            <td class="action-cell">
+                                <button class="action-btn action-view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn action-edit" title="Edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button class="action-btn action-delete" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ECR-2507</td>
+                            <td>Mar 15, 2025</td>
+                            <td>Edappally Church</td>
+                            <td>Edappally</td>
+                            <td>Paper</td>
+                            <td>35 kg</td>
+                            <td>Sanjay Kumar</td>
+                            <td><span class="status-tag status-completed">Completed</span></td>
+                            <td class="action-cell">
+                                <button class="action-btn action-view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn action-edit" title="Edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button class="action-btn action-delete" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="pagination">
+                    <div class="page-info">
+                        Showing 1 to 10 of 45 entries
+                    </div>
+                    
+                    <div class="page-controls">
+                        <button class="page-btn disabled">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn">4</button>
+                        <button class="page-btn">5</button>
+                        <button class="page-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Map Section -->
+            <section class="map-section">
+                <div class="map-header">
+                    <h3 class="map-title">Collection Points Map</h3>
+                    
+                    <div class="map-controls">
+                        <button class="btn btn-outline">
+                            <i class="fas fa-expand"></i>
+                            Full Screen
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="map-container">
+                    <!-- Map will be loaded here -->
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31371.15230786362!2d76.29972101651976!3d10.017991785944196!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080cd820257ec3%3A0x70510338d6614634!2sEdappally%2C%20Kochi%2C%20Kerala!5e0!3m2!1sen!2sin!4v1616412000000!5m2!1sen!2sin" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notification-panel-header">
+            <h3 class="notification-panel-title">Notifications</h3>
+            <button class="notification-close" id="notificationClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="notification-list">
+            <div class="notification-item unread">
+                <div class="notification-icon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">New Collection Added</div>
+                    <div class="notification-message">A new collection request has been assigned to Edappally ward.</div>
+                    <div class="notification-time">10 minutes ago</div>
+                </div>
+            </div>
+            
+            <div class="notification-item unread">
+                <div class="notification-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">Collection Delayed</div>
+                    <div class="notification-message">Collection at Ponekkara has been delayed due to traffic.</div>
+                    <div class="notification-time">2 hours ago</div>
+                </div>
+            </div>
+            
+            <div class="notification-item unread">
+                <div class="notification-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">Report Generated</div>
+                    <div class="notification-message">Weekly collection report for Edappally is ready for review.</div>
+                    <div class="notification-time">Yesterday</div>
+                </div>
+            </div>
+            
+            <div class="notification-item">
+                <div class="notification-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">New Collector Assigned</div>
+                    <div class="notification-message">Vishnu Prasad has been assigned to Edappally zone.</div>
+                    <div class="notification-time">2 days ago</div>
+                </div>
+            </div>
+            
+            <div class="notification-item">
+                <div class="notification-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">New Feedback</div>
+                    <div class="notification-message">You received a 5-star rating from Lulu Mall collection.</div>
+                    <div class="notification-time">3 days ago</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Details Modal -->
+    <div class="modal-backdrop" id="viewDetailsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Collection Details</h3>
+                <button class="modal-close" id="closeViewDetailsModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="detail-item">
+                    <div class="detail-label">Collection ID</div>
+                    <div class="detail-value" id="modalCollectionId">ECR-2532</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Date & Time</div>
+                    <div class="detail-value" id="modalDateTime">Mar 19, 2025, 10:35 AM</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Location</div>
+                    <div class="detail-value" id="modalLocation">Oberon Mall, Edappally</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Ward</div>
+                    <div class="detail-value" id="modalWard">Edappally</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Waste Type</div>
+                    <div class="detail-value" id="modalWasteType">Biodegradable</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Quantity</div>
+                    <div class="detail-value" id="modalQuantity">45 kg</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Waste Collector</div>
+                    <div class="detail-value" id="modalCollector">Raj Kumar</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Contact</div>
+                    <div class="detail-value" id="modalContact">+91 98765 43210</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value">
+                        <span class="status-tag status-completed" id="modalStatus">Completed</span>
+                    </div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Description</div>
+                    <div class="detail-value" id="modalDescription">Collection of food waste from Oberon Mall food court. All waste properly segregated at source.</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Location on Map</div>
+                    <div class="detail-map">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3928.637188871667!2d76.31492261479048!3d10.0294289929045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080c3cd40c8a9d%3A0x5b8dcc7da650abce!2sOberon%20Mall!5e0!3m2!1sen!2sin!4v1616412000000!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="printDetails">
+                    <i class="fas fa-print"></i>
+                    Print Details
+                </button>
+                
+                <button class="btn btn-primary" id="closeDetailsBtn">
+                    <i class="fas fa-check"></i>
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // DOM Elements
+        const sidebar = document.querySelector('.sidebar');
+        const mobileToggle = document.querySelector('.mobile-toggle');
+        const notificationBtn = document.querySelector('.notification-btn');
+        const notificationPanel = document.getElementById('notificationPanel');
+        const notificationClose = document.getElementById('notificationClose');
+        const actionButtons = document.querySelectorAll('.action-btn');
+        const filterButtons = document.querySelectorAll('.filter-actions .btn');
+        const paginationButtons = document.querySelectorAll('.page-btn');
+        const viewDetailsModal = document.getElementById('viewDetailsModal');
+        const closeViewDetailsModal = document.getElementById('closeViewDetailsModal');
+        const closeDetailsBtn = document.getElementById('closeDetailsBtn');
+        const printDetails = document.getElementById('printDetails');
+        const filterDates = document.querySelectorAll('.filter-date');
+        const filterSelects = document.querySelectorAll('.filter-select');
+        const searchInput = document.querySelector('.search-input');
+        const toastContainer = document.getElementById('toastContainer');
+        
+        // Collection data for dynamic processing
+        const collectionData = [
+            {
+                id: "ECR-2532",
+                date: "Mar 19, 2025",
+                time: "10:35 AM",
+                location: "Oberon Mall",
+                fullLocation: "Oberon Mall, Edappally",
+                ward: "Edappally",
+                wasteType: "Biodegradable",
+                quantity: "45 kg",
+                collector: "Raj Kumar",
+                contact: "+91 98765 43210",
+                status: "completed",
+                description: "Collection of food waste from Oberon Mall food court. All waste properly segregated at source.",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3928.637188871667!2d76.31492261479048!3d10.0294289929045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080c3cd40c8a9d%3A0x5b8dcc7da650abce!2sOberon%20Mall!5e0!3m2!1sen!2sin!4v1616412000000!5m2!1sen!2sin"
+            },
+            {
+                id: "ECR-2531",
+                date: "Mar 19, 2025",
+                time: "09:15 AM",
+                location: "Lulu Mall",
+                fullLocation: "Lulu Mall, Edappally",
+                ward: "Edappally",
+                wasteType: "Plastic",
+                quantity: "32 kg",
+                collector: "Arun Nair",
+                contact: "+91 87654 32109",
+                status: "completed",
+                description: "Collection of plastic waste from Lulu Mall shopping area. Mostly packaging materials and bottles.",
+                mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3928.6458801126314!2d76.31512761479042!3d10.028690592905116!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080c15f5f7a52d%3A0xd9f5c2be0de1d8d5!2sLulu%20Mall%20Kochi!5e0!3m2!1sen!2sin!4v1616412000000!5m2!1sen!2sin"
+            },
+            // More data can be added here...
+        ];
+        
+        // Mobile toggle functionality
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+        
+        // Notification panel toggle
+        notificationBtn.addEventListener('click', () => {
+            notificationPanel.classList.toggle('active');
+        });
+        
+        notificationClose.addEventListener('click', () => {
+            notificationPanel.classList.remove('active');
+        });
+        
+        // Close notification panel when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!notificationBtn.contains(e.target) && !notificationPanel.contains(e.target)) {
+                notificationPanel.classList.remove('active');
+            }
+        });
+        
+        // Action buttons functionality
+        actionButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const action = e.currentTarget.classList.contains('action-view') ? 'view' :
+                               e.currentTarget.classList.contains('action-edit') ? 'edit' : 'delete';
+                              
+                const row = e.currentTarget.closest('tr');
+                const recordId = row.querySelector('td:first-child').textContent;
+                
+                if (action === 'view') {
+                    // Find the record in our data
+                    const record = collectionData.find(item => item.id === recordId) || {
+                        id: recordId,
+                        date: row.cells[1].textContent,
+                        time: "10:00 AM", // Default time if not in data
+                        location: row.cells[2].textContent,
+                        fullLocation: `${row.cells[2].textContent}, ${row.cells[3].textContent}`,
+                        ward: row.cells[3].textContent,
+                        wasteType: row.cells[4].textContent,
+                        quantity: row.cells[5].textContent,
+                        collector: row.cells[6].textContent,
+                        contact: "+91 99999 99999", // Default contact if not in data
+                        status: row.cells[7].querySelector('.status-tag').classList.contains('status-completed') ? 'completed' :
+                                row.cells[7].querySelector('.status-tag').classList.contains('status-pending') ? 'pending' :
+                                row.cells[7].querySelector('.status-tag').classList.contains('status-processing') ? 'processing' : 'failed',
+                        description: `Collection of ${row.cells[4].textContent.toLowerCase()} waste from ${row.cells[2].textContent}.`,
+                        mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31371.15230786362!2d76.29972101651976!3d10.017991785944196!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080cd820257ec3%3A0x70510338d6614634!2sEdappally%2C%20Kochi%2C%20Kerala!5e0!3m2!1sen!2sin!4v1616412000000!5m2!1sen!2sin"
+                    };
+                    
+                    // Populate modal with data
+                    document.getElementById('modalCollectionId').textContent = record.id;
+                    document.getElementById('modalDateTime').textContent = `${record.date}, ${record.time}`;
+                    document.getElementById('modalLocation').textContent = record.fullLocation;
+                    document.getElementById('modalWard').textContent = record.ward;
+                    document.getElementById('modalWasteType').textContent = record.wasteType;
+                    document.getElementById('modalQuantity').textContent = record.quantity;
+                    document.getElementById('modalCollector').textContent = record.collector;
+                    document.getElementById('modalContact').textContent = record.contact;
+                    
+                    const statusTag = document.getElementById('modalStatus');
+                    statusTag.textContent = record.status.charAt(0).toUpperCase() + record.status.slice(1);
+                    statusTag.className = `status-tag status-${record.status}`;
+                    
+                    document.getElementById('modalDescription').textContent = record.description;
+                    
+                    // Update map iframe
+                    const detailMap = document.querySelector('.detail-map iframe');
+                    if (detailMap) {
+                        detailMap.src = record.mapUrl;
+                    }
+                    
+                    // Show modal
+                    viewDetailsModal.classList.add('active');
+                    document.querySelector('.modal').classList.add('active');
+                    
+                    // Prevent scrolling on the body
+                    document.body.style.overflow = 'hidden';
+                    
+                } else if (action === 'edit') {
+                    // Show toast notification for edit action
+                    showToast('info', 'Edit Record', `Editing record ${recordId}. This feature will be available soon.`);
+                    
+                } else if (action === 'delete') {
+                    // Show confirmation dialog
+                    if (confirm(`Are you sure you want to delete record ${recordId}?`)) {
+                        // Remove row from table
+                        row.remove();
+                        
+                        // Show success toast
+                        showToast('success', 'Record Deleted', `Record ${recordId} was deleted successfully.`);
+                    }
+                }
+            });
+        });
+        
+        // Close view details modal
+        closeViewDetailsModal.addEventListener('click', () => {
+            closeViewModal();
+        });
+        
+        closeDetailsBtn.addEventListener('click', () => {
+            closeViewModal();
+        });
+        
+        // Close modal when clicking outside
+        viewDetailsModal.addEventListener('click', (e) => {
+            if (e.target === viewDetailsModal) {
+                closeViewModal();
+            }
+        });
+        
+        // Print details functionality
+        printDetails.addEventListener('click', () => {
+            const recordId = document.getElementById('modalCollectionId').textContent;
+            
+            // In a real app, this would print the details
+            showToast('info', 'Print Request', `Printing details for record ${recordId}...`);
+            
+            // Simulate print dialog
+            setTimeout(() => {
+                window.print();
+            }, 1000);
+        });
+        
+        function closeViewModal() {
+            viewDetailsModal.classList.remove('active');
+            document.querySelector('.modal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Filter buttons functionality
+        filterButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const isReset = e.currentTarget.textContent.includes('Reset');
+                
+                if (isReset) {
+                    // Reset all filters
+                    filterSelects.forEach(select => {
+                        select.value = 'all';
+                    });
+                    
+                    filterDates.forEach((date, index) => {
+                        date.value = index === 0 ? '2025-03-01' : '2025-03-19';
+                    });
+                    
+                    showToast('success', 'Filters Reset', 'All filters have been reset to default values.');
+                } else {
+                    // Apply filters
+                    // Get filter values
+                    const dateStart = filterDates[0].value;
+                    const dateEnd = filterDates[1].value;
+                    const ward = document.querySelector('.filter-select:nth-child(1)').value;
+                    const wasteType = document.querySelector('.filter-select:nth-child(2)').value;
+                    const status = document.querySelector('.filter-select:nth-child(3)').value;
+                    
+                    // Show success toast with filter info
+                    showToast('success', 'Filters Applied', `Showing data from ${dateStart} to ${dateEnd} for ${ward === 'all' ? 'all wards' : ward} with ${wasteType === 'all' ? 'all waste types' : wasteType} and ${status === 'all' ? 'all statuses' : status}.`);
+                }
+            });
+        });
+        
+        // Pagination functionality
+        paginationButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                if (e.currentTarget.classList.contains('disabled')) {
+                    return;
+                }
+                
+                // Get page number or direction
+                const page = e.currentTarget.textContent;
+                
+                // Remove active class from all buttons
+                paginationButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                if (!e.currentTarget.classList.contains('page-btn-nav')) {
+                    e.currentTarget.classList.add('active');
+                    
+                    // Update page info
+                    const pageInfo = document.querySelector('.page-info');
+                    if (pageInfo) {
+                        const start = (parseInt(page) - 1) * 10 + 1;
+                        const end = Math.min(start + 9, 45); // Assuming 45 total records
+                        pageInfo.textContent = `Showing ${start} to ${end} of 45 entries`;
+                    }
+                    
+                    // Show toast notification
+                    showToast('info', 'Page Changed', `Navigated to page ${page}`);
+                }
+            });
+        });
+        
+        // Search functionality
+        searchInput.addEventListener('keyup', (e) => {
+            const searchTerm = e.target.value.trim().toLowerCase();
+            
+            if (searchTerm.length > 0) {
+                showToast('info', 'Search', `Searching for "${searchTerm}"...`);
+            }
+            
+            // In a real app, this would filter the table rows
+            // For demo purposes, let's just log the search term
+            console.log(`Searching for: ${searchTerm}`);
+        });
+        
+        // Toast notification function
+        function showToast(type, title, message) {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const iconClass = type === 'success' ? 'fas fa-check-circle' : 
+                             type === 'error' ? 'fas fa-exclamation-circle' :
+                             type === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="${iconClass}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            // Add to container
+            toastContainer.appendChild(toast);
+            
+            // Add event listener to close button
+            const closeBtn = toast.querySelector('.toast-close');
+            closeBtn.addEventListener('click', () => {
+                removeToast(toast);
+            });
+            
+            // Animate in
+            setTimeout(() => {
+                toast.classList.add('active');
+            }, 10);
+            
+            // Auto-remove after 5 seconds
+            const timeout = setTimeout(() => {
+                removeToast(toast);
+            }, 5000);
+            
+            // Store timeout in toast element for clearing if closed manually
+            toast.dataset.timeout = timeout;
+        }
+        
+        function removeToast(toast) {
+            clearTimeout(toast.dataset.timeout);
+            toast.classList.remove('active');
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toastContainer.removeChild(toast);
+                }
+            }, 500);
+        }
+        
+        // Sample notification function
+        function showNotification(message) {
+            showToast('info', 'Notification', message);
+        }
+        
+        // Show sample notification for demo
+        setTimeout(() => {
+            showNotification('New collection report has been added to Edappally ward');
+        }, 3000);
+        
+        // Animation for elements on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = [
+                ...document.querySelectorAll('.report-header, .stats-grid, .report-table-container, .map-section')
+            ];
+            
+            elements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.classList.add('slide-in-up');
+                }, index * 100);
+            });
+        });
+
+        // Map fullscreen functionality
+        const fullScreenBtn = document.querySelector('.map-controls .btn');
+        if (fullScreenBtn) {
+            fullScreenBtn.addEventListener('click', () => {
+                const mapContainer = document.querySelector('.map-container');
+                
+                if (mapContainer) {
+                    if (!document.fullscreenElement) {
+                        if (mapContainer.requestFullscreen) {
+                            mapContainer.requestFullscreen();
+                        } else if (mapContainer.mozRequestFullScreen) {
+                            mapContainer.mozRequestFullScreen();
+                        } else if (mapContainer.webkitRequestFullscreen) {
+                            mapContainer.webkitRequestFullscreen();
+                        } else if (mapContainer.msRequestFullscreen) {
+                            mapContainer.msRequestFullscreen();
+                        }
+                    } else {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        } else if (document.mozCancelFullScreen) {
+                            document.mozCancelFullScreen();
+                        } else if (document.webkitExitFullscreen) {
+                            document.webkitExitFullscreen();
+                        } else if (document.msExitFullscreen) {
+                            document.msExitFullscreen();
+                        }
+                    }
+                }
+            });
+        }
+
+        // Print and Export functionality
+        const printBtn = document.querySelector('.table-actions .btn:first-child');
+        const exportBtn = document.querySelector('.table-actions .btn:last-child');
+        
+        if (printBtn) {
+            printBtn.addEventListener('click', () => {
+                showToast('info', 'Print Report', 'Preparing to print the current report view...');
+                
+                // In a real app, this would prepare a print-friendly version
+                setTimeout(() => {
+                    window.print();
+                }, 1000);
+            });
+        }
+        
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                showToast('info', 'Export Report', 'Preparing to export the current report...');
+                
+                // Simulate download dialog after a brief delay
+                setTimeout(() => {
+                    const link = document.createElement('a');
+                    link.href = '#';
+                    link.download = 'Edappally_Collection_Report_' + new Date().toISOString().slice(0, 10) + '.csv';
+                    link.click();
+                    
+                    showToast('success', 'Export Complete', 'Report has been exported successfully!');
+                }, 1500);
+            });
+        }
+    </script>
+</body>
+</html>
+                

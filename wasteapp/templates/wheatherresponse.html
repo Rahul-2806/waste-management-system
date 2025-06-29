@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Response Plan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+        .bg-light-green {
+            background-color: #f0f9f0;
+        }
+        .text-accent-green {
+            color: #2ecc71;
+        }
+        .border-accent-green {
+            border-color: #2ecc71;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #2ecc71;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            border-left: 2px solid #2ecc71;
+        }
+    </style>
+</head>
+<body class="bg-light-green text-gray-800">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-4xl font-bold mb-8 text-center text-accent-green animate-fade-in">
+                Waste Management Weather Response Plan
+            </h1>
+
+            <!-- Emergency Preparedness Overview -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8 animate-fade-in">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-shield-alt text-accent-green mr-3 text-2xl"></i>
+                    <h2 class="text-2xl font-semibold">Emergency Preparedness Strategy</h2>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="p-4 bg-green-50 rounded-lg text-center">
+                        <i class="fas fa-users text-green-600 text-3xl mb-2"></i>
+                        <h3 class="font-bold text-green-800">24 Staff On Alert</h3>
+                        <p class="text-sm text-gray-600">Rapid Response Team</p>
+                    </div>
+                    <div class="p-4 bg-yellow-50 rounded-lg text-center">
+                        <i class="fas fa-truck text-yellow-600 text-3xl mb-2"></i>
+                        <h3 class="font-bold text-yellow-800">Flexible Routes</h3>
+                        <p class="text-sm text-gray-600">Adaptive Collection Strategies</p>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-lg text-center">
+                        <i class="fas fa-bell text-blue-600 text-3xl mb-2"></i>
+                        <h3 class="font-bold text-blue-800">Early Warning</h3>
+                        <p class="text-sm text-gray-600">Real-time Monitoring</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Response Timeline -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8 animate-fade-in">
+                <h2 class="text-2xl font-semibold mb-6 text-accent-green">
+                    <i class="fas fa-clock mr-2"></i>Response Timeline
+                </h2>
+                <div class="space-y-4">
+                    <div class="timeline-item pb-4">
+                        <h3 class="font-bold text-lg text-green-700">Pre-Weather Event (24-48 Hours Before)</h3>
+                        <ul class="list-disc pl-5 text-gray-700">
+                            <li>Monitor weather forecasts</li>
+                            <li>Prepare alternative waste collection routes</li>
+                            <li>Check and maintain drainage systems</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-item pb-4">
+                        <h3 class="font-bold text-lg text-yellow-700">During Weather Event</h3>
+                        <ul class="list-disc pl-5 text-gray-700">
+                            <li>Activate emergency response team</li>
+                            <li>Implement adaptive routing</li>
+                            <li>Continuous communication with field staff</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-item">
+                        <h3 class="font-bold text-lg text-blue-700">Post-Weather Event</h3>
+                        <ul class="list-disc pl-5 text-gray-700">
+                            <li>Assess infrastructure damage</li>
+                            <li>Clear backlogged waste collection routes</li>
+                            <li>Conduct equipment and vehicle maintenance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Response Protocols -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8 animate-fade-in">
+                <h2 class="text-2xl font-semibold mb-6 text-accent-green">
+                    <i class="fas fa-clipboard-list mr-2"></i>Key Response Protocols
+                </h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-green-800 mb-2">
+                            <i class="fas fa-route mr-2 text-green-600"></i>Route Adaptation
+                        </h3>
+                        <p class="text-gray-700">Prioritize essential waste collection areas. Use real-time GPS tracking to adjust routes dynamically.</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-blue-800 mb-2">
+                            <i class="fas fa-shield-alt mr-2 text-blue-600"></i>Safety Measures
+                        </h3>
+                        <p class="text-gray-700">Ensure staff safety with protective gear and emergency communication devices.</p>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-yellow-800 mb-2">
+                            <i class="fas fa-tools mr-2 text-yellow-600"></i>Equipment Protection
+                        </h3>
+                        <p class="text-gray-700">Waterproof and secure critical waste management equipment.</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-purple-800 mb-2">
+                            <i class="fas fa-clock mr-2 text-purple-600"></i>Contingency Scheduling
+                        </h3>
+                        <p class="text-gray-700">Create backup shifts and extended operation hours if needed.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-center space-x-4 animate-fade-in">
+                <button class="bg-accent-green text-white px-6 py-3 rounded-lg hover:bg-green-600 transition duration-300">
+                    <i class="fas fa-download mr-2"></i>Download Full Plan
+                </button>
+                <button class="border-2 border-accent-green text-accent-green px-6 py-3 rounded-lg hover:bg-green-50 transition duration-300">
+                    <i class="fas fa-bell mr-2"></i>Notify Team
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

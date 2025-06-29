@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced NLP Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<style>
+    /* Enhanced chatbot styles */
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    #chatbot-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 350px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    #chat-bubble {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(45deg, #00f, #0ff);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 30px;
+        color: white;
+        cursor: pointer;
+        animation: pulse 2s infinite;
+        transition: transform 0.3s ease;
+    }
+    
+    #chat-bubble:hover {
+        transform: scale(1.1);
+    }
+
+    #chat-window {
+        background: #222;
+        border-radius: 15px;
+        padding: 15px;
+        width: 100%;
+        margin-top: 10px;
+        display: none;
+        flex-direction: column;
+        box-shadow: 0 0 15px #0ff;
+        transition: all 0.3s ease;
+    }
+
+    #chat-header {
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #444;
+    }
+    
+    #chat-title {
+        font-weight: 500;
+        font-size: 16px;
+    }
+    
+    #chat-close {
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    #chat-messages {
+        max-height: 300px;
+        overflow-y: auto;
+        color: #fff;
+        font-size: 14px;
+        margin-bottom: 15px;
+        padding-right: 5px;
+    }
+    
+    #chat-messages::-webkit-scrollbar {
+        width: 5px;
+    }
+    
+    #chat-messages::-webkit-scrollbar-thumb {
+        background: #0ff;
+        border-radius: 5px;
+    }
+
+    .message {
+        margin-bottom: 10px;
+        padding: 8px 12px;
+        border-radius: 10px;
+        max-width: 80%;
+        word-wrap: break-word;
+    }
+    
+    .bot-message {
+        background: #004;
+        align-self: flex-start;
+        margin-right: auto;
+        border-bottom-left-radius: 2px;
+    }
+    
+    .user-message {
+        background: #008;
+        align-self: flex-end;
+        margin-left: auto;
+        border-bottom-right-radius: 2px;
+    }
+
+    .typing-indicator {
+        display: none;
+        color: #0ff;
+        font-style: italic;
+        margin-bottom: 10px;
+    }
+
+    /* Input + Mic Button area */
+    #chat-input-area {
+        display: flex;
+        align-items: center;
+    }
+
+    #chat-input {
+        flex: 1;
+        border: none;
+        padding: 10px;
+        border-radius: 10px 0 0 10px;
+        outline: none;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    #mic-button {
+        background-color: #00f;
+        border: none;
+        color: white;
+        font-size: 20px;
+        padding: 8px 12px;
+        border-radius: 0 10px 10px 0;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    #mic-button:hover {
+        background-color: #0ff;
+    }
+    
+    #suggestions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 10px;
+    }
+    
+    .suggestion {
+        background: rgba(0, 255, 255, 0.2);
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .suggestion:hover {
+        background: rgba(0, 255, 255, 0.4);
+    }
+
+    /* Bubble Pulse Animation */
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.7); }
+        70% { box-shadow: 0 0 0 15px rgba(0, 255, 255, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
+    }
+    
+    @keyframes typing {
+        0% { content: '.'; }
+        33% { content: '..'; }
+        66% { content: '...'; }
+    }
+    
+    .typing::after {
+        content: '';
+        animation: typing 1.5s infinite;
+    }
+</style>
+<body>
+    <!-- Floating Chat Bubble -->
+    <div id="chatbot-container">
+        <div id="chat-bubble">💬</div>
+        <div id="chat-window">
+            <div id="chat-header">
+                <div id="chat-title">AI Assistant</div>
+                <div id="chat-close">✖</div>
+            </div>
+            <div id="chat-messages"></div>
+            <div class="typing-indicator">Bot is typing<span class="typing"></span></div>
+            <div id="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Ask me anything..." autocomplete="off">
+                <button id="mic-button">🎤</button>
+            </div>
+            <div id="suggestions"></div>
+        </div>
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/compromise/14.8.2/compromise.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatBubble = document.getElementById('chat-bubble');
+        const chatWindow = document.getElementById('chat-window');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const chatClose = document.getElementById('chat-close');
+        const micButton = document.getElementById('mic-button');
+        const typingIndicator = document.querySelector('.typing-indicator');
+        const suggestionsArea = document.getElementById('suggestions');
+
+        let pendingRedirect = null;
+        let isOpen = false;
+        let context = {
+            lastTopic: null,
+            lastIntent: null,
+            conversationHistory: []
+        };
+
+        // NLP processing using compromise.js
+        function processInput(input) {
+            const doc = nlp(input.toLowerCase());
+            
+            // Intent detection - improved with more synonyms and phrases
+            let intent = 'unknown';
+            
+            if (doc.has('(shopping|shop|buy|purchase|product|merchandise|item|browse|catalog|store|collection|sale|deal|offer)')) {
+                intent = 'shopping';
+            } else if (doc.has('(cart|basket|add to cart|shopping bag|checkout|my cart|my items|bag|purchase|buying)')) {
+                intent = 'cart';
+            } else if (doc.has('(trash|garbage|waste|pick up|pickup|collection|dispose|bin|recycling|recycle|disposal|trash day|collection day)')) {
+                intent = 'trash';
+            } else if (doc.has('(order|delivery|package|shipped|shipping|track|tracking|shipment|purchased|bought|delivery status|my purchase)')) {
+                intent = 'order';
+            } else if (doc.has('(application|apply|status|applied|form|submission|request|apply for|submitted|document|paperwork)')) {
+                intent = 'application';
+            } else if (doc.has('(hello|hi|hey|greetings|howdy|good morning|good afternoon|good evening|what\'s up)')) {
+                intent = 'greeting';
+            } else if (doc.has('(bye|goodbye|see you|later|farewell|exit|quit|close)')) {
+                intent = 'farewell';
+            } else if (doc.has('(thank|thanks|appreciate|grateful|thank you)')) {
+                intent = 'thanks';
+            } else if (doc.has('(help|assist|support|question|how|what|explain|tell me about|information|more info|learn about)')) {
+                intent = 'help';
+            }
+            
+            // Extract entities (if any)
+            const entities = {};
+            
+            // Save to context
+            context.lastIntent = intent;
+            context.conversationHistory.push({
+                role: 'user',
+                message: input,
+                intent: intent,
+                entities: entities,
+                timestamp: new Date().toISOString()
+            });
+            
+            return { intent, entities };
+        }
+
+        // Generate appropriate response based on intent
+        function generateResponse(intent, entities) {
+            switch(intent) {
+                case 'greeting':
+                    return getRandomResponse([
+                        "Hello! How can I assist you today?",
+                        "Hi there! What can I help you with?",
+                        "Greetings! How may I be of service?"
+                    ]);
+                case 'farewell':
+                    return getRandomResponse([
+                        "Goodbye! Feel free to chat anytime.",
+                        "See you later! Have a great day!",
+                        "Take care! I'll be here if you need assistance."
+                    ]);
+                case 'thanks':
+                    return getRandomResponse([
+                        "You're welcome! Is there anything else you need help with?",
+                        "My pleasure! Let me know if you need further assistance.",
+                        "Happy to help! Anything else I can help you with today?"
+                    ]);
+                case 'help':
+                    return "I can help you with shopping, viewing your cart, checking trash pickup schedules, tracking orders, or checking application status. What would you like to know?";
+                case 'shopping':
+                    showSuggestions(['View products', 'New arrivals', 'Deals']);
+                    return "Our shopping page features our complete product catalog with categories, filters, and special offers. You can browse items, compare prices, and add products to your cart. Shall I redirect you to the shopping page?";
+                case 'cart':
+                    showSuggestions(['View cart', 'Checkout', 'Continue shopping']);
+                    return "Your cart page shows all items you've selected for purchase, quantities, pricing, and available discounts. You can modify quantities, remove items, or proceed to checkout from there. Shall I take you to your cart?";
+                case 'trash':
+                    showSuggestions(['View schedule', 'Recycling info', 'Special pickup']);
+                    return "The trash pickup section provides your collection schedule, recycling guidelines, and options for special waste disposal. You can see upcoming pickup dates and set reminders. Shall I redirect you to the trash pickup page?";
+                case 'order':
+                    showSuggestions(['Track order', 'Order history', 'Return item']);
+                    return "The orders page displays your complete purchase history, current order status, tracking information, and delivery estimates. You can also manage returns and view receipts. Shall I show you your orders?";
+                case 'application':
+                    showSuggestions(['Check status', 'Application details', 'Contact support']);
+                    return "The application status page shows where your submission is in the review process, any pending requirements, and estimated completion dates. You can also submit additional documents if needed. Shall I open your application status?";
+                default:
+                    showSuggestions(['Shopping', 'Cart', 'Orders', 'Help']);
+                    return "I'm not sure I understand. You can ask about shopping, cart, trash pickup, orders, or application status. How can I help you today?";
+            }
+        }
+
+        function getRandomResponse(responses) {
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function showSuggestions(suggestions) {
+            suggestionsArea.innerHTML = '';
+            suggestions.forEach(suggestion => {
+                const suggestionEl = document.createElement('div');
+                suggestionEl.className = 'suggestion';
+                suggestionEl.textContent = suggestion;
+                suggestionEl.addEventListener('click', () => {
+                    userSendMessage(suggestion);
+                    handleUserInput(suggestion);
+                });
+                suggestionsArea.appendChild(suggestionEl);
+            });
+        }
+
+        // 🎤 Voice Recognition
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        chatBubble.addEventListener('click', toggleChat);
+        chatClose.addEventListener('click', toggleChat);
+        
+        function toggleChat() {
+            isOpen = !isOpen;
+            chatWindow.style.display = isOpen ? 'flex' : 'none';
+            
+            if (isOpen && chatMessages.children.length === 0) {
+                // First time opening - show greeting
+                setTimeout(() => {
+                    showTypingIndicator();
+                    setTimeout(() => {
+                        hideTypingIndicator();
+                        botSendMessage("Hello! 👋 I'm your virtual assistant. How can I help you today?");
+                        showSuggestions(['Shopping', 'View cart', 'Orders', 'Trash pickup', 'Application status']);
+                    }, 1000);
+                }, 300);
+            }
+        }
+
+        function showTypingIndicator() {
+            typingIndicator.style.display = 'block';
+        }
+
+        function hideTypingIndicator() {
+            typingIndicator.style.display = 'none';
+        }
+
+        function botSpeak(text) {
+            // Before starting speech, stop recognition to prevent feedback loop
+            if (recognition) {
+                recognition.abort();
+            }
+            
+            // Remove emojis for speech
+            const cleanedText = text.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
+            const utterance = new SpeechSynthesisUtterance(cleanedText);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            
+            // Prevent recognition during speech
+            utterance.onstart = () => {
+                if (recognition) {
+                    recognition.abort();
+                }
+            };
+            
+            speechSynthesis.speak(utterance);
+        }
+
+        function botSendMessage(text) {
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                hideTypingIndicator();
+                const botMessage = document.createElement('div');
+                botMessage.className = 'message bot-message';
+                botMessage.innerText = text;
+                chatMessages.appendChild(botMessage);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                botSpeak(text);
+                
+                // Save to context
+                context.conversationHistory.push({
+                    role: 'bot',
+                    message: text,
+                    timestamp: new Date().toISOString()
+                });
+            }, Math.min(text.length * 20, 1000)); // Typing delay based on message length
+        }
+
+        function userSendMessage(text) {
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user-message';
+            userMessage.innerText = text;
+            chatMessages.appendChild(userMessage);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function handleUserInput(input) {
+            // Use NLP to understand input
+            const { intent, entities } = processInput(input);
+            
+            // Handle confirmation for redirects
+            if (pendingRedirect) {
+                if (nlp(input).has('(yes|yeah|sure|ok|okay|yep|yup|confirm|proceed)')) {
+                    botSendMessage("Great! Redirecting you to the page now... 🚀");
+                    setTimeout(() => {
+                        window.location.href = pendingRedirect;
+                    }, 1500);
+                } else if (nlp(input).has('(no|nope|nah|not now|cancel|stop)')) {
+                    botSendMessage("Alright, no problem! Let me know if you need anything else.");
+                    showSuggestions(['Shopping', 'View cart', 'Orders', 'Help']);
+                    pendingRedirect = null;
+                } else {
+                    botSendMessage("I'm not sure if you want to proceed. Would you like to visit this page? Please say yes or no.");
+                }
+                return;
+            }
+
+            // Process based on intent
+            const response = generateResponse(intent, entities);
+            botSendMessage(response);
+            
+            // Set pending redirect based on intent
+            switch(intent) {
+                case 'shopping':
+                    pendingRedirect = "/viewcustpro";
+                    break;
+                case 'cart':
+                    pendingRedirect = "/viewcart";
+                    break;
+                case 'trash':
+                    pendingRedirect = "/trashview";
+                    break;
+                case 'order':
+                    pendingRedirect = "/myorders";
+                    break;
+                case 'application':
+                    pendingRedirect = "/view_application_status";
+                    break;
+                default:
+                    // No redirect needed
+                    break;
+            }
+        }
+
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && chatInput.value.trim() !== "") {
+                const userText = chatInput.value.trim();
+                userSendMessage(userText);
+                chatInput.value = "";
+                handleUserInput(userText);
+            }
+        });
+
+        // Quick reply suggestions
+        function addSuggestion(text) {
+            const suggestionEl = document.createElement('div');
+            suggestionEl.className = 'suggestion';
+            suggestionEl.textContent = text;
+            suggestionEl.addEventListener('click', () => {
+                userSendMessage(text);
+                handleUserInput(text);
+            });
+            suggestionsArea.appendChild(suggestionEl);
+        }
+
+        // 🎤 Mic button click
+        micButton.addEventListener('click', () => {
+            // Visual indicator instead of speaking "listening"
+            micButton.style.backgroundColor = "#ff0000"; // Red when recording
+            micButton.textContent = "🔴";
+            
+            // Clear previous recognition
+            recognition.abort();
+            // Short delay to ensure clear start
+            setTimeout(() => {
+                recognition.start();
+            }, 100);
+        });
+
+        recognition.addEventListener('result', (event) => {
+            const speechResult = event.results[0][0].transcript;
+            userSendMessage(speechResult);
+            handleUserInput(speechResult);
+        });
+
+        recognition.addEventListener('speechend', () => {
+            recognition.stop();
+            // Reset mic button appearance
+            micButton.style.backgroundColor = "#00f";
+            micButton.textContent = "🎤";
+        });
+
+        recognition.addEventListener('error', (event) => {
+            // Reset mic button appearance
+            micButton.style.backgroundColor = "#00f";
+            micButton.textContent = "🎤";
+            
+            // Only show error message for actual errors, not when user stops speaking
+            if (event.error !== 'no-speech') {
+                botSendMessage('Sorry, could not hear you properly. Please try again.');
+            }
+        });
+    });
+</script>
+</body>
+</html>

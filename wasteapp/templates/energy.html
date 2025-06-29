@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Waste-to-Energy Converter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1e8b4d;
+            --secondary-color: #ffa726;
+            --background-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #3498db;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 26px;
+            color: var(--primary-color);
+            background: rgba(30, 139, 77, 0.1);
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .logo-text h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .logo-text p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 20px;
+        }
+
+        .data-refresh {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background-color: rgba(30, 139, 77, 0.1);
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--primary-color);
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+
+        .live-indicator.active {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: currentColor;
+            animation: pulse 1.5s infinite;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title i {
+            color: var(--primary-color);
+        }
+
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background-color: rgba(30, 139, 77, 0.1);
+            color: var(--primary-color);
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 10px 0 5px;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .change-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .positive {
+            color: var(--success);
+        }
+
+        .negative {
+            color: var(--danger);
+        }
+
+        .neutral {
+            color: var(--info);
+        }
+
+        /* Converter section */
+        .converter-section {
+            grid-column: span 5;
+        }
+
+        .converter-card {
+            height: 100%;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            color: var(--text-primary);
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .unit-selector {
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .conversion-results {
+            background-color: rgba(30, 139, 77, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(30, 139, 77, 0.1);
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 500;
+        }
+
+        .result-value {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .convert-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .convert-btn:hover {
+            background-color: #176f3d;
+        }
+
+        /* Stats cards */
+        .stat-card {
+            grid-column: span 3;
+            text-align: center;
+            padding: 25px;
+        }
+
+        /* Charts */
+        .chart-section {
+            grid-column: span 7;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .chart-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: #f1f1f1;
+        }
+
+        .chart-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .waste-types-grid {
+            grid-column: span 5;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .waste-card {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .waste-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .environmental-impact {
+            grid-column: span 7;
+        }
+
+        .impact-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .impact-metric {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: rgba(30, 139, 77, 0.05);
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        /* Animation */
+        @keyframes pulse {
+            0% {
+                opacity: 0.6;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 0.6;
+                transform: scale(0.8);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .converter-section {
+                grid-column: span 6;
+            }
+            .chart-section {
+                grid-column: span 6;
+            }
+            .waste-types-grid {
+                grid-column: span 6;
+            }
+            .environmental-impact {
+                grid-column: span 6;
+            }
+            .stat-card {
+                grid-column: span 4;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .converter-section {
+                grid-column: span 12;
+            }
+            .chart-section {
+                grid-column: span 12;
+            }
+            .waste-types-grid {
+                grid-column: span 12;
+            }
+            .environmental-impact {
+                grid-column: span 12;
+            }
+            .stat-card {
+                grid-column: span 4;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: repeat(1, 1fr);
+            }
+            .stat-card {
+                grid-column: span 1;
+            }
+            .waste-types-grid {
+                grid-template-columns: repeat(1, 1fr);
+            }
+            .impact-metrics {
+                grid-template-columns: repeat(1, 1fr);
+            }
+            header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            .header-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-recycle"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Waste-to-Energy Converter</h1>
+                    <p>Real-time waste management solutions</p>
+                </div>
+            </div>
+            <div class="header-controls">
+                <div class="data-refresh">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Last updated: <span id="last-updated">Just now</span></span>
+                </div>
+                <div class="live-indicator active">
+                    <div class="live-dot"></div>
+                    <span>LIVE</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid">
+            <!-- Stat Cards -->
+            <div class="card stat-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-bolt"></i>
+                        <span>Energy Production</span>
+                    </div>
+                </div>
+                <div class="metric-value" id="energy-production">14.8 MWh</div>
+                <div class="metric-label">Current Output</div>
+                <div class="change-indicator positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>12% from last week</span>
+                </div>
+            </div>
+
+            <div class="card stat-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Waste Processed</span>
+                    </div>
+                </div>
+                <div class="metric-value" id="waste-processed">3,850 tons</div>
+                <div class="metric-label">Monthly Total</div>
+                <div class="change-indicator positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>8% from last month</span>
+                </div>
+            </div>
+
+            <div class="card stat-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-leaf"></i>
+                        <span>CO₂ Avoided</span>
+                    </div>
+                </div>
+                <div class="metric-value" id="co2-avoided">1,250 tons</div>
+                <div class="metric-label">Environmental Impact</div>
+                <div class="change-indicator positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>15% improvement</span>
+                </div>
+            </div>
+
+            <div class="card stat-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-home"></i>
+                        <span>Homes Powered</span>
+                    </div>
+                </div>
+                <div class="metric-value" id="homes-powered">5,730</div>
+                <div class="metric-label">Community Impact</div>
+                <div class="change-indicator positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>9% increase</span>
+                </div>
+            </div>
+
+            <!-- Real-time Converter Section -->
+            <div class="converter-section">
+                <div class="card converter-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Waste-to-Energy Calculator</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="waste-amount">Waste Amount</label>
+                        <div class="input-control">
+                            <input type="number" id="waste-amount" class="input-field" value="1000">
+                            <select id="waste-unit" class="unit-selector">
+                                <option value="kg">Kilograms</option>
+                                <option value="ton" selected>Tons</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="waste-type">Waste Type</label>
+                        <select id="waste-type" class="input-field">
+                            <option value="municipal">Municipal Solid Waste</option>
+                            <option value="organic">Organic/Food Waste</option>
+                            <option value="industrial">Industrial Waste</option>
+                            <option value="plastics">Plastics</option>
+                            <option value="paper">Paper/Cardboard</option>
+                            <option value="mixed">Mixed Recyclables</option>
+                        </select>
+                    </div>
+                    
+                    <button id="convert-btn" class="convert-btn">Calculate Energy Output</button>
+                    
+                    <div class="conversion-results" id="conversion-results">
+                        <div class="result-row">
+                            <span class="result-label">Electrical Energy:</span>
+                            <span class="result-value" id="electrical-output">550 MWh</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Thermal Energy:</span>
+                            <span class="result-value" id="thermal-output">1,200 MWh</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">CO₂ Emissions Avoided:</span>
+                            <span class="result-value" id="co2-savings">325 tons</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Homes Powered:</span>
+                            <span class="result-value" id="homes-result">1,485 homes</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Landfill Space Saved:</span>
+                            <span class="result-value" id="landfill-saved">2,500 m³</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="chart-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Energy Production Trends</span>
+                        </div>
+                        <div class="chart-tabs">
+                            <div class="chart-tab active" data-period="day">Day</div>
+                            <div class="chart-tab" data-period="week">Week</div>
+                            <div class="chart-tab" data-period="month">Month</div>
+                        </div>
+                    </div>
+                    <canvas id="energy-chart" height="250"></canvas>
+                </div>
+            </div>
+
+            <!-- Waste Types Section -->
+            <div class="waste-types-grid">
+                <div class="card waste-card">
+                    <div class="waste-icon">
+                        <i class="fas fa-drumstick-bite"></i>
+                    </div>
+                    <h3>Organic Waste</h3>
+                    <div class="metric-value">3.0-5.8</div>
+                    <div class="metric-label">MWh per ton</div>
+                </div>
+                <div class="card waste-card">
+                    <div class="waste-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <h3>Plastics</h3>
+                    <div class="metric-value">5.5-10.0</div>
+                    <div class="metric-label">MWh per ton</div>
+                </div>
+                <div class="card waste-card">
+                    <div class="waste-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <h3>Paper/Cardboard</h3>
+                    <div class="metric-value">3.0-4.5</div>
+                    <div class="metric-label">MWh per ton</div>
+                </div>
+                <div class="card waste-card">
+                    <div class="waste-icon">
+                        <i class="fas fa-trash"></i>
+                    </div>
+                    <h3>Mixed Municipal</h3>
+                    <div class="metric-value">2.0-3.5</div>
+                    <div class="metric-label">MWh per ton</div>
+                </div>
+            </div>
+
+            <!-- Environmental Impact Section -->
+            <div class="environmental-impact">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-globe-americas"></i>
+                            <span>Environmental Impact</span>
+                        </div>
+                    </div>
+                    <div class="impact-metrics">
+                        <div class="impact-metric">
+                            <div class="metric-header">
+                                <i class="fas fa-cloud"></i>
+                                <span>CO₂ Reduction</span>
+                            </div>
+                            <div class="metric-value" id="co2-reduction">43,500</div>
+                            <div class="metric-label">Tons/Year</div>
+                        </div>
+                        <div class="impact-metric">
+                            <div class="metric-header">
+                                <i class="fas fa-gas-pump"></i>
+                                <span>Fossil Fuels Saved</span>
+                            </div>
+                            <div class="metric-value" id="fossil-saved">1.2M</div>
+                            <div class="metric-label">Gallons/Year</div>
+                        </div>
+                        <div class="impact-metric">
+                            <div class="metric-header">
+                                <i class="fas fa-tree"></i>
+                                <span>Tree Equivalent</span>
+                            </div>
+                            <div class="metric-value" id="tree-equiv">725,000</div>
+                            <div class="metric-label">Trees/Year</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Energy Chart
+        const energyChartEl = document.getElementById('energy-chart').getContext('2d');
+        
+        // Chart data for different time periods
+        const chartData = {
+            day: {
+                labels: ['12AM', '3AM', '6AM', '9AM', '12PM', '3PM', '6PM', '9PM'],
+                data: [5.2, 4.8, 5.0, 7.6, 11.2, 14.8, 13.5, 10.2]
+            },
+            week: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                data: [12.4, 13.1, 14.8, 14.2, 15.6, 11.9, 10.5]
+            },
+            month: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                data: [52.8, 57.2, 61.5, 58.7]
+            }
+        };
+        
+        // Create chart with initial data (day)
+        let energyChart = new Chart(energyChartEl, {
+            type: 'line',
+            data: {
+                labels: chartData.day.labels,
+                datasets: [{
+                    label: 'Energy Production (MWh)',
+                    data: chartData.day.data,
+                    backgroundColor: 'rgba(30, 139, 77, 0.1)',
+                    borderColor: '#1e8b4d',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#1e8b4d',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'MWh'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Tab switching functionality
+        document.querySelectorAll('.chart-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Update active state
+                document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Update chart
+                const period = tab.dataset.period;
+                updateChart(period);
+            });
+        });
+        
+        // Chart update function
+        function updateChart(period) {
+            energyChart.data.labels = chartData[period].labels;
+            energyChart.data.datasets[0].data = chartData[period].data;
+            energyChart.update();
+        }
+        
+        // Waste-to-Energy conversion factors (approx. MWh per ton)
+        const conversionFactors = {
+            municipal: {
+                electrical: 0.55,
+                thermal: 1.2,
+                co2: 0.325,
+                homes: 1.485,
+                landfill: 2.5
+            },
+            organic: {
+                electrical: 0.45,
+                thermal: 0.9,
+                co2: 0.28,
+                homes: 1.2,
+                landfill: 1.8
+            },
+            industrial: {
+                electrical: 0.65,
+                thermal: 1.4,
+                co2: 0.4,
+                homes: 1.7,
+                landfill: 2.8
+            },
+            plastics: {
+                electrical: 0.85,
+                thermal: 1.8,
+                co2: 0.5,
+                homes: 2.2,
+                landfill: 3.5
+            },
+            paper: {
+                electrical: 0.5,
+                thermal: 1.0,
+                co2: 0.3,
+                homes: 1.3,
+                landfill: 2.2
+            },
+            mixed: {
+                electrical: 0.6,
+                thermal: 1.25,
+                co2: 0.35,
+                homes: 1.5,
+                landfill: 2.6
+            }
+        };
+        
+        // Calculate waste-to-energy conversion
+        document.getElementById('convert-btn').addEventListener('click', calculateEnergy);
+        
+        function calculateEnergy() {
+            const amount = parseFloat(document.getElementById('waste-amount').value);
+            const unit = document.getElementById('waste-unit').value;
+            const wasteType = document.getElementById('waste-type').value;
+            
+            // Convert to tons if needed
+            const amountInTons = unit === 'kg' ? amount / 1000 : amount;
+            
+            if (isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid waste amount');
+                return;
+            }
+            
+            const factors = conversionFactors[wasteType];
+            
+            // Calculate results
+            const electrical = (amountInTons * factors.electrical).toFixed(1);
+            const thermal = (amountInTons * factors.thermal).toFixed(1);
+            const co2 = (amountInTons * factors.co2).toFixed(1);
+            const homes = Math.round(amountInTons * factors.homes);
+            const landfill = (amountInTons * factors.landfill).toFixed(1);
+            
+            // Update result fields
+            document.getElementById('electrical-output').textContent = `${electrical} MWh`;
+            document.getElementById('thermal-output').textContent = `${thermal} MWh`;
+            document.getElementById('co2-savings').textContent = `${co2} tons`;
+            document.getElementById('homes-result').textContent = `${homes.toLocaleString()} homes`;
+            document.getElementById('landfill-saved').textContent = `${landfill} m³`;
+            
+            // Animate results
+            animateResults();
+        }
+        
+        function animateResults() {
+            const results = document.getElementById('conversion-results');
+            results.style.animation = 'none';
+            results.offsetHeight; // Trigger reflow
+            results.style.animation = 'pulse 0.5s';
+        }
+        
+        // Real-time data simulation
+        function updateRealTimeData() {
+            // Create random fluctuation (+/- 5%)
+            const fluctuation = () => 0.95 + Math.random() * 0.1;
+            
+            // Energy production
+            const baseEnergy = 14.8;
+            const newEnergy = (baseEnergy * fluctuation()).toFixed(1);
+            document.getElementById('energy-production').textContent = `${newEnergy} MWh`;
+            
+            // Update last updated time
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('last-updated').textContent = timeString;
+            
+            // Add new data point to day chart (simulating real-time)
+            chartData.day.data.shift();
+            chartData.day.data.push(parseFloat(newEnergy));
+            
+            if (document.querySelector('.chart-tab.active').dataset.period === 'day') {
+                energyChart.update();
+            }
+        }
+        
+        // Initial calculation
+        calculateEnergy();
+        
+        // Set up intervals for real-time data
+        setInterval(updateRealTimeData, 5000);
+    </script>
+</body>
+</html>

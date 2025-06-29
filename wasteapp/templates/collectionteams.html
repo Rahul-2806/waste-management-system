@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Heroes - Waste Collection Teams</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f8ff;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .trash-icon {
+            position: absolute;
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.3);
+            animation: falling 10s linear infinite;
+        }
+        
+        @keyframes falling {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(400px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .intro {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .team-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .team-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .team-icon {
+            background-color: #4CAF50;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: white;
+        }
+        
+        .recycling .team-icon {
+            background-color: #2196F3;
+        }
+        
+        .organic .team-icon {
+            background-color: #FF9800;
+        }
+        
+        .hazardous .team-icon {
+            background-color: #F44336;
+        }
+        
+        .team-content {
+            padding: 2rem;
+        }
+        
+        .team-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #2E7D32;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .team-title .icon {
+            font-size: 1.3rem;
+        }
+        
+        .recycling .team-title {
+            color: #0D47A1;
+        }
+        
+        .organic .team-title {
+            color: #E65100;
+        }
+        
+        .hazardous .team-title {
+            color: #B71C1C;
+        }
+        
+        .team-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #777;
+        }
+        
+        .stat {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 0.3rem;
+            display: inline-block;
+        }
+        
+        .recycling .stat-value {
+            color: #2196F3;
+        }
+        
+        .organic .stat-value {
+            color: #FF9800;
+        }
+        
+        .hazardous .stat-value {
+            color: #F44336;
+        }
+        
+        .team-action {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+            width: 100%;
+            margin-top: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .recycling .team-action {
+            background-color: #2196F3;
+        }
+        
+        .organic .team-action {
+            background-color: #FF9800;
+        }
+        
+        .hazardous .team-action {
+            background-color: #F44336;
+        }
+        
+        .team-action:hover {
+            filter: brightness(110%);
+        }
+        
+        .truck-animation {
+            position: relative;
+            height: 100px;
+            overflow: hidden;
+            margin: 4rem 0;
+            background-color: #e9e9e9;
+            border-radius: 8px;
+        }
+        
+        .truck {
+            position: absolute;
+            bottom: 0;
+            left: -150px;
+            width: 120px;
+            height: 70px;
+            background-color: #4CAF50;
+            border-radius: 8px 8px 0 0;
+            animation: drive 15s linear infinite;
+        }
+        
+        .truck:before {
+            content: "";
+            position: absolute;
+            width: 60px;
+            height: 40px;
+            background-color: #333;
+            top: -25px;
+            left: 10px;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .truck:after {
+            content: "🗑️";
+            position: absolute;
+            font-size: 24px;
+            top: -25px;
+            right: 10px;
+        }
+        
+        .wheel {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #333;
+            border-radius: 50%;
+            bottom: -10px;
+            animation: rotate 2s linear infinite;
+        }
+        
+        .wheel-1 {
+            left: 20px;
+        }
+        
+        .wheel-2 {
+            left: 90px;
+        }
+        
+        @keyframes drive {
+            0% {
+                transform: translateX(-150px);
+            }
+            100% {
+                transform: translateX(calc(100vw + 150px));
+            }
+        }
+        
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+        
+        .eco-fact {
+            background-color: #EDF7ED;
+            border-left: 5px solid #4CAF50;
+            padding: 1rem;
+            margin: 3rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .fact-title {
+            font-weight: bold;
+            color: #2E7D32;
+            margin-bottom: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .teams-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <h1>Eco Heroes</h1>
+        <p class="tagline">Dedicated Waste Collection Teams Making Our Planet Cleaner</p>
+    </header>
+    
+    <div class="container">
+        <div class="intro">
+            <h2>Our Specialized Collection Teams</h2>
+            <p>Meet the dedicated professionals who work tirelessly to keep our communities clean and sustainable.</p>
+            <p>Each team specializes in different types of waste, ensuring proper disposal and maximum recycling efficiency.</p>
+        </div>
+        
+        <div class="truck-animation">
+            <div class="truck">
+                <div class="wheel wheel-1"></div>
+                <div class="wheel wheel-2"></div>
+            </div>
+        </div>
+        
+        <div class="teams-grid">
+            <div class="team-card general">
+                <div class="team-icon">♻️</div>
+                <div class="team-content">
+                    <h3 class="team-title"><span class="icon">🗑️</span> General Waste Team</h3>
+                    <p class="team-description">Our general waste collection team handles everyday household and commercial waste. They operate using state-of-the-art compressed natural gas trucks that reduce emissions.</p>
+                    <p class="team-description">Working in all weather conditions, this team ensures your regular waste is collected on schedule and properly processed.</p>
+                    <div class="stats-row">
+                        <div class="stat">
+                            <div class="stat-value">12</div>
+                            <div>Trucks</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">36</div>
+                            <div>Team Members</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">96%</div>
+                            <div>On-time Rate</div>
+                        </div>
+                    </div>
+                    <button class="team-action">Learn More</button>
+                </div>
+            </div>
+            
+            <div class="team-card recycling">
+                <div class="team-icon">♳</div>
+                <div class="team-content">
+                    <h3 class="team-title"><span class="icon">🔄</span> Recycling Team</h3>
+                    <p class="team-description">Our specialized recycling team focuses on collecting and sorting recyclable materials. They are experts in identifying different types of recyclables to ensure maximum recovery.</p>
+                    <p class="team-description">This team works closely with processing facilities to continuously improve recycling rates in our community.</p>
+                    <div class="stats-row">
+                        <div class="stat">
+                            <div class="stat-value">9</div>
+                            <div>Trucks</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">27</div>
+                            <div>Team Members</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">8.2</div>
+                            <div>Tons/Day</div>
+                        </div>
+                    </div>
+                    <button class="team-action">Learn More</button>
+                </div>
+            </div>
+            
+            <div class="team-card organic">
+                <div class="team-icon">🌱</div>
+                <div class="team-content">
+                    <h3 class="team-title"><span class="icon">🍂</span> Organic Waste Team</h3>
+                    <p class="team-description">Our organic waste team specializes in collecting food scraps, yard waste, and other compostable materials. They deliver these materials to our composting facility.</p>
+                    <p class="team-description">The team's efforts help reduce methane emissions from landfills while creating valuable compost for local agriculture.</p>
+                    <div class="stats-row">
+                        <div class="stat">
+                            <div class="stat-value">6</div>
+                            <div>Trucks</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">18</div>
+                            <div>Team Members</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.7</div>
+                            <div>Tons/Day</div>
+                        </div>
+                    </div>
+                    <button class="team-action">Learn More</button>
+                </div>
+            </div>
+            
+            <div class="team-card hazardous">
+                <div class="team-icon">⚠️</div>
+                <div class="team-content">
+                    <h3 class="team-title"><span class="icon">☢️</span> Hazardous Waste Team</h3>
+                    <p class="team-description">Our specially trained hazardous waste team handles materials that pose risks to human health and the environment. They follow strict safety protocols for collection and disposal.</p>
+                    <p class="team-description">This expert team ensures dangerous materials are safely removed from the community and properly neutralized or contained.</p>
+                    <div class="stats-row">
+                        <div class="stat">
+                            <div class="stat-value">3</div>
+                            <div>Trucks</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">12</div>
+                            <div>Team Members</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">100%</div>
+                            <div>Safety Record</div>
+                        </div>
+                    </div>
+                    <button class="team-action">Learn More</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="eco-fact">
+            <div class="fact-title">Did you know?</div>
+            <p>The average person generates about 4.5 pounds of waste per day. Our waste collection teams help divert over 60% of this waste from landfills through recycling and composting programs.</p>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2025 Eco Heroes Waste Management | Making a cleaner world, one collection at a time</p>
+    </footer>
+    
+    <script>
+       // Create falling trash icons in header
+function createTrashIcons() {
+    const header = document.getElementById('header');
+    const iconTypes = ['🗑️', '♻️', '📦', '📄', '🥫', '🍾', '🧴', '📱', '🔋', '🧃'];
+    const headerWidth = header.offsetWidth;
+    
+    for (let i = 0; i < 15; i++) {
+        const icon = document.createElement('div');
+        icon.className = 'trash-icon';
+        icon.textContent = iconTypes[Math.floor(Math.random() * iconTypes.length)];
+        
+        // Random position and delay
+        icon.style.left = `${Math.random() * headerWidth}px`;
+        icon.style.animationDelay = `${Math.random() * 8}s`;
+        icon.style.opacity = `${Math.random() * 0.7 + 0.3}`;
+        icon.style.fontSize = `${Math.random() * 1 + 1}rem`;
+        
+        header.appendChild(icon);
+    }
+}
+
+// Add counter animation to stats
+function animateCounters() {
+    const statValues = document.querySelectorAll('.stat-value');
+    
+    statValues.forEach(stat => {
+        const targetValue = parseFloat(stat.textContent);
+        const duration = 2000; // Animation duration in ms
+        const frameDuration = 1000/60; // Frame duration for 60fps
+        const totalFrames = Math.round(duration/frameDuration);
+        let frame = 0;
+        
+        // Reset counter
+        stat.textContent = '0';
+        
+        // Start animation
+        const counter = setInterval(() => {
+            frame++;
+            
+            // Calculate current value
+            const progress = frame / totalFrames;
+            const currentValue = Math.round((targetValue * progress) * 10) / 10;
+            
+            // Update counter
+            stat.textContent = currentValue;
+            
+            // Check if animation completed
+            if (frame === totalFrames) {
+                clearInterval(counter);
+                stat.textContent = targetValue;
+            }
+        }, frameDuration);
+    });
+}
+
+// Add hover effects to trucks
+function addTruckEffects() {
+    const truck = document.querySelector('.truck');
+    
+    truck.addEventListener('mouseenter', () => {
+        truck.style.animationPlayState = 'paused';
+    });
+    
+    truck.addEventListener('mouseleave', () => {
+        truck.style.animationPlayState = 'running';
+    });
+}
+
+// Add click events to buttons
+function setupButtons() {
+    const buttons = document.querySelectorAll('.team-action');
+    
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            const teamType = this.closest('.team-card').classList[1];
+            alert(`Thank you for your interest in our ${teamType} collection team! Schedule details will be sent to you soon.`);
+        });
+    });
+}
+
+// Create multiple trucks with different colors
+function createMultipleTrucks() {
+    const truckAnimation = document.querySelector('.truck-animation');
+    const truckColors = ['#4CAF50', '#2196F3', '#FF9800', '#F44336'];
+    
+    // Remove original truck
+    truckAnimation.innerHTML = '';
+    
+    // Create multiple trucks with different delays
+    for (let i = 0; i < 4; i++) {
+        const truck = document.createElement('div');
+        truck.className = 'truck';
+        truck.style.backgroundColor = truckColors[i];
+        truck.style.animationDelay = `${i * 3}s`;
+        
+        const wheel1 = document.createElement('div');
+        wheel1.className = 'wheel wheel-1';
+        
+        const wheel2 = document.createElement('div');
+        wheel2.className = 'wheel wheel-2';
+        
+        truck.appendChild(wheel1);
+        truck.appendChild(wheel2);
+        
+        truckAnimation.appendChild(truck);
+    }
+}
+
+// Add scroll animations
+function addScrollAnimations() {
+    const teamCards = document.querySelectorAll('.team-card');
+    
+    window.addEventListener('scroll', () => {
+        teamCards.forEach(card => {
+            const cardTop = card.getBoundingClientRect().top;
+            const windowHeight = window.innerHeight;
+            
+            if (cardTop < windowHeight - 100) {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            } else {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(50px)';
+            }
+        });
+    });
+    
+    // Initialize card states
+    teamCards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(50px)';
+        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    });
+}
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    createTrashIcons();
+    setTimeout(animateCounters, 500);
+    addTruckEffects();
+    setupButtons();
+    createMultipleTrucks();
+    addScrollAnimations();
+    
+    // Add window resize handler for responsive elements
+    window.addEventListener('resize', function() {
+        const header = document.getElementById('header');
+        const trashIcons = document.querySelectorAll('.trash-icon');
+        
+        trashIcons.forEach(icon => {
+            icon.style.left = `${Math.random() * header.offsetWidth}px`;
+        });
+    });
+});
+</script>
+</body>
+</html>

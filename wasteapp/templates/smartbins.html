@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Bins - Revolutionizing Waste Management</title>
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #27ae60;
+            --dark-color: #333;
+            --light-color: #f4f4f4;
+            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .features {
+            padding: 4rem 0;
+            background-color: white;
+        }
+        
+        .features h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            text-align: center;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            text-align: center;
+            color: var(--primary-color);
+        }
+        
+        .feature-card p {
+            color: #666;
+        }
+        
+        .benefits {
+            padding: 4rem 0;
+            background-color: var(--light-color);
+        }
+        
+        .benefits h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+        }
+        
+        .benefit-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+        }
+        
+        .benefit-item {
+            flex: 1 1 300px;
+            max-width: 350px;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .benefit-icon {
+            font-size: 1.8rem;
+            color: var(--secondary-color);
+        }
+        
+        .smart-bin-types {
+            padding: 4rem 0;
+            background-color: white;
+        }
+        
+        .smart-bin-types h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+        }
+        
+        .bin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .bin-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .bin-image {
+            height: 200px;
+            background-color: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .bin-content {
+            padding: 1.5rem;
+        }
+        
+        .bin-content h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .cta {
+            text-align: center;
+            padding: 4rem 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .cta h2 {
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: white;
+            color: var(--primary-color);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .benefit-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="hero container">
+            <h1>Smart Bins: The Future of Waste Management</h1>
+            <p>Revolutionizing waste collection and recycling through IoT technology and data-driven solutions</p>
+        </div>
+    </header>
+    
+    <section class="features">
+        <div class="container">
+            <h2>Key Features of Smart Bins</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Real-time Fill Level Monitoring</h3>
+                    <p>Advanced sensors continuously monitor waste levels and automatically alert collection teams when bins reach capacity, optimizing collection routes and preventing overflow.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>Solar-Powered Compaction</h3>
+                    <p>Built-in solar-powered compactors compress waste to increase capacity by up to 8 times, reducing collection frequency and associated carbon emissions.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>IoT Connectivity</h3>
+                    <p>Cloud-connected bins transmit data in real-time to centralized management systems, enabling data-driven decisions and seamless integration with smart city infrastructure.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Automated Sorting</h3>
+                    <p>AI-powered recognition systems automatically sort waste into appropriate categories, increasing recycling rates and reducing contamination.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Secure Access Control</h3>
+                    <p>RFID or mobile app authentication ensures only authorized users can access certain bins, enabling usage tracking and pay-as-you-throw systems.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>User Engagement Apps</h3>
+                    <p>Mobile applications provide feedback on waste disposal habits, offer recycling education, and gamify sustainable behaviors through rewards and challenges.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="benefits">
+        <div class="container">
+            <h2>Benefits of Smart Waste Management</h2>
+            <div class="benefit-container">
+                <div class="benefit-item">
+                    <div class="benefit-icon">✅</div>
+                    <div>
+                        <h3>Operational Efficiency</h3>
+                        <p>Reduce collection costs by up to 80% through optimized routes and demand-based scheduling.</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">✅</div>
+                    <div>
+                        <h3>Environmental Impact</h3>
+                        <p>Lower carbon emissions from collection vehicles and increase recycling rates through proper waste separation.</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">✅</div>
+                    <div>
+                        <h3>Data Analytics</h3>
+                        <p>Gain valuable insights into waste generation patterns to inform policy and infrastructure planning.</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">✅</div>
+                    <div>
+                        <h3>Public Health</h3>
+                        <p>Prevent overflow and reduce exposure to waste, creating cleaner urban environments.</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">✅</div>
+                    <div>
+                        <h3>Resource Recovery</h3>
+                        <p>Improve recycling quality and rates, turning waste into valuable resources.</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">✅</div>
+                    <div>
+                        <h3>User Education</h3>
+                        <p>Promote sustainable disposal practices through immediate feedback and educational content.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="smart-bin-types">
+        <div class="container">
+            <h2>Smart Bin Solutions</h2>
+            <div class="bin-grid">
+                <div class="bin-card">
+                    <div class="bin-image">
+                        <img src="/api/placeholder/400/320" alt="Smart Solar Compactor" />
+                    </div>
+                    <div class="bin-content">
+                        <h3>Solar Compactors</h3>
+                        <p>High-capacity bins with solar-powered compaction technology, ideal for high-traffic areas with limited collection access.</p>
+                    </div>
+                </div>
+                
+                <div class="bin-card">
+                    <div class="bin-image">
+                        <img src="/api/placeholder/400/320" alt="Multi-Stream Recycling Station" />
+                    </div>
+                    <div class="bin-content">
+                        <h3>Multi-Stream Stations</h3>
+                        <p>Intelligent sorting stations with multiple compartments for different waste streams, enhancing recycling quality.</p>
+                    </div>
+                </div>
+                
+                <div class="bin-card">
+                    <div class="bin-image">
+                        <img src="/api/placeholder/400/320" alt="Underground Smart Bins" />
+                    </div>
+                    <div class="bin-content">
+                        <h3>Underground Systems</h3>
+                        <p>Large-volume underground containers with above-ground inlets, maximizing capacity while minimizing visual impact.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Transform Your Waste Management?</h2>
+            <p>Discover how smart bin technology can improve efficiency, sustainability, and urban cleanliness.</p>
+            <a href="#" class="cta-button">Request a Demo</a>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Smart Waste Solutions. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

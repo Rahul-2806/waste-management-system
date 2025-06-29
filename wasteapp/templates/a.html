@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart View</title>
+</head>
+<body>
+    <table border="1">
+        <tr>
+            <th>Image</th>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Action</th>
+           
+            
+        
+        </tr>
+        {% if tt%}
+        {%for t in tt%}
+        <tr>
+          <td><img src="/Uploads/{{t.Img}}" width="150px" height="150px"><br>{{t.Item}}</td> 
+          <td>{{t.Item}}</td>  
+          <td>{{t.Cqty}}</td>  
+          <td>{{t.Amnt}}</td>  
+          
+          <td><a href="/deletecart?id={{t.Pid}}">Remove</a></td>    
+          
+        </tr>
+        {%endfor%}
+        {% else %}
+        <tr>
+            <td colspan="7" style="text-align: center;">No record found</td>
+        </tr>
+        {% endif %}
+    </table>
+</body>
+</html>
+
+ 
+
+<!-- < views > --> 
+
+def viewcart(request):
+    cursor=connection.cursor()
+    uid=request.session['Uid']
+    s="select product.Pid,product.Item,product.Des,product.Amnt,product.Stock,product.Img,cart.Cqty,cart.Cartid from  product INNER JOIN cart ON cart.Pid where cart.Uid='%s'"%(uid)
+    cursor.execute(s)
+    rs=cursor.fetchall()
+    tt=[]
+    total=0
+    for row in rs:
+        Cqty=int(row[6])
+        Amnt=int(row[3])
+        ttt=(Cqty*Amnt)
+        total=total+ttt
+        q={'Pid':row[0],'Item':row[1],'Des':row[2],'Amnt':row[3],'Stock':row[4],'Img':row[5],'Cqty':row[6],'Cartid':row[7],'total':total}       
+        tt.append(q)
+    return render(request, 'viewcart.html', {'tt':tt,'total':total})
+
+
+
+
+    <!-- < view cart -->
+
+
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart View</title>
+</head>
+<body>
+    <h2>Shopping Cart</h2>
+    <table border="1">
+        <tr>
+            <th>Image</th>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Action</th>
+        </tr>
+
+        {% if tt %}
+            {% for t in tt %}
+            <tr>
+                <td>
+                    <img src="/Uploads/{{ t.Img }}" width="150px" height="150px"><br>
+                    {{ t.Item }}
+                </td>
+                <td>{{ t.Item }}</td>  
+                <td>{{ t.Cqty }}</td>  
+                <td>{{ t.Amnt }}</td>  
+                <td>{{ t.item_total }}</td>
+  
+ 
+                <td><a href="/deletecart?id={{ t.Cartid }}">Remove</a></td>    
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="4" style="text-align: right;"><strong> Total:</strong></td>
+                <td colspan="2"><strong>{{ total }}</strong></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6" style="text-align: center;">No record found</td>
+            </tr>
+        {% endif %}
+    </table>
+</body>
+</html>
+
+
+<!-- payment design 1 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Payment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .payment-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .payment-method:hover {
+            background: #e0e0e0;
+        }
+
+        .payment-method i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        button {
+            background: #ff6f00;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #e65c00;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <h2>Select Payment Method</h2>
+        <div class="payment-methods">
+            <div class="payment-method" onclick="selectPayment('credit_card')">
+                <i class="fas fa-credit-card"></i> Credit/Debit Card
+            </div>
+            <div class="payment-method" onclick="selectPayment('upi')">
+                <i class="fas fa-mobile-alt"></i> UPI
+            </div>
+            <div class="payment-method" onclick="selectPayment('net_banking')">
+                <i class="fas fa-university"></i> Net Banking
+            </div>
+            <div class="payment-method" onclick="selectPayment('wallets')">
+                <i class="fas fa-wallet"></i> Wallets
+            </div>
+            <div class="payment-method" onclick="selectPayment('cod')">
+                <i class="fas fa-truck"></i> Cash on Delivery
+            </div>
+        </div>
+        <form action="/process_payment" method="POST">
+            <input type="hidden" name="payment_type" id="payment_type">
+            <button type="submit">Proceed to Pay</button>
+        </form>
+    </div>
+
+    <script>
+        function selectPayment(method) {
+            document.getElementById('payment_type').value = method;
+        }
+    </script>
+</body>
+</html>
+
+
+<!-- payment design 2 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment Gateway</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 2rem;
+        }
+
+        .payment-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+
+        .payment-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .method-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .method-tab {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            background: #f5f5f5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .method-tab.active {
+            background: #2196F3;
+            color: white;
+        }
+
+        .payment-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .payment-section.active {
+            display: block;
+        }
+
+        .card-input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #2196F3;
+            outline: none;
+        }
+
+        .card-logo {
+            height: 30px;
+            margin-bottom: 1rem;
+        }
+
+        .wallet-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .wallet-option {
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .wallet-option:hover {
+            border-color: #2196F3;
+        }
+
+        .upi-apps {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .upi-app {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: #f5f5f5;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .upi-app:hover {
+            transform: scale(1.1);
+        }
+
+        .pay-button {
+            width: 100%;
+            padding: 1.5rem;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .pay-button:hover {
+            background: #45a049;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="payment-header">
+            <h1>Secure Payment Gateway</h1>
+            <p>Total Amount to Pay: $500.00</p>
+        </div>
+
+        <div class="method-tabs">
+            <button class="method-tab active" data-method="card">Credit/Debit Card</button>
+            <button class="method-tab" data-method="wallet">Digital Wallet</button>
+            <button class="method-tab" data-method="upi">UPI</button>
+            <button class="method-tab" data-method="netbanking">Net Banking</button>
+            <button class="method-tab" data-method="crypto">Crypto</button>
+            <button class="method-tab" data-method="cod">Cash on Delivery</button>
+        </div>
+
+        <!-- Credit/Debit Card Section -->
+        <div id="card" class="payment-section active">
+            <div class="card-input-group">
+                <input type="text" placeholder="Card Number" data-inputmask="'mask': '9999 9999 9999 9999'">
+            </div>
+            <div class="card-input-group">
+                <input type="text" placeholder="Cardholder Name">
+            </div>
+            <div class="card-input-group" style="display: flex; gap: 1rem;">
+                <input type="text" placeholder="MM/YY" style="flex: 1;">
+                <input type="text" placeholder="CVV" style="flex: 1;">
+            </div>
+            <button class="pay-button">Pay $500.00</button>
+        </div>
+
+        <!-- Digital Wallet Section -->
+        <div id="wallet" class="payment-section">
+            <div class="wallet-options">
+                <div class="wallet-option">
+                    <img src="paypal-logo.png" alt="PayPal" class="card-logo">
+                    PayPal
+                </div>
+                <div class="wallet-option">
+                    <img src="google-pay-logo.png" alt="Google Pay" class="card-logo">
+                    Google Pay
+                </div>
+                <div class="wallet-option">
+                    <img src="apple-pay-logo.png" alt="Apple Pay" class="card-logo">
+                    Apple Pay
+                </div>
+            </div>
+        </div>
+
+        <!-- UPI Section -->
+        <div id="upi" class="payment-section">
+            <div class="card-input-group">
+                <input type="text" placeholder="UPI ID">
+            </div>
+            <div class="upi-apps">
+                <img src="phonepe-logo.png" class="upi-app" alt="PhonePe">
+                <img src="gpay-logo.png" class="upi-app" alt="Google Pay">
+                <img src="paytm-logo.png" class="upi-app" alt="Paytm">
+            </div>
+            <button class="pay-button">Pay via UPI</button>
+        </div>
+
+        <!-- Net Banking Section -->
+        <div id="netbanking" class="payment-section">
+            <div class="card-input-group">
+                <select style="width: 100%; padding: 1rem;">
+                    <option>Select Bank</option>
+                    <option>Bank of America</option>
+                    <option>Chase Bank</option>
+                    <option>Wells Fargo</option>
+                </select>
+            </div>
+            <button class="pay-button">Continue to Net Banking</button>
+        </div>
+
+        <!-- Crypto Section -->
+        <div id="crypto" class="payment-section">
+            <div class="wallet-options">
+                <div class="wallet-option">
+                    <img src="bitcoin-logo.png" class="card-logo" alt="Bitcoin">
+                    Bitcoin
+                </div>
+                <div class="wallet-option">
+                    <img src="ethereum-logo.png" class="card-logo" alt="Ethereum">
+                    Ethereum
+                </div>
+            </div>
+        </div>
+
+        <!-- Cash on Delivery Section -->
+        <div id="cod" class="payment-section">
+            <div class="cod-info">
+                <h3>Cash on Delivery</h3>
+                <p>Pay in cash when your order arrives</p>
+                <button class="pay-button">Confirm Order</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab functionality
+        document.querySelectorAll('.method-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and sections
+                document.querySelectorAll('.method-tab, .payment-section').forEach(el => {
+                    el.classList.remove('active');
+                });
+
+                // Add active class to clicked tab and corresponding section
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.method).classList.add('active');
+            });
+        });
+
+        // Input masking for card number
+        document.querySelector('[data-inputmask]').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            if (value.length > 16) value = value.substr(0, 16);
+            value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            e.target.value = value;
+        });
+
+        // CVV tooltip
+        const cvvInput = document.querySelector('input[placeholder="CVV"]');
+        cvvInput.addEventListener('focus', () => {
+            cvvInput.setAttribute('title', '3-digit code on back of card');
+        });
+
+        // Handle form submission
+        document.querySelectorAll('.pay-button').forEach(button => {
+            button.addEventListener('click', async () => {
+                button.innerHTML = '<div class="loader"></div>';
+                // Simulate payment processing
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                alert('Payment processed successfully!');
+                button.innerHTML = 'Pay $500.00';
+            });
+        });
+    </script>
+</body>
+</html>
+
+<!-- payment design 3 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment - E-Commerce</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #f7f7f7;
+            padding: 20px;
+        }
+
+        .payment-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 20px;
+        }
+
+        .left-panel {
+            flex: 3;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .right-panel {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method:hover {
+            border-color: #007bff;
+            background: #f9f9f9;
+        }
+
+        .payment-method img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .payment-method span {
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .payment-method.active {
+            border-color: #007bff;
+            background: #e3f2fd;
+        }
+
+        .payment-details {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .payment-details.active {
+            display: block;
+        }
+
+        .payment-details input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .payment-details input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .order-summary {
+            margin-top: 20px;
+        }
+
+        .order-summary .item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .order-summary .total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .pay-button {
+            width: 100%;
+            padding: 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .pay-button:hover {
+            background: #0056b3;
+        }
+
+        .cod-info {
+            text-align: center;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .cod-info p {
+            color: #555;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .payment-container {
+                flex-direction: column;
+            }
+
+            .left-panel, .right-panel {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <!-- Left Panel: Payment Methods -->
+        <div class="left-panel">
+            <h2>Choose Payment Method</h2>
+
+            <!-- Credit/Debit Card -->
+            <div class="payment-method active" data-method="card">
+                <img src="https://img.icons8.com/color/48/000000/credit-card.png" alt="Card">
+                <span>Credit/Debit Card</span>
+            </div>
+
+            <!-- UPI -->
+            <div class="payment-method" data-method="upi">
+                <img src="https://img.icons8.com/color/48/000000/india.png" alt="UPI">
+                <span>UPI</span>
+            </div>
+
+            <!-- Wallets -->
+            <div class="payment-method" data-method="wallet">
+                <img src="https://img.icons8.com/color/48/000000/wallet.png" alt="Wallet">
+                <span>Wallets</span>
+            </div>
+
+            <!-- Net Banking -->
+            <div class="payment-method" data-method="netbanking">
+                <img src="https://img.icons8.com/color/48/000000/bank.png" alt="Net Banking">
+                <span>Net Banking</span>
+            </div>
+
+            <!-- Cash on Delivery -->
+            <div class="payment-method" data-method="cod">
+                <img src="https://img.icons8.com/color/48/000000/cash-in-hand.png" alt="COD">
+                <span>Cash on Delivery</span>
+            </div>
+
+            <!-- Payment Details Section -->
+            <div id="card" class="payment-details active">
+                <input type="text" placeholder="Card Number" data-inputmask="'mask': '9999 9999 9999 9999'">
+                <input type="text" placeholder="Cardholder Name">
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" placeholder="MM/YY" style="flex: 1;">
+                    <input type="text" placeholder="CVV" style="flex: 1;">
+                </div>
+                <button class="pay-button">Pay Now</button>
+            </div>
+
+            <div id="upi" class="payment-details">
+                <input type="text" placeholder="Enter UPI ID">
+                <button class="pay-button">Pay via UPI</button>
+            </div>
+
+            <div id="wallet" class="payment-details">
+                <p>Select your wallet:</p>
+                <div class="payment-method">
+                    <img src="https://img.icons8.com/color/48/000000/paypal.png" alt="PayPal">
+                    <span>PayPal</span>
+                </div>
+                <div class="payment-method">
+                    <img src="https://img.icons8.com/color/48/000000/google-wallet.png" alt="Google Pay">
+                    <span>Google Pay</span>
+                </div>
+                <button class="pay-button">Pay with Wallet</button>
+            </div>
+
+            <div id="netbanking" class="payment-details">
+                <select style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                    <option>Select Bank</option>
+                    <option>Bank of America</option>
+                    <option>Chase Bank</option>
+                    <option>Wells Fargo</option>
+                </select>
+                <button class="pay-button">Continue to Net Banking</button>
+            </div>
+
+            <div id="cod" class="payment-details">
+                <div class="cod-info">
+                    <h3>Cash on Delivery</h3>
+                    <p>Pay in cash when your order arrives</p>
+                    <button class="pay-button">Confirm Order</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Order Summary -->
+        <div class="right-panel">
+            <h2>Order Summary</h2>
+            <div class="order-summary">
+                <div class="item">
+                    <span>Subtotal</span>
+                    <span>$450.00</span>
+                </div>
+                <div class="item">
+                    <span>Shipping</span>
+                    <span>$20.00</span>
+                </div>
+                <div class="item">
+                    <span>Tax</span>
+                    <span>$30.00</span>
+                </div>
+                <div class="total">
+                    <span>Total</span>
+                    <span>$500.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Switch between payment methods
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', () => {
+                // Remove active class from all methods and details
+                document.querySelectorAll('.payment-method, .payment-details').forEach(el => {
+                    el.classList.remove('active');
+                });
+
+                // Add active class to selected method and corresponding details
+                method.classList.add('active');
+                document.getElementById(method.dataset.method).classList.add('active');
+            });
+        });
+
+        // Card number masking
+        document.querySelector('[data-inputmask]').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            if (value.length > 16) value = value.substr(0, 16);
+            value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            e.target.value = value;
+        });
+
+        // Handle payment button click
+        document.querySelectorAll('.pay-button').forEach(button => {
+            button.addEventListener('click', () => {
+                button.innerHTML = 'Processing...';
+                setTimeout(() => {
+                    alert('Payment successful!');
+                    button.innerHTML = 'Pay Now';
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+<!-- payment design 4 -->
+
+<html>
+ <head>
+  <title>
+   Payment System Design
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+            font-family: 'Roboto', sans-serif;
+        }
+  </style>
+ </head>
+ <body class="bg-gray-100">
+  <div class="container mx-auto p-4">
+   <div class="bg-white shadow-md rounded-lg p-6">
+    <h2 class="text-2xl font-bold mb-4">
+     Payment System
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+     <!-- Payment Methods -->
+     <div>
+      <h3 class="text-xl font-semibold mb-3">
+       Select Payment Method
+      </h3>
+      <div class="space-y-4">
+       <div class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+        <img alt="Credit Card Icon" class="w-12 h-12 mr-4" height="50" src="https://storage.googleapis.com/a1aa/image/CJ9UULnx6FZMeMFa9gwbnHHJnRIbGd0T0z3678UVQFQ.jpg" width="50"/>
+        <div>
+         <h4 class="text-lg font-medium">
+          Credit/Debit Card
+         </h4>
+         <p class="text-sm text-gray-600">
+          Visa, MasterCard, Rupay &amp; more
+         </p>
+        </div>
+       </div>
+       <div class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+        <img alt="Net Banking Icon" class="w-12 h-12 mr-4" height="50" src="https://storage.googleapis.com/a1aa/image/MPvpsKyXhmVs9wZfyufUbdqt_tl7CoRWNBi1gyy1E2c.jpg" width="50"/>
+        <div>
+         <h4 class="text-lg font-medium">
+          Net Banking
+         </h4>
+         <p class="text-sm text-gray-600">
+          All major banks available
+         </p>
+        </div>
+       </div>
+       <div class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+        <img alt="UPI Icon" class="w-12 h-12 mr-4" height="50" src="https://storage.googleapis.com/a1aa/image/JCYeOpkZs_xfEbBxhxtY-QkKLe2hfcb37b2Es5v4WvA.jpg" width="50"/>
+        <div>
+         <h4 class="text-lg font-medium">
+          UPI
+         </h4>
+         <p class="text-sm text-gray-600">
+          Google Pay, PhonePe, BHIM &amp; more
+         </p>
+        </div>
+       </div>
+       <div class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+        <img alt="Wallet Icon" class="w-12 h-12 mr-4" height="50" src="https://storage.googleapis.com/a1aa/image/JuW1cEhQwzJdMMgJ6C0Ejuy3FBVWj-sVC8zzjBWYQyM.jpg" width="50"/>
+        <div>
+         <h4 class="text-lg font-medium">
+          Wallet
+         </h4>
+         <p class="text-sm text-gray-600">
+          Paytm, Mobikwik, Freecharge &amp; more
+         </p>
+        </div>
+       </div>
+       <div class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+        <img alt="Cash on Delivery Icon" class="w-12 h-12 mr-4" height="50" src="https://storage.googleapis.com/a1aa/image/hC_e9gnks-oFXw8aUjp6S03zoIlWCiq8ema_Am4d_v8.jpg" width="50"/>
+        <div>
+         <h4 class="text-lg font-medium">
+          Cash on Delivery
+         </h4>
+         <p class="text-sm text-gray-600">
+          Pay with cash upon delivery
+         </p>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Payment Details -->
+     <div>
+      <h3 class="text-xl font-semibold mb-3">
+       Payment Details
+      </h3>
+      <form class="space-y-4">
+       <div>
+        <label class="block text-sm font-medium text-gray-700">
+         Card Number
+        </label>
+        <input class="mt-1 block w-full p-2 border rounded-md" placeholder="1234 5678 9012 3456" type="text"/>
+       </div>
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+         <label class="block text-sm font-medium text-gray-700">
+          Expiry Date
+         </label>
+         <input class="mt-1 block w-full p-2 border rounded-md" placeholder="MM/YY" type="text"/>
+        </div>
+        <div>
+         <label class="block text-sm font-medium text-gray-700">
+          CVV
+         </label>
+         <input class="mt-1 block w-full p-2 border rounded-md" placeholder="123" type="text"/>
+        </div>
+       </div>
+       <div>
+        <label class="block text-sm font-medium text-gray-700">
+         Name on Card
+        </label>
+        <input class="mt-1 block w-full p-2 border rounded-md" placeholder="John Doe" type="text"/>
+       </div>
+       <button class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700" type="submit">
+        Pay Now
+       </button>
+      </form>
+     </div>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>
+
+
+
+
+
+
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    margin-bottom: 30px;
+}
+
+.page-title {
+    color: #2c3e50;
+    font-size: 28px;
+}
+
+.search-container {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.search-box {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+    font-size: 14px;
+}
+
+.search-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 0 4px 4px 0;
+    font-size: 14px;
+}
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.orders-table th {
+    background-color: #3498db;
+    color: white;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.orders-table td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.orders-table tr:last-child td {
+    border-bottom: none;
+}
+
+.orders-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.product-cell {
+    display: flex;
+    align-items: center;
+}
+
+.product-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 15px;
+}
+
+.product-name {
+    font-weight: 500;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-processing {
+    background-color: #f39c12;
+    color: white;
+}
+
+.status-shipped {
+    background-color: #3498db;
+    color: white;
+}
+
+.status-delivered {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.status-canceled {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.payment-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.payment-paid {
+    background-color: #e8f7ef;
+    color: #2ecc71;
+}
+
+.payment-pending {
+    background-color: #fef5e7;
+    color: #f39c12;
+}
+
+.action-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-right: 5px;
+    background-color: #3498db;
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 50px 0;
+    color: #7f8c8d;
+}
+
+.tracking-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 30px;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #7f8c8d;
+}
+
+.tracking-info {
+    margin-top: 20px;
+}
+
+.tracking-steps {
+    position: relative;
+    margin-top: 30px;
+}
+
+.step {
+    display: flex;
+    padding-bottom: 30px;
+    position: relative;
+}
+
+.step:last-child {
+    padding-bottom: 0;
+}
+
+.step-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ecf0f1;
+    color: #95a5a6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-right: 15px;
+    position: relative;
+    z-index: 2;
+}
+
+.step-completed .step-icon {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.step-current .step-icon {
+    background-color: #3498db;
+    color: white;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+.step-date {
+    font-size: 13px;
+    color: #7f8c8d;
+}
+
+.step-line {
+    position: absolute;
+    left: 20px;
+    top: 40px;
+    bottom: 0;
+    width: 2px;
+    background-color: #ecf0f1;
+    z-index: 1;
+}
+
+.step:last-child .step-line {
+    display: none;
+}
+
+.step-completed .step-line {
+    background-color: #2ecc71;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.search-result-info {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #ebf5fb;
+    border-radius: 4px;
+    display: none;
+}
+
+.clear-search {
+    color: #3498db;
+    cursor: pointer;
+    margin-left: 5px;
+    font-weight: 500;
+}
+
+.no-results {
+    text-align: center;
+    padding: 30px 0;
+    color: #7f8c8d;
+}
+
+@media (max-width: 768px) {
+    .orders-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .product-cell {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .product-img {
+        margin-bottom: 10px;
+        margin-right: 0;
+    }
+}
+
+
+
+
+
+orders
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+th {
+    background-color: #f4f4f4;
+}
+.status-select {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+.update-btn {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.update-btn:hover {
+    background-color: #45a049;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

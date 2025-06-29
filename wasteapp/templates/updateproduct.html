@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrack - Update Product</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6b48ff;      /* Updated purple */
+            --secondary: #00ddeb;    /* Updated turquoise */
+            --accent: #ff6b81;       /* Updated coral */
+            --dark: #1a1b2e;         /* Updated dark blue-gray */
+            --light: #f5f7fa;        /* Updated light gray-blue */
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.1);
+            --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, #f5f7fa 0%, #e4e9f0 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background-color: white;
+            color: var(--primary);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-bounce);
+            z-index: 100;
+            border: 2px solid transparent;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            background-color: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .page-container {
+            width: 100%;
+            max-width: 700px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.7s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            background: var(--gradient);
+            padding: 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTI4MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTMyMCAyOGMzMjAgMCAzMjAgODQgNjQwIDg0IDE2MCAwIDI0MCA0MiAzMjAgNDJ2LTE1NEgweiIgZmlsbC1vcGFjaXR5PSIuMDUiLz48cGF0aCBkPSJNMzIwIDU2YzMyMCAwIDMyMCA4NCA2NDAgODQgMTYwIDAgMjQwIDQyIDMyMCA0MlYwSDB6IiBmaWxsLW9wYWNpdHk9Ii4wNyIvPjwvc3ZnPg==');
+            background-size: cover;
+            opacity: 0.3;
+        }
+        
+        .animated-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            right: -50px;
+            animation: float 15s infinite alternate ease-in-out;
+        }
+        
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            left: 10%;
+            animation: float 20s infinite alternate-reverse ease-in-out;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            100% {
+                transform: translate(50px, 50px) rotate(360deg);
+            }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            margin-right: 0.75rem;
+            animation: pulse 2s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.1);
+            }
+        }
+        
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            animation: fadeUp 0.8s ease-out;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            animation: fadeUp 0.8s ease-out 0.2s forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .content {
+            padding: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+            animation: fadeUp 0.5s ease-out backwards;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition-normal);
+            background-color: #F5F5F5;
+            color: var(--dark);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(107, 72, 255, 0.2);
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            color: var(--primary);
+            pointer-events: none;
+        }
+        
+        .icon-input {
+            padding-left: 2.5rem;
+        }
+        
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            width: 100%;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s ease-out;
+        }
+        
+        .submit-btn:hover::after {
+            transform: translate(-50%, -50%) scale(2);
+        }
+        
+        /* Number input styling */
+        .number-input-wrapper {
+            position: relative;
+            display: flex;
+            width: 100%;
+        }
+        
+        .number-input-wrapper input {
+            text-align: center;
+        }
+        
+        .number-input-wrapper input::-webkit-outer-spin-button,
+        .number-input-wrapper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .number-btn {
+            border: 2px solid #E0E0E0;
+            background-color: #F5F5F5;
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            user-select: none;
+        }
+        
+        .number-btn:hover {
+            background-color: rgba(107, 72, 255, 0.1);
+            color: var(--primary);
+        }
+        
+        .dec-btn {
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+        }
+        
+        .inc-btn {
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .number-input {
+            flex: 1;
+            border-radius: 0 !important;
+        }
+        
+        /* Alert */
+        .alert-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            max-width: 400px;
+            width: 100%;
+            z-index: 1100;
+        }
+        
+        .alert {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            display: flex;
+            align-items: stretch;
+            animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 4s;
+            transform: translateX(120%);
+            opacity: 0;
+        }
+        
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOut {
+            to {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+        }
+        
+        .alert-color {
+            width: 5px;
+        }
+        
+        .alert-success .alert-color {
+            background-color: var(--primary);
+        }
+        
+        .alert-error .alert-color {
+            background-color: var(--accent);
+        }
+        
+        .alert-warning .alert-color {
+            background-color: #FF9800;
+        }
+        
+        .alert-content {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            flex-grow: 1;
+        }
+        
+        .alert-icon {
+            margin-right: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .alert-success .alert-icon {
+            color: var(--primary);
+        }
+        
+        .alert-error .alert-icon {
+            color: var(--accent);
+        }
+        
+        .alert-warning .alert-icon {
+            color: #FF9800;
+        }
+        
+        .alert-message {
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .alert-close {
+            color: #9E9E9E;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-left: 0.5rem;
+        }
+        
+        .empty-state {
+            padding: 4rem 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: #E0E0E0;
+            animation: floatAnimation 3s ease-in-out infinite;
+        }
+        
+        @keyframes floatAnimation {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 1rem;
+            color: var(--primary);
+            font-weight: 500;
+            transition: var(--transition-normal);
+            text-decoration: none;
+        }
+        
+        .back-link:hover {
+            color: var(--primary);
+            transform: translateX(-3px);
+        }
+        
+        .back-link i {
+            margin-right: 0.5rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .page-container {
+                max-width: 100%;
+            }
+            
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back Button -->
+    <a href="/viewproduct" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    
+    <!-- Main Page Container -->
+    <div class="page-container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="animated-bg">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+            </div>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-recycle"></i>
+                    <h1 class="text-2xl font-bold">Waste Management System</h1>
+                </div>
+                <h2 class="title">Update Product</h2>
+                <p class="subtitle">Edit recycled product details</p>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <div class="content">
+            {% if tt %}
+            {% for t in tt %}
+            <form action="/updateproductaction" id="product-form">
+                <input type="hidden" name="id" value="{{t.Pid}}">
+                
+                <div class="form-grid">
+                    <div class="form-group" style="animation-delay: 0.1s;">
+                        <label for="name" class="block text-gray-700 font-medium mb-2">Item Name</label>
+                        <div class="relative">
+                            <i class="fas fa-box input-icon"></i>
+                            <input type="text" id="name" name="name" class="form-control icon-input" value="{{t.Item}}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.2s;">
+                        <label for="category" class="block text-gray-700 font-medium mb-2">Category</label>
+                        <div class="relative">
+                            <i class="fas fa-tag input-icon"></i>
+                            <input type="text" id="category" name="category" class="form-control icon-input" value="{{t.Category}}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.3s;">
+                        <label for="subcat" class="block text-gray-700 font-medium mb-2">Subcategory</label>
+                        <div class="relative">
+                            <i class="fas fa-tags input-icon"></i>
+                            <input type="text" id="subcat" name="subcat" class="form-control icon-input" value="{{t.Subcategory}}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.4s;">
+                        <label for="amount" class="block text-gray-700 font-medium mb-2">Price</label>
+                        <div class="number-input-wrapper">
+                            <div class="number-btn dec-btn" id="decAmount">
+                                <i class="fas fa-minus"></i>
+                            </div>
+                            <input type="number" id="amount" name="amount" class="form-control number-input" min="0" value="{{t.Amnt}}" required>
+                            <div class="number-btn inc-btn" id="incAmount">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.5s;">
+                        <label for="stock" class="block text-gray-700 font-medium mb-2">Stock</label>
+                        <div class="number-input-wrapper">
+                            <div class="number-btn dec-btn" id="decStock">
+                                <i class="fas fa-minus"></i>
+                            </div>
+                            <input type="number" id="stock" name="stock" class="form-control number-input" min="0" value="{{t.Stock}}" required>
+                            <div class="number-btn inc-btn" id="incStock">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="animation-delay: 0.6s;">
+                        <label for="Img" class="block text-gray-700 font-medium mb-2">Image</label>
+                        <div class="relative">
+                            <i class="fas fa-image input-icon"></i>
+                            <input type="text" id="Img" name="Img" class="form-control icon-input" value="{{t.Img}}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="animation-delay: 0.7s;">
+                    <label for="description" class="block text-gray-700 font-medium mb-2">Description</label>
+                    <textarea id="description" name="description" class="form-control" rows="4" required>{{t.Des}}</textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn" style="animation-delay: 0.8s;">
+                    <i class="fas fa-save mr-2"></i> Update Product
+                </button>
+                
+                <div class="text-center mt-4">
+                    <a href="/viewproduct" class="back-link">
+                        <i class="fas fa-chevron-left"></i> Back to products
+                    </a>
+                </div>
+            </form>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-box-open empty-icon"></i>
+                <h3 class="text-xl font-medium">Product not found</h3>
+                <p class="text-gray-500">The product you're looking for doesn't exist or has been removed.</p>
+                <a href="/viewproduct" class="submit-btn text-center mt-4">
+                    <i class="fas fa-arrow-left mr-2"></i> Return to Products
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Alert Container -->
+    <div id="alert-container" class="alert-container"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Number input functionality for Amount
+            function setupNumberInput(inputId, decBtnId, incBtnId, step = 1) {
+                const input = document.getElementById(inputId);
+                const decBtn = document.getElementById(decBtnId);
+                const incBtn = document.getElementById(incBtnId);
+                
+                if (!input || !decBtn || !incBtn) return;
+                
+                decBtn.addEventListener('click', function() {
+                    const currentVal = parseInt(input.value) || 0;
+                    input.value = Math.max(0, currentVal - step);
+                    input.dispatchEvent(new Event('change'));
+                });
+                
+                incBtn.addEventListener('click', function() {
+                    const currentVal = parseInt(input.value) || 0;
+                    input.value = currentVal + step;
+                    input.dispatchEvent(new Event('change'));
+                });
+            }
+            
+            setupNumberInput('amount', 'decAmount', 'incAmount', 10);
+            setupNumberInput('stock', 'decStock', 'incStock', 1);
+            
+            // Form submission with animated alert
+            document.getElementById('product-form')?.addEventListener('submit', function(e) {
+                // Don't prevent default as we want the form to actually submit
+                
+                // Show animated success alert
+                showAlert('Product updated successfully!', 'success');
+            });
+            
+            // Add animations to form groups
+            const formGroups = document.querySelectorAll('.form-group');
+            formGroups.forEach((group, index) => {
+                setTimeout(() => {
+                    group.style.opacity = 1;
+                    group.style.transform = 'translateY(0)';
+                }, 100 + (index * 100));
+            });
+        });
+        
+        // Alert function
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alert-container');
+            
+            const icons = {
+                success: '<i class="fas fa-check-circle"></i>',
+                error: '<i class="fas fa-exclamation-circle"></i>',
+                warning: '<i class="fas fa-exclamation-triangle"></i>'
+            };
+            
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <div class="alert-color"></div>
+                <div class="alert-content">
+                    <div class="alert-icon">${icons[type]}</div>
+                    <div class="alert-message">${message}</div>
+                    <button class="alert-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            alertContainer.appendChild(alert);
+            
+            // Close on button click
+            alert.querySelector('.alert-close').addEventListener('click', () => {
+                alert.remove();
+            });
+            
+            // Auto remove after animation completes
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

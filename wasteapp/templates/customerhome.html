@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary: #6b48ff;
+            --secondary: #00ddeb;
+            --accent: #ff6b81;
+            --dark: #1a1b2e;
+            --light: #f5f7fa;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+            background: linear-gradient(45deg, #f5f7fa 0%, #e4e9f0 100%);
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-logo i {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .nav-logo span {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-icon {
+            position: relative;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-icon i {
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+
+        .nav-icon:hover {
+            transform: scale(1.1);
+            color: var(--primary);
+        }
+
+        .nav-logout, .tutorial-btn {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1.2rem;
+            background: var(--gradient);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(107, 72, 255, 0.2);
+            cursor: pointer;
+        }
+
+        .nav-logout i, .tutorial-btn i {
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .nav-logout:hover, .tutorial-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(107, 72, 255, 0.3);
+        }
+
+        .badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            animation: pulse 2s infinite;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            z-index: 2;
+            animation: slideUp 1s ease-out;
+        }
+
+        .hero-greeting {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+            max-width: 80%;
+        }
+
+        .hero-btn {
+            display: inline-flex;
+            padding: 1rem 2.5rem;
+            background: var(--gradient);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(107, 72, 255, 0.3);
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(107, 72, 255, 0.4);
+        }
+
+        .hero-bg {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 60%;
+            height: 100%;
+            background: var(--gradient);
+            clip-path: polygon(30% 0%, 100% 0%, 100% 100%, 0% 100%);
+            z-index: 1;
+            animation: wave 8s ease-in-out infinite;
+        }
+
+        /* Dashboard Cards */
+        .dashboard {
+            padding: 5rem 5%;
+            position: relative;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            animation: floatIn 1s ease-out;
+            animation-fill-mode: backwards;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-btn {
+            background: transparent;
+            border: 2px solid var(--primary);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .card-btn:hover {
+            background: var(--gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            margin-top: 3rem;
+        }
+
+        .section-title {
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .action-item {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px;
+        }
+
+        .action-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        .action-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .action-item h3 {
+            color: var(--dark);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .action-item p {
+            color: #666;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .action-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-item:hover::before {
+            opacity: 1;
+        }
+
+        .action-item:hover .action-icon {
+            color: white;
+        }
+
+        .action-item:hover h3,
+        .action-item:hover p {
+            color: white;
+        }
+
+        /* Notification Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            animation: scaleIn 0.3s ease;
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            background: var(--gradient);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .close {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .notification-item {
+            display: flex;
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            transition: all 0.3s ease;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .notification-icon {
+            margin-right: 1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: rgba(107, 72, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-content h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-content p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-date {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        /* Tutorial Overlay */
+        .tutorial-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1200;
+            backdrop-filter: blur(2px);
+        }
+
+        .tutorial-step {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            max-width: 350px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 0.5s ease;
+            z-index: 1201;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .tutorial-step h3 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .tutorial-step p {
+            font-size: 0.95rem;
+            color: #444;
+            line-height: 1.4;
+        }
+
+        .tutorial-buttons {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: flex-end;
+        }
+
+        .tutorial-btn-action {
+            padding: 0.7rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .tutorial-btn-action.next {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 3px 10px rgba(107, 72, 255, 0.3);
+        }
+
+        .tutorial-btn-action.next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(107, 72, 255, 0.4);
+        }
+
+        .tutorial-btn-action.skip {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .tutorial-btn-action.skip:hover {
+            background: var(--primary);
+            color: white;
+            border-color: transparent;
+        }
+
+        .highlight {
+            position: relative;
+            z-index: 1202;
+            outline: 3px solid var(--primary);
+            border-radius: 10px;
+            animation: pulseHighlight 1.5s infinite;
+            background: rgba(107, 72, 255, 0.1);
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes floatIn {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes wave {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes pulseHighlight {
+            0% { outline-color: var(--primary); }
+            50% { outline-color: var(--secondary); }
+            100% { outline-color: var(--primary); }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-bg {
+                width: 100%;
+                clip-path: none;
+                opacity: 0.1;
+            }
+
+            .hero {
+                padding: 120px 5% 5rem;
+            }
+
+            .nav-bar {
+                padding: 1rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .nav-logout, .tutorial-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .tutorial-step {
+                max-width: 80%;
+                padding: 1.2rem;
+            }
+
+            .tutorial-step h3 {
+                font-size: 1.4rem;
+            }
+
+            .tutorial-step p {
+                font-size: 0.85rem;
+            }
+        }
+
+/* chatbot.css */
+#chatbot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+#chat-bubble {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #00f, #0ff);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    color: white;
+    cursor: pointer;
+    animation: pulse 2s infinite;
+}
+
+#chat-window {
+    background: #222;
+    border-radius: 15px;
+    padding: 10px;
+    width: 100%;
+    margin-top: 10px;
+    display: none;
+    flex-direction: column;
+    box-shadow: 0 0 15px #0ff;
+}
+
+#chat-messages {
+    max-height: 200px;
+    overflow-y: auto;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* Input + Mic Button area */
+#chat-input-area {
+    display: flex;
+    align-items: center;
+}
+
+#chat-input {
+    flex: 1;
+    border: none;
+    padding: 8px;
+    border-radius: 10px 0 0 10px;
+    outline: none;
+    font-family: 'Poppins', sans-serif;
+}
+
+#mic-button {
+    background-color: #00f;
+    border: none;
+    color: white;
+    font-size: 20px;
+    padding: 8px 12px;
+    border-radius: 0 10px 10px 0;
+    cursor: pointer;
+}
+
+#mic-button:hover {
+    background-color: #0ff;
+}
+
+/* Bubble Pulse Animation */
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(0, 255, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
+}
+
+
+    </style>
+</head>
+<body>
+   <!-- Floating Chat Bubble -->
+<!-- <div id="chatbot-container">
+    <div id="chat-bubble">💬</div>
+    <div id="chat-window">
+        <div id="chat-messages"></div>
+        <div id="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Ask me anything..." autocomplete="off">
+            <button id="mic-button">🎤</button>
+        </div>
+    </div>
+</div> -->
+
+
+
+    <nav class="nav-bar">
+        <div class="nav-logo">
+            <i class="fas fa-rocket"></i>
+            <span>Customer Dashboard</span>
+        </div>
+        <div class="nav-actions">
+            <div class="nav-icon" onclick="openNotificationModal()">
+                <i class="fas fa-bell"></i>
+                <span class="badge">3</span>
+            </div>
+            <div class="nav-icon" onclick="goToCart()">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-badge" class="badge">0</span>
+            </div>
+            <div class="nav-icon">
+                <a href="/customerprofile" onclick="goToProfile(); return false;">
+                    <i class="fas fa-user"></i>
+                </a>
+            </div>
+            <div class="tutorial-btn" onclick="startTutorial()">
+                <i class="fas fa-question-circle"></i>
+                Start Tutorial
+            </div>
+            <a href="/login" class="nav-logout" onclick="logout(); return false;">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-greeting">Hello, <span id="user-name">Customer</span>!</div>
+            <h1 class="hero-title">Your Personal Dashboard</h1>
+            <p class="hero-subtitle">Access your services, track orders, and manage your account with ease.</p>
+            <a href="#dashboard" class="hero-btn">Explore Now</a>
+        </div>
+        <div class="hero-bg"></div>
+    </section>
+
+    <section class="dashboard" id="dashboard">
+        <div class="cards-grid">
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>Applications</h3>
+                <p>Submit new applications or check existing ones</p>
+                <a href="/application" class="card-btn">Apply Now</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+                <h3>Trash Pickup</h3>
+                <p>View Trash Pickup Collector Details</p>
+                <a href="/trashview" class="card-btn">Collector Details</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Rate Details</h3>
+                <p>View your current rate details and billing information</p>
+                <a href="/viewratedetails" class="card-btn">View Rates</a>
+            </div>
+        </div>
+
+        <div class="quick-actions" id="quick-actions">
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="actions-grid" id="actions-container">
+                <!-- Quick actions will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <div id="notification-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Notifications</h3>
+                <span class="close" onclick="closeNotificationModal()">×</span>
+            </div>
+            <div class="modal-body">
+                <!-- Notification content will be dynamically added -->
+            </div>
+        </div>
+    </div>
+
+    <div id="tutorial-overlay" class="tutorial-overlay">
+        <div id="tutorial-step" class="tutorial-step"></div>
+    </div>
+
+    <script>
+        let userData = {
+            name: '',
+            memberSince: 'March 2025'
+        };
+
+        const quickActions = [
+            { icon: 'fas fa-credit-card', title: 'Edit Profile', description: 'Edit Your Profile', link: '/customerprofile' },
+            { icon: 'fas fa-hourglass-half', title: 'Application Status', description: 'Check your application progress', link: '/view_application_status' },
+            { icon: 'fas fa-shopping-bag', title: 'Shopping', description: 'Browse our products and services', link: '/viewcustpro' },
+            { icon: 'fas fa-shopping-cart', title: 'View Cart', description: 'Review your shopping cart', link: '/viewcart' },
+            { icon: 'fas fa-clipboard-list', title: 'My Orders', description: 'Track your order history', link: '/myorders' },
+            { icon: 'fas fa-credit-card', title: 'Feedback', description: 'Post Your Feedback', link: '/feedback' },
+            { icon: 'fas fa-sign-out-alt', title: 'Logout', description: 'Sign out of your account', link: '/login' }
+        ];
+
+        // Find the tutorialSteps definition and update positions for quick action steps (indices 7-13)
+const tutorialSteps = [
+    { 
+        target: '.nav-icon:nth-child(1)', 
+        title: 'Notifications', 
+        description: 'Click here to view your latest notifications and updates.', 
+        position: { top: '80px', right: '20px' }
+    },
+    { 
+        target: '.nav-icon:nth-child(2)', 
+        title: 'Shopping Cart', 
+        description: 'Access your cart to review items before checkout.', 
+        position: { top: '80px', right: '20px' }
+    },
+    { 
+        target: '.nav-icon:nth-child(3)', 
+        title: 'Profile', 
+        description: 'Manage your account details and preferences.', 
+        position: { top: '80px', right: '20px' }
+    },
+    { 
+        target: '.nav-logout', 
+        title: 'Logout', 
+        description: 'Sign out of your account securely.', 
+        position: { top: '80px', right: '20px' }
+    },
+    { 
+        target: '.card:nth-child(1) .card-btn', 
+        title: 'Applications', 
+        description: 'Submit  your applications for waste pickup.', 
+        position: { bottom: '20px', left: '20px' }
+    },
+    { 
+        target: '.card:nth-child(2) .card-btn', 
+        title: 'Trash Pickup', 
+        description: 'View details about your trash pickup person.', 
+        position: { bottom: '20px', left: '20px' }
+    },
+    { 
+        target: '.card:nth-child(3) .card-btn', 
+        title: 'Rate Details', 
+        description: 'Check your billing and rate information.', 
+        position: { bottom: '20px', left: '20px' }
+    },
+    /* UPDATED POSITIONS FOR QUICK ACTIONS - Now they appear on the left side */
+    { 
+        target: '.action-item:nth-child(1)', 
+        title: 'Edit Profile', 
+        description: 'Update your personal information.', 
+        position: { top: '50%', left: '20px' }
+    },
+    { 
+        target: '.action-item:nth-child(2)', 
+        title: 'Application Status', 
+        description: 'Track the progress of your applications.', 
+        position: { top: '50%', left: '20px' }
+    },
+    { 
+        target: '.action-item:nth-child(3)', 
+        title: 'Shopping', 
+        description: 'Browse products and services available.', 
+        position: { top: '50%', left: '20px' }
+    },
+    { 
+        target: '.action-item:nth-child(4)', 
+        title: 'View Cart', 
+        description: 'Review items in your shopping cart.', 
+        position: { top: '50%', left: '20px' }
+    },
+    { 
+        target: '.action-item:nth-child(5)', 
+        title: 'My Orders', 
+        description: 'View your order history and status.', 
+        position: { top: '50%', left: '20px' }
+    },
+    { 
+        target: '.action-item:nth-child(6)', 
+        title: 'Feedback', 
+        description: 'Share your feedback with us.', 
+        position: { top: '50%', left: '20px' }
+    },
+    { 
+        target: '.action-item:nth-child(7)', 
+        title: 'Logout', 
+        description: 'Sign out from the quick actions menu.', 
+        position: { top: '50%', left: '20px' }
+    }
+];
+        
+
+        let currentStep = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initDashboard();
+
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    initDashboard();
+                }
+            });
+
+            window.addEventListener('load', function() {
+                initDashboard();
+            });
+        });
+
+        function initDashboard() {
+            console.log('Dashboard initialized at: ' + new Date().toISOString());
+            loadUserData();
+            updateCartCount();
+            loadQuickActions();
+
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'cartItems') updateCartCount();
+            });
+        }
+
+        function loadQuickActions() {
+            const actionsContainer = document.getElementById('actions-container');
+            if (!actionsContainer) {
+                console.error('Actions container not found');
+                return;
+            }
+            
+            actionsContainer.innerHTML = '';
+            console.log('Quick actions container cleared');
+            
+            quickActions.forEach(action => {
+                const actionItem = document.createElement('a');
+                actionItem.href = action.link;
+                actionItem.className = 'action-item';
+                
+                if (action.title === 'Logout') {
+                    actionItem.onclick = function(event) {
+                        event.preventDefault();
+                        logout();
+                    };
+                }
+                
+                actionItem.innerHTML = `
+                    <div class="action-icon">
+                        <i class="${action.icon}"></i>
+                    </div>
+                    <h3>${action.title}</h3>
+                    <p>${action.description}</p>
+                `;
+                
+                actionsContainer.appendChild(actionItem);
+            });
+            
+            console.log('Quick actions loaded: ' + quickActions.length);
+        }
+
+        function updateCartCount() {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const cartBadge = document.getElementById('cart-badge');
+            cartBadge.textContent = cartItems.length;
+            cartBadge.style.display = cartItems.length > 0 ? 'flex' : 'none';
+        }
+
+        function loadUserData() {
+            const savedData = JSON.parse(localStorage.getItem('userData'));
+            if (savedData && savedData.name) {
+                userData = savedData;
+                document.getElementById('user-name').textContent = savedData.name.split(' ')[0] || 'Customer';
+            }
+        }
+
+        function goToCart() {
+            window.location.href = '/viewcart';
+        }
+
+        function goToProfile() {
+            window.location.href = '/customerprofile';
+        }
+
+        function logout() {
+            showNotification('Successfully logged out!', 'success');
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 1500);
+        }
+
+        function openNotificationModal() {
+            const modal = document.getElementById('notification-modal');
+            const modalBody = modal.querySelector('.modal-body');
+            modalBody.innerHTML = '';
+            
+            const notifications = [
+                { title: 'Payment Received', message: 'Your payment of $45.00 has been processed successfully.', date: '2025-03-14' },
+                { title: 'Upcoming Pickup', message: 'Your trash pickup is scheduled for tomorrow morning.', date: '2025-03-13' },
+                { title: 'Application Update', message: 'Your service application has been approved!', date: '2025-03-10' }
+            ];
+            
+            if (notifications.length === 0) {
+                const emptyNotice = document.createElement('div');
+                emptyNotice.className = 'empty-notifications';
+                emptyNotice.innerHTML = `
+                    <i class="fas fa-bell-slash"></i>
+                    <p>No notifications at this time</p>
+                `;
+                modalBody.appendChild(emptyNotice);
+            } else {
+                notifications.forEach(notification => {
+                    const notificationItem = document.createElement('div');
+                    notificationItem.className = 'notification-item';
+                    notificationItem.innerHTML = `
+                        <div class="notification-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>${notification.title}</h4>
+                            <p>${notification.message}</p>
+                            <span class="notification-date">${formatDate(notification.date)}</span>
+                        </div>
+                    `;
+                    modalBody.appendChild(notificationItem);
+                });
+            }
+            
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeNotificationModal() {
+            document.getElementById('notification-modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 0) {
+                return 'Today';
+            } else if (diffDays === 1) {
+                return 'Yesterday';
+            } else if (diffDays < 7) {
+                return `${diffDays} days ago`;
+            } else {
+                return date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 2rem;
+                border-radius: 12px;
+                color: white;
+                background: var(--gradient);
+                z-index: 1001;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                animation: slideIn 0.5s ease forwards, slideOut 0.5s ease 2.5s forwards;
+            `;
+            
+            const icon = document.createElement('i');
+            icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+            
+            notification.appendChild(icon);
+            notification.appendChild(document.createTextNode(message));
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // Tutorial Functions
+        function startTutorial() {
+            localStorage.removeItem('tutorialCompleted'); // Allow tutorial to run again
+            currentStep = 0;
+            showTutorialStep();
+        }
+
+        function showTutorialStep() {
+    const overlay = document.getElementById('tutorial-overlay');
+    const stepContainer = document.getElementById('tutorial-step');
+    const step = tutorialSteps[currentStep];
+
+    overlay.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+
+    document.querySelectorAll('.highlight').forEach(el => {
+        el.classList.remove('highlight');
+    });
+
+    const target = document.querySelector(step.target);
+    if (target) {
+        target.classList.add('highlight');
+        
+        // Scroll to the element
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Calculate position based on target and avoid chatbot
+        const targetRect = target.getBoundingClientRect();
+        const isChatbotOverlap = 
+            (step.position.right && step.position.bottom) || 
+            (step.target.includes('action-item'));
+        
+        // Set default values but override if provided in step.position
+        stepContainer.style.top = step.position.top || 'auto';
+        stepContainer.style.left = step.position.left || 'auto';
+        stepContainer.style.right = step.position.right || 'auto';
+        stepContainer.style.bottom = step.position.bottom || 'auto';
+        
+        // For quick actions, always position to the left
+        if (step.target.includes('action-item')) {
+            stepContainer.style.top = `${targetRect.top}px`;
+            stepContainer.style.left = '20px';
+            stepContainer.style.right = 'auto';
+            stepContainer.style.bottom = 'auto';
+        }
+    }
+
+    stepContainer.innerHTML = `
+        <h3>${step.title}</h3>
+        <p>${step.description}</p>
+        <div class="tutorial-buttons">
+            <div class="tutorial-btn-action skip" onclick="endTutorial()">Skip</div>
+            <div class="tutorial-btn-action next" onclick="${currentStep < tutorialSteps.length - 1 ? 'nextTutorialStep()' : 'endTutorial()'}">
+                ${currentStep < tutorialSteps.length - 1 ? 'Next' : 'Finish'}
+            </div>
+        </div>
+    `;
+}
+
+        function nextTutorialStep() {
+            currentStep++;
+            if (currentStep < tutorialSteps.length) {
+                showTutorialStep();
+            } else {
+                endTutorial();
+            }
+        }
+
+        function endTutorial() {
+            const overlay = document.getElementById('tutorial-overlay');
+            overlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.querySelectorAll('.highlight').forEach(el => {
+                el.classList.remove('highlight');
+            });
+            localStorage.setItem('tutorialCompleted', 'true');
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+// chatbot.js
+document.addEventListener('DOMContentLoaded', function() {
+    const chatBubble = document.getElementById('chat-bubble');
+    const chatWindow = document.getElementById('chat-window');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const micButton = document.getElementById('mic-button');
+
+    let pendingRedirect = null;
+
+    // 🎤 Voice Recognition
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    chatBubble.addEventListener('click', () => {
+        chatWindow.style.display = (chatWindow.style.display === 'flex') ? 'none' : 'flex';
+    });
+
+    function botSpeak(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        speechSynthesis.speak(utterance);
+    }
+
+    function botSendMessage(text) {
+        const botMessage = document.createElement('div');
+        botMessage.innerText = "🤖: " + text;
+        chatMessages.appendChild(botMessage);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        botSpeak(text);
+    }
+
+    function userSendMessage(text) {
+        const userMessage = document.createElement('div');
+        userMessage.innerText = "🧑: " + text;
+        chatMessages.appendChild(userMessage);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function handleUserInput(input) {
+        if (pendingRedirect) {
+            if (input.includes('yes')) {
+                window.location.href = pendingRedirect;
+            } else {
+                botSendMessage("Alright, let me know if you need anything else!");
+                pendingRedirect = null;
+            }
+            return;
+        }
+
+        if (input.includes('shopping')) {
+            botSendMessage("Our shopping page has all the latest products! 🛍️ Shall I redirect you?");
+            pendingRedirect = "/viewcustpro";
+        }
+        else if (input.includes('cart')) {
+            botSendMessage("You can view your selected items in your cart. 🛒 Shall I take you there?");
+            pendingRedirect = "/viewcart";
+        }
+        else if (input.includes('trash') || input.includes('pick up')) {
+            botSendMessage("Check out your trash pickup schedule and details. ♻️ Shall I redirect you?");
+            pendingRedirect = "/trashview";
+        }
+        else if (input.includes('order')) {
+            botSendMessage("You can view your order history here. 📦 Shall I show you?");
+            pendingRedirect = "/myorders";
+        }
+        else if (input.includes('application')) {
+            botSendMessage("Check the status of your application easily. 📋 Shall I open it?");
+            pendingRedirect = "/view_application_status";
+        }
+        else {
+            botSendMessage("Sorry, I didn't catch that. 🧐 You can ask about shopping, cart, trash pickup, orders, or application status!");
+        }
+    }
+
+    chatInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && chatInput.value.trim() !== "") {
+            const userText = chatInput.value.trim().toLowerCase();
+            userSendMessage(chatInput.value);
+            chatInput.value = "";
+            handleUserInput(userText);
+        }
+    });
+
+    // 🎤 Mic button click
+    micButton.addEventListener('click', () => {
+        recognition.start();
+        botSendMessage("🎙️ Listening... Please speak now.");
+    });
+
+    recognition.addEventListener('result', (event) => {
+        const speechResult = event.results[0][0].transcript.toLowerCase();
+        userSendMessage(speechResult);
+        handleUserInput(speechResult);
+    });
+
+    recognition.addEventListener('speechend', () => {
+        recognition.stop();
+    });
+
+    recognition.addEventListener('error', (event) => {
+        botSendMessage('Sorry, could not hear you properly. Please try again.');
+    });
+});
+
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrack - Add Category</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6b48ff;      /* Updated purple */
+            --secondary: #00ddeb;    /* Updated turquoise */
+            --accent: #ff6b81;       /* Updated coral */
+            --dark: #1a1b2e;         /* Updated dark blue-gray */
+            --light: #f5f7fa;        /* Updated light gray-blue */
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.1);
+            --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(45deg, #f5f7fa 0%, #e4e9f0 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            color: var(--dark);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.7s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-header {
+            background: var(--gradient);
+            padding: 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTI4MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTMyMCAyOGMzMjAgMCAzMjAgODQgNjQwIDg0IDE2MCAwIDI0MCA0MiAzMjAgNDJ2LTE1NEgweiIgZmlsbC1vcGFjaXR5PSIuMDUiLz48cGF0aCBkPSJNMzIwIDU2YzMyMCAwIDMyMCA4NCA2NDAgODQgMTYwIDAgMjQwIDQyIDMyMCA0MlYwSDB6IiBmaWxsLW9wYWNpdHk9Ii4wNyIvPjwvc3ZnPg==');
+            background-size: cover;
+            opacity: 0.3;
+        }
+        
+        .animated-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            right: -50px;
+            animation: float 15s infinite alternate ease-in-out;
+        }
+        
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            left: 10%;
+            animation: float 20s infinite alternate-reverse ease-in-out;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            100% {
+                transform: translate(50px, 50px) rotate(360deg);
+            }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            margin-right: 0.75rem;
+            animation: pulse 2s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.1);
+            }
+        }
+        
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            animation: fadeUp 0.8s ease-out;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            animation: fadeUp 0.8s ease-out 0.2s forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-container {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: formElementSlideUp 0.5s forwards;
+        }
+        
+        @keyframes formElementSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Floating label animation */
+        .input-group {
+            position: relative;
+        }
+
+        .input-group input, .input-group textarea {
+            padding: 1rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            width: 100%;
+            background-color: #F5F5F5;
+            position: relative;
+            font-size: 1rem;
+            transition: var(--transition-normal);
+            color: var(--dark);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .input-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .input-group label {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #F5F5F5;
+            padding: 0 0.5rem;
+            color: #546E7A;
+            transition: var(--transition-normal);
+            pointer-events: none;
+        }
+
+        .input-group textarea + label {
+            top: 1.5rem;
+        }
+
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label,
+        .input-group textarea:focus + label,
+        .input-group textarea:not(:placeholder-shown) + label {
+            top: 0;
+            font-size: 0.85rem;
+            color: var(--primary);
+            background: white;
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(107, 72, 255, 0.2);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background-color: white;
+            color: var(--primary);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-bounce);
+            z-index: 100;
+            border: 2px solid transparent;
+            text-decoration: none;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            background-color: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition-bounce);
+            cursor: pointer;
+            width: 100%;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s ease-out;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .submit-btn:hover::after {
+            transform: translate(-50%, -50%) scale(2);
+        }
+
+        /* Alert */
+        .alert-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            max-width: 400px;
+            width: 100%;
+            z-index: 1100;
+        }
+        
+        .alert {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            display: flex;
+            align-items: stretch;
+            animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 4s;
+            transform: translateX(120%);
+            opacity: 0;
+        }
+        
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOut {
+            to {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+        }
+        
+        .alert-color {
+            width: 5px;
+        }
+        
+        .alert-success .alert-color {
+            background-color: var(--primary);
+        }
+        
+        .alert-content {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            flex-grow: 1;
+        }
+        
+        .alert-icon {
+            margin-right: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .alert-success .alert-icon {
+            color: var(--primary);
+        }
+        
+        .alert-message {
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .alert-close {
+            color: #9E9E9E;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-left: 0.5rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .form-header {
+                padding: 1.5rem;
+            }
+            
+            .title {
+                font-size: 1.5rem;
+            }
+            
+            .form-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back Button -->
+    <a href="/viewcategory" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
+    <div class="card">
+        <!-- Header Section -->
+        <header class="form-header">
+            <div class="animated-bg">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+            </div>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-recycle"></i>
+                    <h1 class="text-2xl font-bold">Waste Management System</h1>
+                </div>
+                <h2 class="title">Add Category</h2>
+                <p class="subtitle">Create a new waste category</p>
+            </div>
+        </header>
+
+        <div class="form-container">
+            <form action="/cataction/" id="category-form">
+                <div class="form-group" style="animation-delay: 0.1s;">
+                    <div class="input-group">
+                        <input type="text" id="category" name="category" placeholder=" " required>
+                        <label for="category">Category Name</label>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="animation-delay: 0.2s;">
+                    <div class="input-group">
+                        <textarea id="description" name="description" placeholder=" " required></textarea>
+                        <label for="description">Description</label>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="animation-delay: 0.3s;">
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-plus-circle mr-2"></i>
+                        Add Category
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Alert Container -->
+    <div id="alert-container" class="alert-container"></div>
+    
+    <script>
+        // Animation for form groups
+        document.querySelectorAll('.form-group').forEach((group, index) => {
+            group.style.animationDelay = `${0.1 * (index + 1)}s`;
+        });
+        
+        // Form submission with animated alert
+        document.getElementById('category-form')?.addEventListener('submit', function(e) {
+            // Don't prevent default as we want the form to actually submit
+            
+            // Show animated success alert
+            showAlert('Category added successfully!', 'success');
+        });
+        
+        // Alert function
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alert-container');
+            
+            const icons = {
+                success: '<i class="fas fa-check-circle"></i>',
+                error: '<i class="fas fa-exclamation-circle"></i>',
+                warning: '<i class="fas fa-exclamation-triangle"></i>',
+                info: '<i class="fas fa-info-circle"></i>'
+            };
+            
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <div class="alert-color"></div>
+                <div class="alert-content">
+                    <div class="alert-icon">${icons[type]}</div>
+                    <div class="alert-message">${message}</div>
+                    <button class="alert-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            alertContainer.appendChild(alert);
+            
+            // Close on button click
+            alert.querySelector('.alert-close').addEventListener('click', () => {
+                alert.remove();
+            });
+            
+            // Auto remove after animation completes
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

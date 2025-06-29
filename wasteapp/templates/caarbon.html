@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Footprint Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Include jsPDF library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Include html2canvas for capturing the card as image -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (min-width: 640px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .animated-card {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .p-3 {
+            padding: 0.75rem;
+        }
+        
+        .p-4 {
+            padding: 1rem;
+        }
+        
+        .mr-4 {
+            margin-right: 1rem;
+        }
+        
+        .rounded-full {
+            border-radius: 9999px;
+        }
+        
+        .bg-green-100 {
+            background-color: #d1fae5;
+        }
+        
+        .text-green-600 {
+            color: #059669;
+        }
+        
+        .text-green-500 {
+            color: #10b981;
+        }
+        
+        .text-gray-500 {
+            color: #6b7280;
+        }
+        
+        .text-xl {
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+        }
+        
+        .text-2xl {
+            font-size: 1.5rem;
+            line-height: 2rem;
+        }
+        
+        .text-sm {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+        
+        .text-xs {
+            font-size: 0.75rem;
+            line-height: 1rem;
+        }
+        
+        .font-bold {
+            font-weight: 700;
+        }
+        
+        .font-normal {
+            font-weight: 400;
+        }
+        
+        .flex {
+            display: flex;
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .justify-between {
+            justify-content: space-between;
+        }
+        
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+        
+        .block {
+            display: block;
+        }
+        
+        /* Dashboard specific styles */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #111827;
+        }
+        
+        .dashboard-controls {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            background-color: #f3f4f6;
+            border-color: #d1d5db;
+        }
+        
+        .btn-primary {
+            background-color: #059669;
+            color: white;
+            border-color: #059669;
+        }
+        
+        .btn-primary:hover {
+            background-color: #047857;
+            border-color: #047857;
+        }
+        
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .charts-container {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+        
+        .chart-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+        }
+        
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1rem;
+        }
+        
+        @media (min-width: 640px) {
+            .details-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .detail-card {
+            background-color: #f9fafb;
+            border-radius: 0.375rem;
+            padding: 1rem;
+        }
+        
+        .detail-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+        
+        .detail-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .pdf-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .pdf-loading.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .loading-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #059669;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+            color: #6b7280;
+            text-align: center;
+        }
+        
+        /* Chart placeholders */
+        .chart-placeholder {
+            width: 100%;
+            height: 300px;
+            background-color: #f9fafb;
+            border-radius: 0.375rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+        
+        /* Tooltip styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #374151;
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 0.5rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+            pointer-events: none;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Table styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .data-table th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .carbon-report {
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .report-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .company-info h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #059669;
+        }
+        
+        .company-info p {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .report-date {
+            font-size: 0.875rem;
+            color: #6b7280;
+            text-align: right;
+        }
+        
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+            margin: 1.5rem 0 1rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+        
+        .meter {
+            height: 20px;
+            background-color: #f3f4f6;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .meter-fill {
+            height: 100%;
+            background-color: #059669;
+            width: 65%;
+            transition: width 1s ease-in-out;
+            position: relative;
+        }
+        
+        .meter-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        .recommendations {
+            margin: 1.5rem 0;
+        }
+        
+        .recommendation-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .recommendation-icon {
+            margin-right: 0.75rem;
+            padding-top: 0.125rem;
+            color: #059669;
+        }
+        
+        .recommendation-text {
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+        
+        .signature {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+            text-align: right;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background-color: #d1fae5;
+            color: #047857;
+        }
+        
+        .badge-progress {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .badge-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Sustainability Dashboard</h1>
+            <div class="dashboard-controls">
+                <button class="btn" id="reportBtn">Generate Report</button>
+                <button class="btn btn-primary">Download Full Data</button>
+            </div>
+        </div>
+        
+        <div class="grid">
+            <!-- Card 1: Carbon Footprint - This is the clickable card -->
+            <div id="carbonCard" class="card animated-card" style="--card-index: 1">
+                <div class="p-4 flex items-center">
+                    <div class="p-3 rounded-full bg-green-100 mr-4">
+                        <i class="fas fa-leaf text-green-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Carbon Footprint</p>
+                        <h3 class="text-2xl font-bold">28.4 <span class="text-sm font-normal">tons CO₂</span></h3>
+                        <p class="text-green-500 text-xs"><i class="fas fa-arrow-down"></i> 4.8% this month</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 2: Energy Consumption -->
+            <div class="card animated-card" style="--card-index: 2">
+                <div class="p-4 flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 mr-4" style="background-color: #dbeafe;">
+                        <i class="fas fa-bolt text-blue-600 text-xl" style="color: #2563eb;"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Energy Consumption</p>
+                        <h3 class="text-2xl font-bold">145.2 <span class="text-sm font-normal">MWh</span></h3>
+                        <p class="text-blue-500 text-xs" style="color: #3b82f6;"><i class="fas fa-arrow-down"></i> 2.3% this month</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 3: Water Usage -->
+            <div class="card animated-card" style="--card-index: 3">
+                <div class="p-4 flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 mr-4" style="background-color: #e0f2fe;">
+                        <i class="fas fa-tint text-blue-600 text-xl" style="color: #0284c7;"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Water Usage</p>
+                        <h3 class="text-2xl font-bold">1,240 <span class="text-sm font-normal">m³</span></h3>
+                        <p class="text-red-500 text-xs" style="color: #ef4444;"><i class="fas fa-arrow-up"></i> 1.2% this month</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 4: Waste Reduction -->
+            <div class="card animated-card" style="--card-index: 4">
+                <div class="p-4 flex items-center">
+                    <div class="p-3 rounded-full bg-yellow-100 mr-4" style="background-color: #fef3c7;">
+                        <i class="fas fa-recycle text-yellow-600 text-xl" style="color: #d97706;"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Waste Reduction</p>
+                        <h3 class="text-2xl font-bold">84.5 <span class="text-sm font-normal">%</span></h3>
+                        <p class="text-green-500 text-xs"><i class="fas fa-arrow-up"></i> 2.7% this month</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="charts-container">
+            <div class="chart-card">
+                <h3 class="chart-title">Carbon Emissions by Category</h3>
+                <div class="chart-placeholder">
+                    <div class="carbon-emissions-chart">
+                        <div style="display: flex; height: 250px; align-items: flex-end; gap: 20px; padding: 0 20px;">
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                <div style="width: 50px; height: 65%; background-color: #059669; margin-bottom: 10px;"></div>
+                                <span style="font-size: 12px; color: #6b7280;">Transportation</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                <div style="width: 50px; height: 85%; background-color: #059669; margin-bottom: 10px;"></div>
+                                <span style="font-size: 12px; color: #6b7280;">Electricity</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                <div style="width: 50px; height: 40%; background-color: #059669; margin-bottom: 10px;"></div>
+                                <span style="font-size: 12px; color: #6b7280;">Heating</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                <div style="width: 50px; height: 25%; background-color: #059669; margin-bottom: 10px;"></div>
+                                <span style="font-size: 12px; color: #6b7280;">Waste</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                <div style="width: 50px; height: 15%; background-color: #059669; margin-bottom: 10px;"></div>
+                                <span style="font-size: 12px; color: #6b7280;">Water</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <h3 class="chart-title">Carbon Footprint Trend</h3>
+                <div class="chart-placeholder">
+                    <div class="carbon-trend-chart">
+                        <div style="width: 100%; height: 200px; position: relative; padding: 20px;">
+                            <!-- Line chart simulation -->
+                            <svg width="100%" height="100%" viewBox="0 0 300 150">
+                                <!-- Grid lines -->
+                                <line x1="0" y1="0" x2="300" y2="0" stroke="#e5e7eb" stroke-width="1"/>
+                                <line x1="0" y1="30" x2="300" y2="30" stroke="#e5e7eb" stroke-width="1"/>
+                                <line x1="0" y1="60" x2="300" y2="60" stroke="#e5e7eb" stroke-width="1"/>
+                                <line x1="0" y1="90" x2="300" y2="90" stroke="#e5e7eb" stroke-width="1"/>
+                                <line x1="0" y1="120" x2="300" y2="120" stroke="#e5e7eb" stroke-width="1"/>
+                                <line x1="0" y1="150" x2="300" y2="150" stroke="#e5e7eb" stroke-width="1"/>
+                                
+                                <!-- Trend line -->
+                                <path d="M0,120 C50,110 100,130 150,90 S250,50 300,30" 
+                                      stroke="#059669" 
+                                      fill="none" 
+                                      stroke-width="3"/>
+                                      
+                                <!-- Data points -->
+                                <circle cx="0" cy="120" r="4" fill="#059669"/>
+                                <circle cx="50" cy="110" r="4" fill="#059669"/>
+                                <circle cx="100" cy="130" r="4" fill="#059669"/>
+                                <circle cx="150" cy="90" r="4" fill="#059669"/>
+                                <circle cx="200" cy="70" r="4" fill="#059669"/>
+                                <circle cx="250" cy="50" r="4" fill="#059669"/>
+                                <circle cx="300" cy="30" r="4" fill="#059669"/>
+                                
+                                <!-- Month labels -->
+                                <text x="0" y="165" font-size="10" text-anchor="middle" fill="#6b7280">Jan</text>
+                                <text x="50" y="165" font-size="10" text-anchor="middle" fill="#6b7280">Feb</text>
+                                <text x="100" y="165" font-size="10" text-anchor="middle" fill="#6b7280">Mar</text>
+                                <text x="150" y="165" font-size="10" text-anchor="middle" fill="#6b7280">Apr</text>
+                                <text x="200" y="165" font-size="10" text-anchor="middle" fill="#6b7280">May</text>
+                                <text x="250" y="165" font-size="10" text-anchor="middle" fill="#6b7280">Jun</text>
+                                <text x="300" y="165" font-size="10" text-anchor="middle" fill="#6b7280">Jul</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-card" style="margin-top: 1.5rem;">
+            <h3 class="chart-title">Emission Sources Breakdown</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>Emissions (tons CO₂)</th>
+                        <th>% of Total</th>
+                        <th>YoY Change</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Electricity Consumption</td>
+                        <td>12.6</td>
+                        <td>44.4%</td>
+                        <td>-5.2%</td>
+                        <td><span class="badge">Improving</span></td>
+                    </tr>
+                    <tr>
+                        <td>Transportation Fleet</td>
+                        <td>8.3</td>
+                        <td>29.2%</td>
+                        <td>-3.7%</td>
+                        <td><span class="badge">Improving</span></td>
+                    </tr>
+                    <tr>
+                        <td>Heating & Cooling</td>
+                        <td>4.7</td>
+                        <td>16.5%</td>
+                        <td>-2.8%</td>
+                        <td><span class="badge">Improving</span></td>
+                    </tr>
+                    <tr>
+                        <td>Waste Management</td>
+                        <td>1.9</td>
+                        <td>6.7%</td>
+                        <td>+1.2%</td>
+                        <td><span class="badge badge-warning">Needs Attention</span></td>
+                    </tr>
+                    <tr>
+                        <td>Water Treatment</td>
+                        <td>0.9</td>
+                        <td>3.2%</td>
+                        <td>-6.5%</td>
+                        <td><span class="badge">Improving</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Hidden Report Template for PDF Generation -->
+        <div id="pdfTemplate" style="display: none;">
+            <div class="carbon-report">
+                <div class="report-title">Carbon Footprint Report</div>
+                
+                <div class="report-header">
+                    <div class="company-info">
+                        <h2>Eco Solutions Inc.</h2>
+                        <p>Environmental Sustainability Department</p>
+                        <p>Quarterly Carbon Assessment</p>
+                    </div>
+                    <div class="report-date">
+                        <p>Report Generated: April 10, 2025</p>
+                        <p>Reporting Period: Q1 2025</p>
+                    </div>
+                </div>
+                
+                <div class="section-title">Executive Summary</div>
+                <p>This report presents the carbon footprint analysis for Q1 2025. Our total carbon emissions for this period are <strong>28.4 tons CO₂</strong>, which represents a <strong>4.8% decrease</strong> compared to the previous month. We continue to make progress toward our annual reduction target of 15%.</p>
+                
+                <div class="section-title">Carbon Footprint Overview</div>
+                <div class="meter">
+                    <div class="meter-fill"></div>
+                </div>
+                <div class="meter-label">
+                    <span>Current: 28.4 tons</span>
+                    <span>Target: 25.0 tons</span>
+                </div>
+                <p>We are currently at 65% progress toward our quarterly carbon reduction target.</p>
+                
+                <div class="section-title">Emissions by Source</div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Source</th>
+                            <th>Emissions (tons CO₂)</th>
+                            <th>% of Total</th>
+                            <th>YoY Change</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Electricity Consumption</td>
+                            <td>12.6</td>
+                            <td>44.4%</td>
+                            <td>-5.2%</td>
+                        </tr>
+                        <tr>
+                            <td>Transportation Fleet</td>
+                            <td>8.3</td>
+                            <td>29.2%</td>
+                            <td>-3.7%</td>
+                        </tr>
+                        <tr>
+                            <td>Heating & Cooling</td>
+                            <td>4.7</td>
+                            <td>16.5%</td>
+                            <td>-2.8%</td>
+                        </tr>
+                        <tr>
+                            <td>Waste Management</td>
+                            <td>1.9</td>
+                            <td>6.7%</td>
+                            <td>+1.2%</td>
+                        </tr>
+                        <tr>
+                            <td>Water Treatment</td>
+                            <td>0.9</td>
+                            <td>3.2%</td>
+                            <td>-6.5%</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="section-title">Key Recommendations</div>
+                <div class="recommendations">
+                    <div class="recommendation-item">
+                        <div class="recommendation-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="recommendation-text">
+                            <strong>Waste Management Improvements:</strong> Implement enhanced recycling programs and waste sorting protocols to address the 1.2% increase in waste-related emissions.
+                        </div>
+                    </div>
+                    <div class="recommendation-item">
+                        <div class="recommendation-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="recommendation-text">
+                            <strong>Energy Efficiency:</strong> Continue LED lighting retrofits in Building B to further reduce electricity consumption. Estimated additional savings: 1.2 tons CO₂.
+                        </div>
+                    </div>
+                    <div class="recommendation-item">
+                        <div class="recommendation-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="recommendation-text">
+                            <strong>Transportation Fleet:</strong> Accelerate transition of delivery vehicles to electric alternatives as scheduled in Q2 2025.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="signature">
+                    <p>Report prepared by Environmental Sustainability Department</p>
+                    <p>For more information, contact sustainability@ecosolutions.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PDF Loading Indicator -->
+    <div id="pdfLoading" class="pdf-loading">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Generating PDF Report...</p>
+            <p class="text-sm text-gray-500">This may take a few seconds</p>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <p>© 2025 Eco Solutions Inc. Sustainability Dashboard</p>
+    </footer>
+    
+    <script>
+        // Load the PDF library modules
+        window.jsPDF = window.jspdf.jsPDF;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize elements
+            const carbonCard = document.getElementById('carbonCard');
+            const reportBtn = document.getElementById('reportBtn');
+            const pdfLoading = document.getElementById('pdfLoading');
+            
+            // Initialize meter animation
+            setTimeout(() => {
+                const meterFill = document.querySelector('.meter-fill');
+                if (meterFill) {
+                    meterFill.style.width = '65%';
+                }
+            }, 500);
+            
+            // Function to generate and download PDF
+            async function generatePDF() {
+                // Show loading indicator
+                pdfLoading.classList.add('active');
+                
+                // Small delay to allow loading indicator to appear
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                try {
+                    // Get the template element
+                    const template = document.getElementById('pdfTemplate');
+                    template.style.display = 'block'; // Make it visible for html2canvas
+                    
+                    // Use html2canvas to capture the template as an image
+                    const canvas = await html2canvas(template.querySelector('.carbon-report'), {
+                        scale: 2, // Higher scale for better quality
+                        logging: false,
+                        useCORS: true,
+                        backgroundColor: '#ffffff'
+                    });
+                    
+                    // Hide the template again
+                    template.style.display = 'none';
+                    
+                    // Create a new PDF document
+                    const pdf = new jsPDF({
+                        orientation: 'portrait',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+                    
+                    // Calculate the width and height to fit the PDF page
+                    const imgWidth = 210; // A4 width in mm
+                    const imgHeight = canvas.height * imgWidth / canvas.width;
+                    
+                    // Add the image to the PDF
+                    const imgData = canvas.toDataURL('image/png');
+                    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                    
+                    // Download the PDF
+                    pdf.save('Carbon_Footprint_Report_Q1_2025.pdf');
+                    
+                    // Success message (could be a toast notification in a real app)
+                    console.log('PDF generated successfully');
+                } catch (error) {
+                    console.error('Error generating PDF:', error);
+                    alert('There was an error generating the PDF. Please try again.');
+                } finally {
+                    // Hide loading indicator
+                    pdfLoading.classList.remove('active');
+                }
+            }
+            
+            // Event listeners
+            carbonCard.addEventListener('click', generatePDF);
+            reportBtn.addEventListener('click', generatePDF);
+        });
+    </script>
+</body>
+</html>

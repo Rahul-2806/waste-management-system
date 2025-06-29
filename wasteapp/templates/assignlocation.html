@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrack - Assign Location</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6b48ff;      /* Updated purple */
+            --secondary: #00ddeb;    /* Updated turquoise */
+            --accent: #ff6b81;       /* Updated coral */
+            --dark: #1a1b2e;         /* Updated dark blue-gray */
+            --light: #f5f7fa;        /* Updated light gray-blue */
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.1);
+            --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, #f5f7fa 0%, #e4e9f0 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background-color: white;
+            color: var(--primary);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-bounce);
+            z-index: 100;
+            border: 2px solid transparent;
+            text-decoration: none;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            background-color: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .page-container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.7s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            background: var(--gradient);
+            padding: 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTI4MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTMyMCAyOGMzMjAgMCAzMjAgODQgNjQwIDg0IDE2MCAwIDI0MCA0MiAzMjAgNDJ2LTE1NEgweiIgZmlsbC1vcGFjaXR5PSIuMDUiLz48cGF0aCBkPSJNMzIwIDU2YzMyMCAwIDMyMCA4NCA2NDAgODQgMTYwIDAgMjQwIDQyIDMyMCA0MlYwSDB6IiBmaWxsLW9wYWNpdHk9Ii4wNyIvPjwvc3ZnPg==');
+            background-size: cover;
+            opacity: 0.3;
+        }
+        
+        .animated-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            right: -50px;
+            animation: float 15s infinite alternate ease-in-out;
+        }
+        
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            left: 10%;
+            animation: float 20s infinite alternate-reverse ease-in-out;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            100% {
+                transform: translate(50px, 50px) rotate(360deg);
+            }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            margin-right: 0.75rem;
+            animation: pulse 2s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.1);
+            }
+        }
+        
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            animation: fadeUp 0.8s ease-out;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            animation: fadeUp 0.8s ease-out 0.2s forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .content {
+            padding: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeUp 0.5s ease-out forwards;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 50px;
+            font-size: 1rem;
+            transition: var(--transition-normal);
+            background-color: #F5F5F5;
+            color: var(--dark);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(107, 72, 255, 0.2);
+        }
+        
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 1.25rem;
+            transform: translateY(-50%);
+            color: var(--primary);
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        /* Dropdown styling */
+        .dropdown-wrapper {
+            position: relative;
+        }
+        
+        .dropdown-wrapper::after {
+            content: '\f078';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            pointer-events: none;
+            font-size: 0.8rem;
+        }
+        
+        .select-control {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-color: #F5F5F5;
+            padding-right: 3rem;
+        }
+        
+        .submit-btn {
+            background: var(--gradient);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            width: 100%;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeUp 0.5s ease-out forwards;
+            animation-delay: 0.3s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s ease-out;
+        }
+        
+        .submit-btn:hover::after {
+            transform: translate(-50%, -50%) scale(2);
+        }
+        
+        /* Alert */
+        .alert-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            max-width: 400px;
+            width: 100%;
+            z-index: 1100;
+        }
+        
+        .alert {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            display: flex;
+            align-items: stretch;
+            animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 4s;
+            transform: translateX(120%);
+            opacity: 0;
+        }
+        
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOut {
+            to {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+        }
+        
+        .alert-color {
+            width: 5px;
+        }
+        
+        .alert-success .alert-color {
+            background-color: var(--primary);
+        }
+        
+        .alert-error .alert-color {
+            background-color: var(--accent);
+        }
+        
+        .alert-warning .alert-color {
+            background-color: #FF9800;
+        }
+        
+        .alert-content {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            flex-grow: 1;
+        }
+        
+        .alert-icon {
+            margin-right: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .alert-success .alert-icon {
+            color: var(--primary);
+        }
+        
+        .alert-error .alert-icon {
+            color: var(--accent);
+        }
+        
+        .alert-warning .alert-icon {
+            color: #FF9800;
+        }
+        
+        .alert-message {
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .alert-close {
+            color: #9E9E9E;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-left: 0.5rem;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 1.5rem;
+            color: var(--primary);
+            font-weight: 500;
+            transition: var(--transition-normal);
+            text-decoration: none;
+            opacity: 0;
+            animation: fadeUp 0.5s ease-out forwards;
+            animation-delay: 0.4s;
+        }
+        
+        .back-link:hover {
+            color: var(--secondary);
+            transform: translateX(-5px);
+        }
+        
+        .back-link i {
+            margin-right: 0.5rem;
+        }
+        
+        /* Label styling */
+        label {
+            font-weight: 500;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            transition: var(--transition-normal);
+        }
+        
+        .form-group:focus-within label {
+            color: var(--primary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .page-container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 1.5rem;
+            }
+            
+            .title {
+                font-size: 1.5rem;
+            }
+            
+            .content {
+                padding: 1.5rem;
+            }
+            
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        /* Hex Loader Styles */
+.hex-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
+}
+
+.hex-loader.fade-out {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.hex-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+}
+
+/* Hexagon Grid */
+.hex-grid {
+    position: relative;
+    width: 300px;
+    height: 300px;
+}
+
+.hex {
+    position: absolute;
+    width: 60px;
+    height: 34.64px; /* 60 * sin(60°) */
+    background: white;
+    margin: 17.32px 0; /* 60 * sin(30°) */
+    border-left: 2px solid #e4e9f0;
+    border-right: 2px solid #e4e9f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hex span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--gradient);
+    opacity: 0.7;
+    box-shadow: 0 0 15px rgba(107, 72, 255, 0.5);
+}
+
+.hex::before,
+.hex::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    left: 0;
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+}
+
+.hex::before {
+    bottom: 100%;
+    border-bottom: 17.32px solid #e4e9f0; /* 60 * sin(30°) */
+}
+
+.hex::after {
+    top: 100%;
+    border-top: 17.32px solid #e4e9f0; /* 60 * sin(30°) */
+}
+
+.hex-center {
+    width: 80px;
+    height: 46.19px; /* 80 * sin(60°) */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    margin: 23.09px 0; /* 80 * sin(30°) */
+    background: var(--gradient);
+    border-left: none;
+    border-right: none;
+    opacity: 1;
+    z-index: 10;
+    box-shadow: 0 8px 20px rgba(107, 72, 255, 0.25);
+}
+
+.hex-center::before,
+.hex-center::after {
+    border-left: 40px solid transparent;
+    border-right: 40px solid transparent;
+}
+
+.hex-center::before {
+    bottom: 100%;
+    border-bottom: 23.09px solid var(--primary); /* 80 * sin(30°) */
+}
+
+.hex-center::after {
+    top: 100%;
+    border-top: 23.09px solid var(--secondary); /* 80 * sin(30°) */
+}
+
+.hex-center i {
+    color: white;
+    font-size: 1.8rem;
+    animation: pulse 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.9;
+    }
+    100% {
+        transform: scale(1.15);
+        opacity: 1;
+    }
+}
+
+/* Hexagon positions */
+.hex-1 {
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.5);
+}
+
+.hex-2 {
+    top: 90px;
+    right: 50px;
+    transform: scale(0.5);
+}
+
+.hex-3 {
+    top: 180px;
+    right: 30px;
+    transform: scale(0.5);
+}
+
+.hex-4 {
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.5);
+}
+
+.hex-5 {
+    top: 180px;
+    left: 30px;
+    transform: scale(0.5);
+}
+
+.hex-6 {
+    top: 90px;
+    left: 50px;
+    transform: scale(0.5);
+}
+
+.hex-7 {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -120px) scale(0.5);
+}
+
+/* Connection lines */
+.connection-line {
+    position: absolute;
+    background: linear-gradient(90deg, rgba(107, 72, 255, 0.2), rgba(0, 221, 235, 0.3));
+    height: 2px;
+    transform-origin: left center;
+    opacity: 0;
+    border-radius: 2px;
+}
+
+.line-1 {
+    width: 60px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -70px) rotate(-90deg);
+}
+
+.line-2 {
+    width: 60px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-10%, -40px) rotate(-30deg);
+}
+
+.line-3 {
+    width: 60px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-10%, 20px) rotate(30deg);
+}
+
+.line-4 {
+    width: 60px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 50px) rotate(90deg);
+}
+
+.line-5 {
+    width: 60px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-90%, 20px) rotate(150deg);
+}
+
+.line-6 {
+    width: 60px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-90%, -40px) rotate(210deg);
+}
+
+.line-7 {
+    width: 60px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -125px) rotate(-90deg);
+}
+
+/* Text Container */
+.loader-text-container {
+    text-align: center;
+}
+
+.loader-title {
+    font-size: 2rem;
+    font-weight: 700;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 1rem;
+}
+
+.typing-container {
+    display: inline-block;
+    position: relative;
+    color: var(--dark);
+    font-size: 1rem;
+}
+
+.typing-text::after {
+    content: '|';
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Animation classes that will be applied with JS */
+.hex.animate {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+}
+
+.hex-1.animate { transform: translateX(-50%) scale(1); }
+.hex-2.animate { transform: scale(1); }
+.hex-3.animate { transform: scale(1); }
+.hex-4.animate { transform: translateX(-50%) scale(1); }
+.hex-5.animate { transform: scale(1); }
+.hex-6.animate { transform: scale(1); }
+.hex-7.animate { transform: translate(-50%, -120px) scale(1); }
+
+.connection-line.animate {
+    opacity: 1;
+}
+
+/* Initial page load styles */
+.page-container {
+    opacity: 0;
+    transition: opacity 0.8s ease-out;
+}
+
+.page-container.loaded {
+    opacity: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hex-grid {
+        transform: scale(0.8);
+    }
+    
+    .loader-title {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hex-grid {
+        transform: scale(0.7);
+    }
+    
+    .loader-title {
+        font-size: 1.5rem;
+    }
+}
+    </style>
+</head>
+<body>
+
+<!-- Hexagonal Network Loader -->
+<div id="hexLoader" class="hex-loader">
+    <div class="hex-container">
+        <!-- Hexagon Grid -->
+        <div class="hex-grid">
+            <div class="hex hex-1"><span></span></div>
+            <div class="hex hex-2"><span></span></div>
+            <div class="hex hex-3"><span></span></div>
+            <div class="hex hex-4"><span></span></div>
+            <div class="hex hex-5"><span></span></div>
+            <div class="hex hex-6"><span></span></div>
+            <div class="hex hex-7"><span></span></div>
+            <div class="hex hex-center"><i class="fas fa-recycle"></i></div>
+            
+            <!-- Connection lines -->
+            <div class="connection-line line-1"></div>
+            <div class="connection-line line-2"></div>
+            <div class="connection-line line-3"></div>
+            <div class="connection-line line-4"></div>
+            <div class="connection-line line-5"></div>
+            <div class="connection-line line-6"></div>
+            <div class="connection-line line-7"></div>
+        </div>
+        
+        <!-- Text Container -->
+        <div class="loader-text-container">
+            <h2 class="loader-title">Assign Location</h2>
+            <div class="typing-container">
+                <span class="typing-text">Loading assignments</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Back Button -->
+    <a href="/adminhome" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    
+    <!-- Main Page Container -->
+    <div class="page-container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="animated-bg">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+            </div>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-recycle"></i>
+                    <h1 class="text-2xl font-bold">Waste Management System</h1>
+                </div>
+                <h2 class="title">Assign Location</h2>
+                <p class="subtitle">Assign staff members to service areas</p>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <div class="content">
+            <form action="/assignlocationaction" id="assign-form">
+                <div class="form-group" style="animation-delay: 0.1s;">
+                    <label for="staff" class="block text-gray-700 font-medium mb-2">Staff Member</label>
+                    <div class="relative dropdown-wrapper">
+                        <i class="fas fa-user-tie input-icon"></i>
+                        <select id="staff" name="staff" class="form-control select-control" required>
+                            <option value="" disabled selected>Select staff member</option>
+                            {% for t in tt %}
+                            <option value="{{t.Sid}}">{{t.Name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="animation-delay: 0.2s;">
+                    <label for="location" class="block text-gray-700 font-medium mb-2">Location</label>
+                    <div class="relative dropdown-wrapper">
+                        <i class="fas fa-map-marked-alt input-icon"></i>
+                        <select id="location" name="location" class="form-control select-control" required>
+                            <option value="" disabled selected>Select location</option>
+                            {% for t in ttt %}
+                            <option value="{{t.Locid}}">{{t.Area}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn" name="submit">
+                    <i class="fas fa-check-circle mr-2"></i>Assign Location
+                </button>
+                
+                <div class="text-center mt-4">
+                    <a href="/viewAllAssign" class="back-link">
+                        <i class="fas fa-chevron-left"></i> View all assignments
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Alert Container -->
+    <div id="alert-container" class="alert-container"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add animation delay to form groups
+            const formGroups = document.querySelectorAll('.form-group');
+            formGroups.forEach((group, index) => {
+                group.style.animationDelay = `${0.1 + (index * 0.1)}s`;
+            });
+            
+            // Form submission with animated alert
+            document.getElementById('assign-form')?.addEventListener('submit', function(e) {
+                // Don't prevent default as we want the form to actually submit
+                // But we can still show a nice animation
+                
+                // Show animated success alert
+                showAlert('Location assigned successfully!', 'success');
+            });
+        });
+        
+        // Alert function
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alert-container');
+            
+            const icons = {
+                success: '<i class="fas fa-check-circle"></i>',
+                error: '<i class="fas fa-exclamation-circle"></i>',
+                warning: '<i class="fas fa-exclamation-triangle"></i>'
+            };
+            
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <div class="alert-color"></div>
+                <div class="alert-content">
+                    <div class="alert-icon">${icons[type]}</div>
+                    <div class="alert-message">${message}</div>
+                    <button class="alert-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            alertContainer.appendChild(alert);
+            
+            // Close on button click
+            alert.querySelector('.alert-close').addEventListener('click', () => {
+                alert.remove();
+            });
+            
+            // Auto remove after animation completes
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+    const hexLoader = document.getElementById('hexLoader');
+    const pageContainer = document.querySelector('.page-container');
+    const hexagons = document.querySelectorAll('.hex:not(.hex-center)');
+    const lines = document.querySelectorAll('.connection-line');
+    const typingText = document.querySelector('.typing-text');
+    
+    // Hide content initially
+    if (pageContainer) pageContainer.style.opacity = '0';
+    
+    // Typing animation text options
+    const textOptions = [
+        "Loading assignments...",
+        "Preparing staff data...",
+        "Mapping service areas...",
+        "Connecting team locations..."
+    ];
+    let currentTextIndex = 0;
+    
+    // Typing animation function
+    function typeText(element, text, i = 0) {
+        if (i === 0) {
+            element.textContent = '';
+        }
+        
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            setTimeout(() => typeText(element, text, i + 1), 100);
+        } else {
+            // After typing completes, wait and then type next text
+            setTimeout(() => {
+                currentTextIndex = (currentTextIndex + 1) % textOptions.length;
+                typeText(element, textOptions[currentTextIndex]);
+            }, 2000);
+        }
+    }
+    
+    // Start hexagon network animation sequence
+    function animateHexNetwork() {
+        // Animate hexagons one by one
+        hexagons.forEach((hex, index) => {
+            setTimeout(() => {
+                hex.classList.add('animate');
+            }, 200 + (index * 150));
+        });
+        
+        // Animate connection lines after hexagons
+        setTimeout(() => {
+            lines.forEach((line, index) => {
+                setTimeout(() => {
+                    line.classList.add('animate');
+                }, 150 * index);
+            });
+        }, 1200);
+    }
+    
+    // Start typing animation
+    typeText(typingText, textOptions[0]);
+    
+    // Start hexagon animation
+    animateHexNetwork();
+    
+    // Complete loading sequence
+    setTimeout(() => {
+        // Show page content
+        if (pageContainer) {
+            pageContainer.classList.add('loaded');
+            pageContainer.style.opacity = '1';
+        }
+        
+        // Hide loader
+        hexLoader.classList.add('fade-out');
+        
+        // Remove from DOM after animation
+        setTimeout(() => {
+            hexLoader.style.display = 'none';
+        }, 600);
+    }, 3000); // Adjust total loading time as needed
+});
+    </script>
+</body>
+</html>

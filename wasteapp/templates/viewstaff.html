@@ -1,0 +1,2550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6b48ff;      /* Purple */
+            --primary-light: #9e89ff;      /* Light purple */
+            --primary-dark: #4b28d9;       /* Dark purple */
+            --accent-color: #00ddeb;       /* Cyan */
+            --secondary-accent: #ff6b81;   /* Pink/Coral */
+            --background-light: #f5f7fa;   /* Very light gray-blue */
+            --background-dark: #e4e9f0;    /* Light gray-blue */
+            --text-primary: #1a1b2e;       /* Dark blue-gray */
+            --text-secondary: #546E7A;     /* Medium gray */
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 15px 25px rgba(0, 0, 0, 0.1);
+            --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --success-color: #10b981;      /* Green */
+            --error-color: #ef4444;        /* Red */
+            --warning-color: #f59e0b;      /* Amber */
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, var(--background-light) 0%, var(--background-dark) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background-color: white;
+            color: var(--primary-color);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-bounce);
+            z-index: 100;
+            border: 2px solid transparent;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .page-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+            animation: slideUp 0.7s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            padding: 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .animated-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.2;
+        }
+        
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: pulse 15s infinite alternate;
+        }
+        
+        .circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -50px;
+            animation-delay: 0s;
+        }
+        
+        .circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: -50px;
+            right: 100px;
+            animation-delay: 2s;
+        }
+        
+        .circle:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            bottom: -50px;
+            right: -50px;
+            animation-delay: 4s;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1) translate(0, 0);
+                opacity: 0.2;
+            }
+            50% {
+                transform: scale(1.1) translate(20px, 10px);
+                opacity: 0.3;
+            }
+            100% {
+                transform: scale(0.9) translate(-10px, -20px);
+                opacity: 0.2;
+            }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            margin-right: 0.75rem;
+            
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .section-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        .section-tab {
+            padding: 0.85rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            background-color: white;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-tab.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        .section-tab:hover:not(.active) {
+            background-color: var(--background-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: formElementSlideUp 0.5s forwards;
+        }
+        
+        @keyframes formElementSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition-normal);
+            background-color: var(--background-light);
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(107, 72, 255, 0.2);
+        }
+        
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 0.75rem;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            padding: 0.5rem 0;
+        }
+        
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .radio-label input[type="radio"] {
+            appearance: none;
+            width: 1.2rem;
+            height: 1.2rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition-normal);
+        }
+        
+        .radio-label input[type="radio"]:checked {
+            border-color: var(--primary-color);
+        }
+        
+        .radio-label input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0.6rem;
+            height: 0.6rem;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            animation: pulseRadio 0.3s ease;
+        }
+        
+        @keyframes pulseRadio {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition-bounce);
+            cursor: pointer;
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border: none;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s ease-out;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .submit-btn:hover::after {
+            transform: translate(-50%, -50%) scale(2);
+        }
+
+        .submit-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .search-container {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition-normal);
+            background-color: var(--background-light);
+            color: var(--text-primary);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(107, 72, 255, 0.2);
+        }
+        
+        .search-icon {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            pointer-events: none;
+        }
+        
+        .table-container {
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ECEFF1;
+        }
+        
+        th {
+            background-color: #F5F7F9;
+            color: var(--text-secondary);
+            font-weight: 600;
+            position: relative;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        tr.staff-row {
+            transition: var(--transition-normal);
+            opacity: 0;
+            transform: translateY(10px);
+            cursor: pointer;
+        }
+        
+        tr.staff-row:hover {
+            background-color: rgba(107, 72, 255, 0.05);
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-male {
+            background-color: rgba(107, 72, 255, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .badge-female {
+            background-color: rgba(255, 107, 129, 0.1);
+            color: var(--secondary-accent);
+        }
+        
+        .badge i {
+            margin-right: 0.35rem;
+            font-size: 0.7rem;
+        }
+        
+        .action-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: var(--transition-bounce);
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+        
+        .action-links a.update {
+            background-color: rgba(107, 72, 255, 0.12);
+            color: var(--primary-color);
+        }
+        
+        .action-links a.update:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(107, 72, 255, 0.25);
+        }
+        
+        .action-links a.delete {
+            background-color: rgba(255, 107, 129, 0.12);
+            color: var(--secondary-accent);
+        }
+        
+        .action-links a.delete:hover {
+            background-color: var(--secondary-accent);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(255, 107, 129, 0.25);
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .modal-header {
+            padding: 2rem 2rem 1rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .modal-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: rgba(255, 107, 129, 0.1);
+            color: var(--secondary-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .details-modal .modal-icon {
+            background-color: rgba(107, 72, 255, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-body {
+            padding: 0 2rem 1.5rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        
+        .modal-actions {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            border-top: 1px solid #ECEFF1;
+        }
+        
+        .btn-modal {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .btn-cancel {
+            background-color: #F5F5F5;
+            color: var(--text-secondary);
+        }
+        
+        .btn-cancel:hover {
+            background-color: #E0E0E0;
+        }
+        
+        .btn-confirm {
+            background-color: var(--secondary-accent);
+            color: white;
+        }
+        
+        .btn-confirm:hover {
+            background-color: #ff4f6a;
+            box-shadow: 0 4px 8px rgba(255, 107, 129, 0.25);
+        }
+        
+        /* Staff details modal */
+        .details-modal .modal {
+            max-width: 600px;
+        }
+        
+        .details-profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .details-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-right: 1.5rem;
+        }
+        
+        .details-info {
+            text-align: left;
+        }
+        
+        .details-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .details-email {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            text-align: left;
+            margin-top: 1.5rem;
+        }
+        
+        .details-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .details-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .details-value {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .details-full {
+            grid-column: span 2;
+        }
+        
+        .details-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #f5f5f5;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            border: none;
+        }
+        
+        .details-close:hover {
+            background: #e0e0e0;
+            color: var(--text-primary);
+        }
+        
+        .alert-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            max-width: 400px;
+            width: 100%;
+            z-index: 1100;
+        }
+        
+        .alert {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            display: flex;
+            align-items: stretch;
+            animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 4s;
+            transform: translateX(120%);
+            opacity: 0;
+        }
+        
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOut {
+            to {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+        }
+        
+        .alert-color {
+            width: 5px;
+        }
+        
+        .alert-success .alert-color {
+            background-color: var(--primary-color);
+        }
+        
+        .alert-error .alert-color {
+            background-color: var(--secondary-accent);
+        }
+        
+        .alert-warning .alert-color {
+            background-color: #FF9800;
+        }
+        
+        .alert-content {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            flex-grow: 1;
+        }
+        
+        .alert-icon {
+            margin-right: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .alert-success .alert-icon {
+            color: var(--primary-color);
+        }
+        
+        .alert-error .alert-icon {
+            color: var(--secondary-accent);
+        }
+        
+        .alert-warning .alert-icon {
+            color: #FF9800;
+        }
+        
+        .alert-message {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .alert-close {
+            color: #9E9E9E;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-left: 0.5rem;
+        }
+        
+        .empty-state {
+            padding: 4rem 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: #E0E0E0;
+            animation: floatAnimation 3s ease-in-out infinite;
+        }
+        
+        @keyframes floatAnimation {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        /* Photo thumbnail styling in staff list */
+        .staff-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-light);
+            margin-right: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .staff-photo:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Photo modal styling */
+        .photo-modal {
+            max-width: 600px;
+            width: auto;
+            text-align: center;
+        }
+        
+        .photo-container {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        #enlargedPhoto {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            color: var(--text-primary);
+        }
+        
+        /* Animation for the photo modal */
+        .photo-modal {
+            animation: zoomIn 0.3s forwards;
+        }
+        
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* Row click effect */
+        .row-click {
+            animation: clickEffect 0.3s ease;
+        }
+        
+        @keyframes clickEffect {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.98); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Hex Loader Styles */
+        .hex-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
+        }
+        
+        .hex-loader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .hex-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+        }
+        
+        /* Hexagon Grid */
+        .hex-grid {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+        
+        .hex {
+            position: absolute;
+            width: 60px;
+            height: 34.64px; /* 60 * sin(60°) */
+            background: white;
+            margin: 17.32px 0; /* 60 * sin(30°) */
+            border-left: 2px solid var(--background-dark);
+            border-right: 2px solid var(--background-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .hex span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            opacity: 0.7;
+            box-shadow: 0 0 15px rgba(107, 72, 255, 0.5);
+        }
+        
+        .hex::before,
+        .hex::after {
+            content: "";
+            position: absolute;
+            width: 0;
+            left: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+        }
+        
+        .hex::before {
+            bottom: 100%;
+            border-bottom: 17.32px solid var(--background-dark); /* 60 * sin(30°) */
+        }
+        
+        .hex::after {
+            top: 100%;
+            border-top: 17.32px solid var(--background-dark); /* 60 * sin(30°) */
+        }
+        
+        .hex-center {
+            width: 80px;
+            height: 46.19px; /* 80 * sin(60°) */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            margin: 23.09px 0; /* 80 * sin(30°) */
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-left: none;
+            border-right: none;
+            opacity: 1;
+            z-index: 10;
+            box-shadow: 0 8px 20px rgba(107, 72, 255, 0.25);
+        }
+        
+        .hex-center::before,
+        .hex-center::after {
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+        }
+        
+        .hex-center::before {
+            bottom: 100%;
+            border-bottom: 23.09px solid var(--primary-color); /* 80 * sin(30°) */
+        }
+        
+        .hex-center::after {
+            top: 100%;
+            border-top: 23.09px solid var(--accent-color); /* 80 * sin(30°) */
+        }
+        
+        .hex-center i {
+            color: white;
+            font-size: 1.8rem;
+            animation: pulse 1.5s infinite alternate ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.9;
+            }
+            100% {
+                transform: scale(1.15);
+                opacity: 1;
+            }
+        }
+        
+        /* Hexagon positions */
+        .hex-1 {
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.5);
+        }
+        
+        .hex-2 {
+            top: 90px;
+            right: 50px;
+            transform: scale(0.5);
+        }
+        
+        .hex-3 {
+            top: 180px;
+            right: 30px;
+            transform: scale(0.5);
+        }
+        
+        .hex-4 {
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.5);
+        }
+        
+        .hex-5 {
+            top: 180px;
+            left: 30px;
+            transform: scale(0.5);
+        }
+        
+        .hex-6 {
+            top: 90px;
+            left: 50px;
+            transform: scale(0.5);
+        }
+        
+        .hex-7 {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -120px) scale(0.5);
+        }
+        
+        /* Connection lines */
+        .connection-line {
+            position: absolute;
+            background: linear-gradient(90deg, rgba(107, 72, 255, 0.2), rgba(0, 221, 235, 0.3));
+            height: 2px;
+            transform-origin: left center;
+            opacity: 0;
+            border-radius: 2px;
+        }
+        
+        .line-1 {
+            width: 60px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -70px) rotate(-90deg);
+        }
+        
+        .line-2 {
+            width: 60px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-10%, -40px) rotate(-30deg);
+        }
+        
+        .line-3 {
+            width: 60px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-10%, 20px) rotate(30deg);
+        }
+        
+        .line-4 {
+            width: 60px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, 50px) rotate(90deg);
+        }
+        
+        .line-5 {
+            width: 60px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-90%, 20px) rotate(150deg);
+        }
+        
+        .line-6 {
+            width: 60px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-90%, -40px) rotate(210deg);
+        }
+        
+        .line-7 {
+            width: 60px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -125px) rotate(-90deg);
+        }
+        
+        /* Text Container */
+        .loader-text-container {
+            text-align: center;
+        }
+        
+        .loader-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .typing-container {
+            display: inline-block;
+            position: relative;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .typing-text::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        /* Animation classes that will be applied with JS */
+        .hex.animate {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+        
+        .hex-1.animate { transform: translateX(-50%) scale(1); }
+        .hex-2.animate { transform: scale(1); }
+        .hex-3.animate { transform: scale(1); }
+        .hex-4.animate { transform: translateX(-50%) scale(1); }
+        .hex-5.animate { transform: scale(1); }
+        .hex-6.animate { transform: scale(1); }
+        .hex-7.animate { transform: translate(-50%, -120px) scale(1); }
+        
+        .connection-line.animate {
+            opacity: 1;
+        }
+        
+        /* Initial page load styles */
+        .page-container {
+            opacity: 0;
+            transition: opacity 0.8s ease-out;
+        }
+        
+        .page-container.loaded {
+            opacity: 1;
+        }
+
+        /* VALIDATION STYLES */
+        .form-control.is-valid {
+            border-color: var(--success-color);
+            background-color: rgba(16, 185, 129, 0.05);
+        }
+        
+        .form-control.is-invalid {
+            border-color: var(--secondary-accent);
+            background-color: rgba(255, 107, 129, 0.05);
+        }
+        
+        .validation-feedback {
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        .invalid-feedback {
+            color: var(--secondary-accent);
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .valid-feedback {
+            color: var(--success-color);
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .validation-icon {
+            position: absolute;
+            right: 0.75rem;
+            top: calc(50% - 10px);
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .validation-icon.valid-icon {
+            color: var(--success-color);
+        }
+        
+        .validation-icon.invalid-icon {
+            color: var(--secondary-accent);
+        }
+        
+        .form-control.is-valid ~ .validation-icon.valid-icon,
+        .form-control.is-invalid ~ .validation-icon.invalid-icon {
+            opacity: 1;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease;
+        }
+        
+        /* Password strength indicator */
+        .password-strength-meter {
+            height: 5px;
+            background-color: #e2e8f0;
+            margin-top: 0.5rem;
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .password-strength-meter::before {
+            content: '';
+            height: 100%;
+            width: 0;
+            background: linear-gradient(to right, #ff6b81, #6b48ff);
+            position: absolute;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        .password-strength-meter.weak::before {
+            width: 25%;
+            background: #ff6b81;
+        }
+        
+        .password-strength-meter.medium::before {
+            width: 50%;
+            background: #fdc830;
+        }
+        
+        .password-strength-meter.strong::before {
+            width: 75%;
+            background: #36d1dc;
+        }
+        
+        .password-strength-meter.very-strong::before {
+            width: 100%;
+            background: #10b981;
+        }
+        
+        .password-strength-text {
+            font-size: 0.7rem;
+            text-align: right;
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
+        
+        .password-strength-text.weak {
+            color: #ff6b81;
+        }
+        
+        .password-strength-text.medium {
+            color: #fdc830;
+        }
+        
+        .password-strength-text.strong {
+            color: #36d1dc;
+        }
+        
+        .password-strength-text.very-strong {
+            color: #10b981;
+        }
+        
+        /* For the file input preview */
+        .file-preview-container {
+            margin-top: 0.5rem;
+            display: none;
+            text-align: center;
+        }
+        
+        .file-preview {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            object-fit: cover;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .page-container {
+                max-width: 900px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .section-tabs {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .title {
+                font-size: 1.5rem;
+            }
+            
+            .form-group, .table-container {
+                padding: 0.5rem;
+            }
+            
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .details-full {
+                grid-column: span 1;
+            }
+            
+            .hex-grid {
+                transform: scale(0.8);
+            }
+            
+            .loader-title {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 800px;
+            }
+            
+            .action-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .hex-grid {
+                transform: scale(0.7);
+            }
+            
+            .loader-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Set the minimum date for Date of Birth to be 18 years ago from today
+        document.addEventListener('DOMContentLoaded', function() {
+            var dobInput = document.getElementById('dob');
+            var today = new Date();
+            var minDate = new Date(today.setFullYear(today.getFullYear() - 18)).toISOString().split('T')[0]; // 18 years ago
+    
+            dobInput.setAttribute('max', minDate); // Set max date to 18 years ago
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const hexLoader = document.getElementById('hexLoader');
+            const pageContainer = document.querySelector('.page-container');
+            const hexagons = document.querySelectorAll('.hex:not(.hex-center)');
+            const lines = document.querySelectorAll('.connection-line');
+            const typingText = document.querySelector('.typing-text');
+            
+            // Hide content initially
+            if (pageContainer) pageContainer.style.opacity = '0';
+            
+            // Typing animation text options
+            const textOptions = [
+                "Building connections...",
+                "Loading staff data...",
+                "Preparing your dashboard...",
+                "Analyzing team structure..."
+            ];
+            let currentTextIndex = 0;
+            
+            // Typing animation function
+            function typeText(element, text, i = 0) {
+                if (i === 0) {
+                    element.textContent = '';
+                }
+                
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    setTimeout(() => typeText(element, text, i + 1), 100);
+                } else {
+                    // After typing completes, wait and then type next text
+                    setTimeout(() => {
+                        currentTextIndex = (currentTextIndex + 1) % textOptions.length;
+                        typeText(element, textOptions[currentTextIndex]);
+                    }, 2000);
+                }
+            }
+            
+            // Start hexagon network animation sequence
+            function animateHexNetwork() {
+                // Animate hexagons one by one
+                hexagons.forEach((hex, index) => {
+                    setTimeout(() => {
+                        hex.classList.add('animate');
+                    }, 200 + (index * 150));
+                });
+                
+                // Animate connection lines after hexagons
+                setTimeout(() => {
+                    lines.forEach((line, index) => {
+                        setTimeout(() => {
+                            line.classList.add('animate');
+                        }, 150 * index);
+                    });
+                }, 1200);
+            }
+            
+            // Start typing animation
+            typeText(typingText, textOptions[0]);
+            
+            // Start hexagon animation
+            animateHexNetwork();
+            
+            // Complete loading sequence
+            setTimeout(() => {
+                // Show page content
+                if (pageContainer) {
+                    pageContainer.classList.add('loaded');
+                    pageContainer.style.opacity = '1';
+                }
+                
+                // Hide loader
+                hexLoader.classList.add('fade-out');
+                
+                // Remove from DOM after animation
+                setTimeout(() => {
+                    hexLoader.style.display = 'none';
+                }, 600);
+            }, 3000); // Adjust total loading time as needed
+        });
+    </script>
+
+    <!-- Hexagonal Network Loader -->
+    <div id="hexLoader" class="hex-loader">
+        <div class="hex-container">
+            <!-- Hexagon Grid -->
+            <div class="hex-grid">
+                <div class="hex hex-1"><span></span></div>
+                <div class="hex hex-2"><span></span></div>
+                <div class="hex hex-3"><span></span></div>
+                <div class="hex hex-4"><span></span></div>
+                <div class="hex hex-5"><span></span></div>
+                <div class="hex hex-6"><span></span></div>
+                <div class="hex hex-7"><span></span></div>
+                <div class="hex hex-center"><i class="fas fa-recycle"></i></div>
+                
+                <!-- Connection lines -->
+                <div class="connection-line line-1"></div>
+                <div class="connection-line line-2"></div>
+                <div class="connection-line line-3"></div>
+                <div class="connection-line line-4"></div>
+                <div class="connection-line line-5"></div>
+                <div class="connection-line line-6"></div>
+                <div class="connection-line line-7"></div>
+            </div>
+            
+            <!-- Text Container -->
+            <div class="loader-text-container">
+                <h2 class="loader-title">Staff Management</h2>
+                <div class="typing-container">
+                    <span class="typing-text">Building connections</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="/adminhome" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    
+    <div class="page-container">
+        <!-- Page Header -->
+        <div class="card mb-8">
+            <div class="card-header">
+                <div class="animated-bg">
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                </div>
+                <div class="header-content">
+                    <div class="logo">
+                        <i class="fas fa-recycle"></i>
+                        <h1 class="text-2xl font-bold">Waste Management System</h1>
+                    </div>
+                    <h2 class="title">Staff Management</h2>
+                    <p class="subtitle">Register and manage staff members</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section Tabs -->
+        <div class="section-tabs">
+            <div class="section-tab active" data-section="register">
+                <i class="fas fa-user-plus mr-2"></i>Register Staff
+            </div>
+            <div class="section-tab" data-section="list">
+                <i class="fas fa-users mr-2"></i>Staff List
+            </div>
+        </div>
+        
+        <!-- Register Form Section -->
+        <div class="section active form-register" id="register">
+            <div class="card">
+                <div class="card-header">
+                    <div class="animated-bg">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                    </div>
+                    <div class="header-content">
+                        <h2 class="text-xl font-bold">Staff Registration Form</h2>
+                        <p class="text-green-100 mt-1">Add a new staff member to the system</p>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <form action="/staffaction/" method="POST" enctype="multipart/form-data" id="staff-form" novalidate>
+                        {% csrf_token %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Staff Name -->
+                            <div class="form-group" style="animation-delay: 0.1s;">
+                                <label for="name" class="form-label">Staff Name</label>
+                                <div class="relative">
+                                    <i class="fas fa-user input-icon"></i>
+                                    <input type="text" id="name" name="name" class="form-control" required>
+                                    <i class="fas fa-check validation-icon valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle validation-icon invalid-icon"></i>
+                                </div>
+                                <div class="validation-feedback" id="name-feedback"></div>
+                            </div>
+                    
+                            <!-- Profile Image -->
+                            <div class="form-group" style="animation-delay: 0.1s;">
+                                <label for="img" class="form-label">Profile Pic</label>
+                                <div class="relative">
+                                    <i class="fas fa-camera input-icon"></i>
+                                    <input type="file" id="img" name="img" class="form-control" accept="image/*" required>
+                                    <i class="fas fa-check validation-icon valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle validation-icon invalid-icon"></i>
+                                </div>
+                                <div class="validation-feedback" id="img-feedback"></div>
+                                <div class="file-preview-container" id="img-preview-container">
+                                    <img src="#" class="file-preview" id="img-preview" alt="Profile preview">
+                                </div>
+                            </div>
+                    
+                            <!-- Gender -->
+                            <div class="form-group" style="animation-delay: 0.2s;">
+                                <label class="form-label">Gender</label>
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" name="gender" value="M" required> Male
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="gender" value="F" required> Female
+                                    </label>
+                                </div>
+                                <div class="validation-feedback" id="gender-feedback"></div>
+                            </div>
+                    
+                            <!-- Date of Birth -->
+                            <div class="form-group" style="animation-delay: 0.3s;">
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <div class="relative">
+                                    <i class="fas fa-calendar-alt input-icon"></i>
+                                    <input type="date" id="dob" name="dob" class="form-control" required>
+                                    <i class="fas fa-check validation-icon valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle validation-icon invalid-icon"></i>
+                                </div>
+                                <div class="validation-feedback" id="dob-feedback"></div>
+                            </div>
+                    
+                            <!-- Address -->
+                            <div class="form-group" style="animation-delay: 0.4s;">
+                                <label for="address" class="form-label">Address</label>
+                                <div class="relative">
+                                    <i class="fas fa-home input-icon"></i>
+                                    <input type="text" id="address" name="address" class="form-control" required>
+                                    <i class="fas fa-check validation-icon valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle validation-icon invalid-icon"></i>
+                                </div>
+                                <div class="validation-feedback" id="address-feedback"></div>
+                            </div>
+                    
+                            <!-- Place -->
+                            <div class="form-group" style="animation-delay: 0.5s;">
+                                <label for="place" class="form-label">Place</label>
+                                <div class="relative">
+                                    <i class="fas fa-map-marker-alt input-icon"></i>
+                                    <input type="text" id="place" name="place" class="form-control" required>
+                                    <i class="fas fa-check validation-icon valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle validation-icon invalid-icon"></i>
+                                </div>
+                                <div class="validation-feedback" id="place-feedback"></div>
+                            </div>
+                    
+                            <!-- Phone -->
+                            <div class="form-group" style="animation-delay: 0.6s;">
+                                <label for="phone" class="form-label">Phone</label>
+                                <div class="relative">
+                                    <i class="fas fa-phone input-icon"></i>
+                                    <input type="text" id="phone" name="phone" class="form-control" pattern="[0-9]{10}" maxlength="10" required>
+                                    <i class="fas fa-check validation-icon valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle validation-icon invalid-icon"></i>
+                                </div>
+                                <div class="validation-feedback" id="phone-feedback"></div>
+                            </div>
+                    
+                            <!-- Aadhaar -->
+                            <div class="form-group" style="animation-delay: 0.7s;">
+                                <label for="adhaar" class="form-label">Aadhaar</label>
+                                <div class="relative">
+                                    <i class="fas fa-id-card input-icon"></i>
+                                    <input type="text" id="adhaar" name="adhaar" pattern="[0-9]{12}" maxlength="12" class="form-control" required>
+                                    <i class="fas fa-check validation-icon valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle validation-icon invalid-icon"></i>
+                                </div>
+                                <div class="validation-feedback" id="adhaar-feedback"></div>
+                            </div>
+                    
+                            <!-- Email -->
+                            <div class="form-group" style="animation-delay: 0.8s;">
+                                <label for="email" class="form-label">Email</label>
+                                <div class="relative">
+                                    <i class="fas fa-envelope input-icon"></i>
+                                    <input type="email" id="email" name="email" class="form-control" required>
+                                    <i class="fas fa-check validation-icon valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle validation-icon invalid-icon"></i>
+                                </div>
+                                <div class="validation-feedback" id="email-feedback"></div>
+                            </div>
+                    
+                            <!-- Password -->
+                            <div class="form-group" style="animation-delay: 0.9s;">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="relative">
+                                    <i class="fas fa-lock input-icon"></i>
+                                    <input type="password" id="password" name="password" class="form-control" required>
+                                    <i class="fas fa-check validation-icon valid-icon"></i>
+                                    <i class="fas fa-exclamation-circle validation-icon invalid-icon"></i>
+                                </div>
+                                <div class="password-strength-meter" id="password-strength-meter"></div>
+                                <div class="password-strength-text" id="password-strength-text"></div>
+                                <div class="validation-feedback" id="password-feedback"></div>
+                            </div>
+                        </div>
+                    
+                        <div class="mt-6">
+                            <button type="submit" class="submit-btn" style="animation-delay: 1s;" id="submit-button" disabled>
+                                <i class="fas fa-user-plus mr-2"></i> Register Staff
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Staff List Section -->
+        <div class="section staff-list" id="list">
+            <div class="card">
+                <div class="card-header">
+                    <div class="animated-bg">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                    </div>
+                    <div class="header-content">
+                        <h2 class="text-xl font-bold">Staff List</h2>
+                        <p class="text-green-100 mt-1">View and manage all staff members</p>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search staff by name, email or phone...">
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="staffTable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="flex items-center">
+                                            <i class="fas fa-user mr-2"></i>
+                                            Staff Name
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="flex items-center">
+                                            <i class="fas fa-venus-mars mr-2"></i>
+                                            Gender
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="flex items-center">
+                                            <i class="fas fa-phone mr-2"></i>
+                                            Phone
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="flex items-center">
+                                            <i class="fas fa-envelope mr-2"></i>
+                                            Email
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="flex items-center">
+                                            <i class="fas fa-map-marker-alt mr-2"></i>
+                                            Place
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="flex items-center">
+                                            <i class="fas fa-cog mr-2"></i>
+                                            Actions
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if tt %}
+                                    {% for t in tt %}
+                                        <tr class="staff-row" data-id="{{ t.Sid }}" data-name="{{ t.Name }}" data-gender="{{ t.Gender }}" data-dob="{{ t.Dob }}" data-address="{{ t.Address }}" data-place="{{ t.Place }}" data-phone="{{ t.Phone }}" data-adhaar="{{ t.Adhaar }}" data-email="{{ t.Email }}" data-img="/Uploads/{{ t.img }}">
+                                            <td>
+                                                <div class="flex items-center">
+                                                    <img src="/Uploads/{{ t.img }}" alt="{{ t.Name }}" class="staff-photo" data-name="{{ t.Name }}" onclick="openPhotoModal(this); event.stopPropagation();">
+                                                    <span>{{ t.Name }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {% if t.Gender == 'M' %}
+                                                    <span class="badge badge-male">
+                                                        <i class="fas fa-mars"></i> Male
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge badge-female">
+                                                        <i class="fas fa-venus"></i> Female
+                                                    </span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ t.Phone }}</td>
+                                            <td>{{ t.Email }}</td>
+                                            <td>{{ t.Place }}</td>
+                                            <td class="action-links">
+                                                <a href="#" onclick="confirmDelete('{{ t.Sid }}', '{{ t.Name }}'); event.stopPropagation();" class="delete">
+                                                    <i class="fas fa-trash-alt mr-1"></i> Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6">
+                                            <div class="empty-state">
+                                                <i class="fas fa-users empty-icon"></i>
+                                                <h3 class="text-xl font-medium text-gray-700">No staff members found</h3>
+                                                <p class="text-gray-500 mt-2">Start by adding your first staff member</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="modal-title">Confirm Deletion</h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <span id="deleteName" class="font-semibold"></span>?</p>
+                <p class="mt-2 text-sm">This action cannot be undone.</p>
+            </div>
+            <div class="modal-actions">
+                <button id="cancelDelete" class="btn-modal btn-cancel">
+                    <i class="fas fa-times mr-2"></i> Cancel
+                </button>
+                <a id="confirmDeleteBtn" href="#" class="btn-modal btn-confirm">
+                    <i class="fas fa-trash-alt mr-2"></i> Delete
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Staff Details Modal -->
+    <div id="staffDetailsModal" class="modal-overlay details-modal">
+        <div class="modal">
+            <button class="details-close" id="closeDetailsModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h3 class="modal-title">Staff Details</h3>
+            </div>
+            <div class="modal-body">
+                <div class="details-profile">
+                    <img id="detailsImg" src="" alt="Staff Photo" class="details-photo">
+                    <div class="details-info">
+                        <div id="detailsName" class="details-name"></div>
+                        <div id="detailsEmail" class="details-email"></div>
+                    </div>
+                </div>
+                
+                <div class="details-grid">
+                    <div class="details-item">
+                        <div class="details-label">
+                            <i class="fas fa-venus-mars mr-1"></i> Gender
+                        </div>
+                        <div id="detailsGender" class="details-value"></div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-label">
+                            <i class="fas fa-calendar-alt mr-1"></i> Date of Birth
+                        </div>
+                        <div id="detailsDob" class="details-value"></div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-label">
+                            <i class="fas fa-phone mr-1"></i> Phone
+                        </div>
+                        <div id="detailsPhone" class="details-value"></div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-label">
+                            <i class="fas fa-id-card mr-1"></i> Aadhaar
+                        </div>
+                        <div id="detailsAdhaar" class="details-value"></div>
+                    </div>
+                    <div class="details-item details-full">
+                        <div class="details-label">
+                            <i class="fas fa-home mr-1"></i> Address
+                        </div>
+                        <div id="detailsAddress" class="details-value"></div>
+                    </div>
+                    <div class="details-item details-full">
+                        <div class="details-label">
+                            <i class="fas fa-map-marker-alt mr-1"></i> Place
+                        </div>
+                        <div id="detailsPlace" class="details-value"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Photo Viewer Modal -->
+    <div id="photoModal" class="modal-overlay">
+        <div class="modal photo-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Staff Profile Photo</h3>
+                <button id="closePhotoModal" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body photo-container">
+                <img id="enlargedPhoto" src="" alt="Staff Profile Photo">
+                <p id="photoStaffName" class="mt-4 text-center font-medium"></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Alert container -->
+    <div id="alert-container" class="alert-container"></div>
+    
+    <script>
+        // Form Validation
+        document.addEventListener('DOMContentLoaded', function() {
+            initTabSwitching();
+            setupSearchFunctionality();
+            setupStaffRowsClickable();
+            setupPhotoPopup();
+            checkUrlForAlerts();
+            
+            // Setup form validation
+            const form = document.getElementById('staff-form');
+            const submitButton = document.getElementById('submit-button');
+            const nameInput = document.getElementById('name');
+            const imgInput = document.getElementById('img');
+            const genderInputs = document.querySelectorAll('input[name="gender"]');
+            const dobInput = document.getElementById('dob');
+            const addressInput = document.getElementById('address');
+            const placeInput = document.getElementById('place');
+            const phoneInput = document.getElementById('phone');
+            const adhaarInput = document.getElementById('adhaar');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            
+            // Track form validity
+            let formValidity = {
+                name: false,
+                img: false,
+                gender: false,
+                dob: false,
+                address: false,
+                place: false,
+                phone: false,
+                adhaar: false,
+                email: false,
+                password: false
+            };
+            
+            // Update submit button state
+            function updateSubmitButtonState() {
+                const isFormValid = Object.values(formValidity).every(valid => valid);
+                submitButton.disabled = !isFormValid;
+            }
+            
+            // Show validation feedback
+            function showFeedback(inputElement, isValid, message) {
+                const feedbackId = inputElement.id + '-feedback';
+                const feedbackElement = document.getElementById(feedbackId);
+                
+                if (feedbackElement) {
+                    feedbackElement.textContent = message;
+                    feedbackElement.classList.remove('valid-feedback', 'invalid-feedback');
+                    
+                    if (message) {
+                        feedbackElement.classList.add(isValid ? 'valid-feedback' : 'invalid-feedback');
+                        feedbackElement.style.display = 'block';
+                    } else {
+                        feedbackElement.style.display = 'none';
+                    }
+                }
+                
+                inputElement.classList.remove('is-valid', 'is-invalid');
+                if (message) {
+                    inputElement.classList.add(isValid ? 'is-valid' : 'is-invalid');
+                }
+                
+                // Update form validity
+                formValidity[inputElement.id] = isValid;
+                
+                updateSubmitButtonState();
+            }
+            
+            // Validate name
+            nameInput.addEventListener('input', function() {
+                const value = this.value.trim();
+                if (value.length < 3) {
+                    showFeedback(this, false, 'Name must be at least 3 characters long');
+                } else if (!/^[A-Za-z\s]+$/.test(value)) {
+                    showFeedback(this, false, 'Name should contain only letters and spaces');
+                } else {
+                    showFeedback(this, true, 'Valid name!');
+                }
+            });
+            
+            // Validate image
+            imgInput.addEventListener('change', function() {
+                const filePreviewContainer = document.getElementById('img-preview-container');
+                const filePreview = document.getElementById('img-preview');
+                
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    
+                    if (!validTypes.includes(file.type)) {
+                        showFeedback(this, false, 'Please select a valid image file (JPEG, PNG, GIF, WEBP)');
+                        filePreviewContainer.style.display = 'none';
+                    } else if (file.size > maxSize) {
+                        showFeedback(this, false, 'Image size should be less than 5MB');
+                        filePreviewContainer.style.display = 'none';
+                    } else {
+                        showFeedback(this, true, 'Valid image!');
+                        
+                        // Show image preview
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            filePreview.src = e.target.result;
+                            filePreviewContainer.style.display = 'block';
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                } else {
+                    showFeedback(this, false, 'Please select an image');
+                    filePreviewContainer.style.display = 'none';
+                }
+            });
+            
+            // Validate gender
+            genderInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const isChecked = document.querySelector('input[name="gender"]:checked');
+                    showFeedback(genderInputs[0], isChecked ? true : false, isChecked ? '' : 'Please select a gender');
+                    formValidity.gender = !!isChecked;
+                    updateSubmitButtonState();
+                });
+            });
+            
+            // Validate date of birth
+            dobInput.addEventListener('change', function() {
+                const value = this.value;
+                if (!value) {
+                    showFeedback(this, false, 'Please select a date of birth');
+                } else {
+                    const selectedDate = new Date(value);
+                    const today = new Date();
+                    const minAgeDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+                    
+                    if (selectedDate > minAgeDate) {
+                        showFeedback(this, false, 'Staff must be at least 18 years old');
+                    } else {
+                        showFeedback(this, true, 'Valid date of birth!');
+                    }
+                }
+            });
+            
+            // Validate address
+            addressInput.addEventListener('input', function() {
+                const value = this.value.trim();
+                if (value.length < 5) {
+                    showFeedback(this, false, 'Address must be at least 5 characters long');
+                } else {
+                    showFeedback(this, true, 'Valid address!');
+                }
+            });
+            
+            // Validate place
+            placeInput.addEventListener('input', function() {
+                const value = this.value.trim();
+                if (value.length < 3) {
+                    showFeedback(this, false, 'Place must be at least 3 characters long');
+                } else if (!/^[A-Za-z\s]+$/.test(value)) {
+                    showFeedback(this, false, 'Place should contain only letters and spaces');
+                } else {
+                    showFeedback(this, true, 'Valid place!');
+                }
+            });
+            
+            // Validate phone
+            phoneInput.addEventListener('input', function() {
+                const value = this.value.replace(/\D/g, ''); // Remove non-digits
+                this.value = value; // Update input value to digits only
+                
+                if (value.length !== 10) {
+                    showFeedback(this, false, 'Phone number must be 10 digits');
+                } else {
+                    showFeedback(this, true, 'Valid phone number!');
+                }
+            });
+            
+            // Validate Aadhaar
+            adhaarInput.addEventListener('input', function() {
+                const value = this.value.replace(/\D/g, ''); // Remove non-digits
+                this.value = value; // Update input value to digits only
+                
+                if (value.length !== 12) {
+                    showFeedback(this, false, 'Aadhaar number must be 12 digits');
+                } else {
+                    showFeedback(this, true, 'Valid Aadhaar number!');
+                }
+            });
+            
+            // Validate email
+            emailInput.addEventListener('input', function() {
+                const value = this.value.trim();
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                
+                if (!emailRegex.test(value)) {
+                    showFeedback(this, false, 'Please enter a valid email address');
+                } else {
+                    showFeedback(this, true, 'Valid email address!');
+                }
+            });
+            
+            // Password strength meter
+            const strengthMeter = document.getElementById('password-strength-meter');
+            const strengthText = document.getElementById('password-strength-text');
+            
+            passwordInput.addEventListener('input', function() {
+                const value = this.value;
+                let strength = 0;
+                let feedback = '';
+                
+                // Check password strength
+                if (value.length >= 8) strength += 1;
+                if (/[A-Z]/.test(value)) strength += 1;
+                if (/[a-z]/.test(value)) strength += 1;
+                if (/[0-9]/.test(value)) strength += 1;
+                if (/[^A-Za-z0-9]/.test(value)) strength += 1;
+                
+                // Update strength meter
+                strengthMeter.className = 'password-strength-meter';
+                strengthText.className = 'password-strength-text';
+                
+                if (value.length === 0) {
+                    strengthText.textContent = '';
+                } else if (strength < 2) {
+                    strengthMeter.classList.add('weak');
+                    strengthText.classList.add('weak');
+                    strengthText.textContent = 'Weak';
+                    feedback = 'Password is too weak';
+                } else if (strength < 4) {
+                    strengthMeter.classList.add('medium');
+                    strengthText.classList.add('medium');
+                    strengthText.textContent = 'Medium';
+                    feedback = 'Password could be stronger';
+                } else if (strength < 5) {
+                    strengthMeter.classList.add('strong');
+                    strengthText.classList.add('strong');
+                    strengthText.textContent = 'Strong';
+                    feedback = '';
+                } else {
+                    strengthMeter.classList.add('very-strong');
+                    strengthText.classList.add('very-strong');
+                    strengthText.textContent = 'Very Strong';
+                    feedback = '';
+                }
+                
+                // Validate password
+                if (value.length < 8) {
+                    showFeedback(this, false, 'Password must be at least 8 characters long');
+                } else if (strength < 3) {
+                    showFeedback(this, false, feedback);
+                } else {
+                    showFeedback(this, true, 'Good password strength!');
+                }
+            });
+            
+            // Delete the functions related to confirm password validation
+            // No need for validateConfirmPassword() function
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate all fields
+                const inputs = [
+                    { element: nameInput, message: 'Please enter a valid name' },
+                    { element: imgInput, message: 'Please select a profile image' },
+                    { element: dobInput, message: 'Please select a valid date of birth' },
+                    { element: addressInput, message: 'Please enter a valid address' },
+                    { element: placeInput, message: 'Please enter a valid place' },
+                    { element: phoneInput, message: 'Please enter a valid phone number' },
+                    { element: adhaarInput, message: 'Please enter a valid Aadhaar number' },
+                    { element: emailInput, message: 'Please enter a valid email address' },
+                    { element: passwordInput, message: 'Please enter a valid password' }
+                ];
+                
+                let isValid = true;
+                let firstInvalidElement = null;
+                
+                // Validate each input
+                inputs.forEach(input => {
+                    if (!formValidity[input.element.id]) {
+                        showFeedback(input.element, false, input.message);
+                        
+                        // Add shake animation
+                        input.element.classList.add('shake');
+                        setTimeout(() => {
+                            input.element.classList.remove('shake');
+                        }, 500);
+                        
+                        isValid = false;
+                        
+                        // Track first invalid element for scrolling
+                        if (!firstInvalidElement) {
+                            firstInvalidElement = input.element;
+                        }
+                    }
+                });
+                
+                // Validate gender separately
+                if (!formValidity.gender) {
+                    const genderFeedback = document.getElementById('gender-feedback');
+                    genderFeedback.textContent = 'Please select a gender';
+                    genderFeedback.classList.add('invalid-feedback');
+                    genderFeedback.style.display = 'block';
+                    
+                    // Add shake animation to radio group
+                    const radioGroup = document.querySelector('.radio-group');
+                    radioGroup.classList.add('shake');
+                    setTimeout(() => {
+                        radioGroup.classList.remove('shake');
+                    }, 500);
+                    
+                    isValid = false;
+                    
+                    // Set as first invalid element if none set yet
+                    if (!firstInvalidElement) {
+                        firstInvalidElement = genderInputs[0];
+                    }
+                }
+                
+                if (!isValid) {
+                    // Scroll to first invalid element
+                    if (firstInvalidElement) {
+                        firstInvalidElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstInvalidElement.focus();
+                    }
+                    return false;
+                }
+                
+                // If validation passed, show success alert and submit form
+                showAlert('Staff registration submitted successfully!', 'success');
+                
+                // Submit the form after a short delay to show the alert
+                setTimeout(() => {
+                    this.submit();
+                }, 1000);
+            });
+        });
+        
+        // Tabs functionality
+        function initTabSwitching() {
+            document.querySelectorAll('.section-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all sections
+                    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                    // Show selected section
+                    const sectionId = this.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.add('active');
+                });
+            });
+        }
+        
+        // Make staff rows clickable to show details
+        function setupStaffRowsClickable() {
+            document.querySelectorAll('.staff-row').forEach(row => {
+                row.addEventListener('click', function() {
+                    // Add click animation
+                    this.classList.add('row-click');
+                    setTimeout(() => {
+                        this.classList.remove('row-click');
+                    }, 300);
+                    
+                    // Show staff details
+                    openStaffDetails(this);
+                });
+                
+                // Animate row on load
+                setTimeout(() => {
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateY(0)';
+                    row.style.transition = 'all 0.5s ease-out';
+                }, 100 + (Array.from(row.parentNode.children).indexOf(row) * 100));
+            });
+            
+            // Setup close details modal
+            document.getElementById('closeDetailsModal').addEventListener('click', function() {
+                document.getElementById('staffDetailsModal').classList.remove('active');
+            });
+            
+            // Close when clicking outside modal
+            document.getElementById('staffDetailsModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        }
+        
+        // Open staff details modal
+        function openStaffDetails(row) {
+            const modal = document.getElementById('staffDetailsModal');
+            
+            // Get staff data from data attributes
+            const staffData = {
+                id: row.getAttribute('data-id'),
+                name: row.getAttribute('data-name'),
+                gender: row.getAttribute('data-gender'),
+                dob: row.getAttribute('data-dob'),
+                address: row.getAttribute('data-address'),
+                place: row.getAttribute('data-place'),
+                phone: row.getAttribute('data-phone'),
+                adhaar: row.getAttribute('data-adhaar'),
+                email: row.getAttribute('data-email'),
+                img: row.getAttribute('data-img')
+            };
+            
+            // Set modal content
+            document.getElementById('detailsName').textContent = staffData.name;
+            document.getElementById('detailsEmail').textContent = staffData.email;
+            document.getElementById('detailsGender').textContent = staffData.gender === 'M' ? 'Male' : 'Female';
+            document.getElementById('detailsDob').textContent = staffData.dob;
+            document.getElementById('detailsPhone').textContent = staffData.phone;
+            document.getElementById('detailsAdhaar').textContent = staffData.adhaar;
+            document.getElementById('detailsAddress').textContent = staffData.address;
+            document.getElementById('detailsPlace').textContent = staffData.place;
+            document.getElementById('detailsImg').src = staffData.img;
+            
+            // Show modal
+            modal.classList.add('active');
+        }
+        
+        function setupSearchFunctionality() {
+            document.getElementById('searchInput').addEventListener('keyup', function() {
+                const searchValue = this.value.toLowerCase();
+                const table = document.getElementById('staffTable');
+                const rows = table.getElementsByTagName('tr');
+                
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i];
+                    const cells = row.getElementsByTagName('td');
+                    let found = false;
+                    
+                    // Skip the header row and empty state row
+                    if (cells.length === 0 || cells.length === 1) continue;
+                    
+                    for (let j = 0; j < cells.length - 1; j++) {
+                        const cellText = cells[j].textContent.toLowerCase();
+                        if (cellText.includes(searchValue)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    
+                    if (found) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        }
+        
+        // Delete confirmation modal
+        function confirmDelete(id, name) {
+            const modal = document.getElementById('deleteModal');
+            const nameSpan = document.getElementById('deleteName');
+            const confirmBtn = document.getElementById('confirmDeleteBtn');
+            
+            nameSpan.textContent = name;
+            confirmBtn.href = '/deletestaff?id=' + id;
+            modal.classList.add('active');
+        }
+        
+        document.getElementById('cancelDelete').addEventListener('click', function() {
+            document.getElementById('deleteModal').classList.remove('active');
+        });
+        
+        // Photo Popup Functionality
+        function setupPhotoPopup() {
+            const photoModal = document.getElementById('photoModal');
+            const closePhotoModal = document.getElementById('closePhotoModal');
+            
+            // Close modal on button click
+            closePhotoModal.addEventListener('click', function() {
+                photoModal.classList.remove('active');
+            });
+            
+            // Close modal when clicking outside
+            photoModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        }
+        
+        function openPhotoModal(photoElement) {
+            const photoModal = document.getElementById('photoModal');
+            const enlargedPhoto = document.getElementById('enlargedPhoto');
+            const photoStaffName = document.getElementById('photoStaffName');
+            
+            // Get the full-size image path and staff name
+            const imgSrc = photoElement.src;
+            const staffName = photoElement.getAttribute('data-name');
+            
+            // Set the modal content
+            enlargedPhoto.src = imgSrc;
+            photoStaffName.textContent = staffName;
+            
+            // Show the modal
+            photoModal.classList.add('active');
+        }
+        
+        // Alert function
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alert-container');
+            
+            const icons = {
+                success: '<i class="fas fa-check-circle"></i>',
+                error: '<i class="fas fa-exclamation-circle"></i>',
+                warning: '<i class="fas fa-exclamation-triangle"></i>'
+            };
+            
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <div class="alert-color"></div>
+                <div class="alert-content">
+                    <div class="alert-icon">${icons[type]}</div>
+                    <div class="alert-message">${message}</div>
+                    <button class="alert-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            alertContainer.appendChild(alert);
+            
+            // Close on button click
+            alert.querySelector('.alert-close').addEventListener('click', () => {
+                alert.remove();
+            });
+            
+            // Auto remove after animation completes
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+        
+        // Check URL for alerts
+        function checkUrlForAlerts() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('deleted')) {
+                showAlert('Staff member successfully deleted!', 'success');
+            } else if (urlParams.has('updated')) {
+                showAlert('Staff information updated successfully!', 'success');
+            } else if (urlParams.has('added')) {
+                showAlert('New staff member added successfully!', 'success');
+                // Switch to list tab
+                document.querySelector('.section-tab[data-section="list"]').click();
+            }
+        }
+        
+        // Click outside modal to close
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+        
+        // Close modals with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+        });
+        
+        // Custom form input sanitization
+        document.querySelectorAll('input[type="text"], input[type="email"]').forEach(input => {
+            input.addEventListener('input', function() {
+                // Basic sanitization for XSS prevention
+                this.value = this.value.replace(/[<>]/g, '');
+            });
+        });
+    </script>
+</body>
+</html>

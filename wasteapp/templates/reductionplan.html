@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landfill Waste Reduction Plans</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2C9F42;
+            --secondary-color: #1E6B2E;
+            --accent-color: #65C178;
+            --light-color: #E8F5E9;
+            --dark-color: #1B5E20;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F7FAFA;
+        }
+        
+        .card {
+            transition: all 0.4s ease;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px -15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .strategy-card {
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .progress-bar {
+            transition: width 1.5s ease-out;
+        }
+
+        /* Custom radio buttons */
+        .custom-radio input {
+            display: none;
+        }
+
+        .custom-radio .radio-label {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .custom-radio input:checked + .radio-label {
+            border-color: #4CAF50;
+            background-color: #E8F5E9;
+            color: #1B5E20;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 p-4">
+    <div class="max-w-7xl mx-auto">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">Landfill Waste Reduction Plans</h1>
+                <p class="text-gray-600">Strategic initiatives to extend landfill lifespan and reduce environmental impact</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex space-x-3">
+                <!-- <button class="bg-green-100 text-green-800 px-4 py-2 rounded-md transition font-medium flex items-center">
+                    <i class="fas fa-save mr-2"></i> Save Changes
+                </button>
+                <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition">
+                    <i class="fas fa-file-export mr-2"></i> Export Plan
+                </button> -->
+            </div>
+        </div>
+
+        <!-- Current Status Summary -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6 card">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Current Landfill Status</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-4">
+                <div class="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-amber-100 text-amber-600 mr-4">
+                            <i class="fas fa-chart-pie text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Current Capacity Used</p>
+                            <p class="text-2xl font-bold text-amber-600">71%</p>
+                            <p class="text-xs text-amber-700">2.7M m³ of 3.8M m³ total</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+                            <i class="fas fa-calendar-alt text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Estimated Lifespan</p>
+                            <p class="text-2xl font-bold text-blue-600">6.2 years</p>
+                            <p class="text-xs text-blue-700">At current fill rate</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 bg-red-50 rounded-lg border border-red-200">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-red-100 text-red-600 mr-4">
+                            <i class="fas fa-arrow-trend-up text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Annual Fill Rate</p>
+                            <p class="text-2xl font-bold text-red-600">178K m³</p>
+                            <p class="text-xs text-red-700">4.7% increase vs. previous year</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="w-full h-6 bg-gray-200 rounded-full overflow-hidden mb-2">
+                <div class="h-full bg-gradient-to-r from-green-500 via-yellow-500 to-red-500" style="width: 71%"></div>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-xs text-gray-500">0% - Empty</span>
+                <span class="text-xs text-yellow-600">50% - Half Capacity</span>
+                <span class="text-xs text-gray-500">100% - Full</span>
+            </div>
+        </div>
+
+        <!-- Reduction Targets & Strategies Tabs -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6 card">
+            <!-- Reduction Target Setting -->
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Reduction Targets</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Target Lifespan Extension</label>
+                            <div class="flex items-center">
+                                <input type="range" min="1" max="15" value="8" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="lifespanSlider">
+                                <span class="ml-3 text-xl font-bold text-green-600"><span id="lifespanValue">8</span> years</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Current projection: 6.2 years + <span class="text-green-600 font-medium">1.8 years extension</span></p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Annual Waste Reduction Target</label>
+                            <div class="flex items-center">
+                                <input type="range" min="0" max="50" value="30" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="reductionSlider">
+                                <span class="ml-3 text-xl font-bold text-green-600"><span id="reductionValue">30</span>%</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Current fill rate: 178K m³/year → Target: <span class="text-green-600 font-medium">124.6K m³/year</span></p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Target Achievement Timeline</label>
+                            <div class="flex space-x-4 mt-2">
+                                <label class="custom-radio flex items-center">
+                                    <input type="radio" name="timeline" value="aggressive" checked>
+                                    <span class="radio-label">
+                                        <i class="fas fa-bolt mr-1 text-yellow-500"></i> Aggressive (1-2 years)
+                                    </span>
+                                </label>
+                                <label class="custom-radio flex items-center">
+                                    <input type="radio" name="timeline" value="balanced">
+                                    <span class="radio-label">
+                                        <i class="fas fa-balance-scale mr-1 text-blue-500"></i> Balanced (2-3 years)
+                                    </span>
+                                </label>
+                                <label class="custom-radio flex items-center">
+                                    <input type="radio" name="timeline" value="gradual">
+                                    <span class="radio-label">
+                                        <i class="fas fa-hourglass-half mr-1 text-green-500"></i> Gradual (3-5 years)
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-medium text-gray-700 mb-3">Projected Outcomes</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium">Extended Lifespan</span>
+                                    <span class="text-sm font-medium text-green-600">14.2 years</span>
+                                </div>
+                                <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-green-500 rounded-full progress-bar" style="width: 70%"></div>
+                                </div>
+                                <div class="flex justify-between mt-1">
+                                    <span class="text-xs text-gray-500">Current: 6.2 years</span>
+                                    <span class="text-xs text-green-600">+8 years</span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium">Waste Volume Reduction</span>
+                                    <span class="text-sm font-medium text-green-600">53.4K m³/year</span>
+                                </div>
+                                <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-green-500 rounded-full progress-bar" style="width: 30%"></div>
+                                </div>
+                                <div class="flex justify-between mt-1">
+                                    <span class="text-xs text-gray-500">Current: 178K m³/year</span>
+                                    <span class="text-xs text-green-600">-30%</span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium">Carbon Emission Reduction</span>
+                                    <span class="text-sm font-medium text-green-600">4.3K tCO₂e/year</span>
+                                </div>
+                                <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-green-500 rounded-full progress-bar" style="width: 40%"></div>
+                                </div>
+                                <div class="flex justify-between mt-1">
+                                    <span class="text-xs text-gray-500">Current: 10.8K tCO₂e/year</span>
+                                    <span class="text-xs text-green-600">-40%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="p-3 bg-blue-50 rounded-lg mt-4">
+                                <div class="flex items-start">
+                                    <i class="fas fa-info-circle text-blue-500 mt-0.5 mr-2"></i>
+                                    <div>
+                                        <p class="text-sm text-blue-800 font-medium">Estimated Cost Savings</p>
+                                        <p class="text-xs text-blue-700">₹4.2 crore over 8 years projected lifespan extension</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategic Initiatives -->
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Strategic Initiatives</h3>
+                    <button class="text-green-600 hover:text-green-700 flex items-center text-sm font-medium">
+                        <i class="fas fa-plus-circle mr-1"></i> Add Initiative
+                    </button>
+                </div>
+                
+                <!-- Waste Diversion Strategy -->
+                <div class="border border-gray-200 rounded-lg p-5 mb-6 strategy-card">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                        <div>
+                            <h4 class="text-lg font-medium text-gray-800">Organic Waste Diversion Program</h4>
+                            <p class="text-sm text-gray-600">Redirect organic waste to composting facilities and biogas plants</p>
+                        </div>
+                        <div class="mt-3 md:mt-0 flex items-center">
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium mr-2">High Impact</span>
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">In Progress</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">Target Metrics</h5>
+                            <div class="p-3 bg-gray-50 rounded-lg">
+                                <div class="mb-2">
+                                    <span class="text-xs text-gray-500">Waste Reduction</span>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-base font-bold text-green-600">45K m³/year</span>
+                                        <span class="text-xs text-green-600">25% of total</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-gray-500">Completion Timeline</span>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-base font-bold text-blue-600">18 months</span>
+                                        <span class="text-xs text-blue-600">Q3 2026</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">Implementation Progress</h5>
+                            <div class="p-3 bg-gray-50 rounded-lg">
+                                <div class="mb-3">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-xs font-medium">Overall Progress</span>
+                                        <span class="text-xs font-medium text-green-600">35%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-green-500 rounded-full" style="width: 35%"></div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-800">
+                                        <i class="fas fa-check-circle mr-1"></i> Phase 1 Complete
+                                    </span>
+                                    <span class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-800">
+                                        <i class="fas fa-spinner mr-1"></i> Phase 2 In Progress
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">Key Components</h5>
+                            <ul class="p-3 bg-gray-50 rounded-lg space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-600 mt-0.5 mr-2"></i>
+                                    <span class="text-sm text-gray-700">Residential composting program</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-600 mt-0.5 mr-2"></i>
+                                    <span class="text-sm text-gray-700">Commercial food waste collection</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-spinner text-blue-600 mt-0.5 mr-2"></i>
+                                    <span class="text-sm text-gray-700">Biogas plant partnership</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex justify-between">
+                        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i> View Details
+                        </button>
+                        <div>
+                            <button class="border border-gray-300 text-gray-700 hover:bg-gray-50 px-3 py-1 rounded-md transition text-sm mr-2">
+                                <i class="fas fa-edit mr-1"></i> Edit
+                            </button>
+                            <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md transition text-sm">
+                                <i class="fas fa-chart-line mr-1"></i> Track Progress
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recycling Improvement Strategy -->
+                <div class="border border-gray-200 rounded-lg p-5 mb-6 strategy-card">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                        <div>
+                            <h4 class="text-lg font-medium text-gray-800">Enhanced Recycling Program</h4>
+                            <p class="text-sm text-gray-600">Improve sorting efficiency and increase recyclable material recovery</p>
+                        </div>
+                        <div class="mt-3 md:mt-0 flex items-center">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium mr-2">Medium Impact</span>
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">Planning</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">Target Metrics</h5>
+                            <div class="p-3 bg-gray-50 rounded-lg">
+                                <div class="mb-2">
+                                    <span class="text-xs text-gray-500">Waste Reduction</span>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-base font-bold text-green-600">32K m³/year</span>
+                                        <span class="text-xs text-green-600">18% of total</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-gray-500">Completion Timeline</span>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-base font-bold text-blue-600">24 months</span>
+                                        <span class="text-xs text-blue-600">Q1 2027</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">Implementation Progress</h5>
+                            <div class="p-3 bg-gray-50 rounded-lg">
+                                <div class="mb-3">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-xs font-medium">Overall Progress</span>
+                                        <span class="text-xs font-medium text-yellow-600">15%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-yellow-500 rounded-full" style="width: 15%"></div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-800">
+                                        <i class="fas fa-check-circle mr-1"></i> Planning Complete
+                                    </span>
+                                    <span class="px-2 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-800">
+                                        <i class="fas fa-clock mr-1"></i> Procurement Pending
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">Key Components</h5>
+                            <ul class="p-3 bg-gray-50 rounded-lg space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-spinner text-blue-600 mt-0.5 mr-2"></i>
+                                    <span class="text-sm text-gray-700">Advanced sorting technology</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-clock text-yellow-600 mt-0.5 mr-2"></i>
+                                    <span class="text-sm text-gray-700">Recycling facility upgrades</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-600 mt-0.5 mr-2"></i>
+                                    <span class="text-sm text-gray-700">Community awareness campaign</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex justify-between">
+                        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i> View Details
+                        </button>
+                        <div>
+                            <button class="border border-gray-300 text-gray-700 hover:bg-gray-50 px-3 py-1 rounded-md transition text-sm mr-2">
+                                <i class="fas fa-edit mr-1"></i> Edit
+                            </button>
+                            <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md transition text-sm">
+                                <i class="fas fa-chart-line mr-1"></i> Track Progress
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <button class="bg-green-600 hover:bg-green-700 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center transition duration-300 ease-in-out transform hover:scale-110 focus:outline-none">
+            <i class="fas fa-plus text-2xl"></i>
+        </button>
+    </div>
+
+    <script>
+        // Lifespan Slider
+        const lifespanSlider = document.getElementById('lifespanSlider');
+        const lifespanValue = document.getElementById('lifespanValue');
+        
+        lifespanSlider.addEventListener('input', function() {
+            lifespanValue.textContent = this.value;
+        });
+
+        // Reduction Slider
+        const reductionSlider = document.getElementById('reductionSlider');
+        const reductionValue = document.getElementById('reductionValue');
+        
+        reductionSlider.addEventListener('input', function() {
+            reductionValue.textContent = this.value;
+        });
+    </script>
+</body>
+</html>

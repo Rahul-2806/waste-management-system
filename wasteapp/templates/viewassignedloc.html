@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WasteManage Pro - Assigned Locations</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+/* Replace the existing CSS with this updated theme */
+
+:root {
+    /* Modern color scheme */
+    --primary: #3498db;
+    --primary-light: #74b9ff;
+    --primary-dark: #2980b9;
+    --secondary: #8e44ad;
+    --secondary-light: #a55eea;
+    --accent: #f1c40f;
+    --danger: #e74c3c;
+    --success: #2ecc71;
+    
+    /* Background colors */
+    --light: #f8fafc;
+    --dark: #2c3e50;
+    --gray: #95a5a6;
+    --gray-light: #ecf0f1;
+    --white: #FFFFFF;
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+    
+    /* Rounded corners */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    
+    /* Transitions */
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+body {
+    background-color: var(--light);
+    color: var(--dark);
+    overflow-x: hidden;
+    line-height: 1.6;
+    position: relative;
+}
+
+/* Light background pattern */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(var(--gray-light) 1px, transparent 1px),
+        radial-gradient(var(--gray-light) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: 0 0, 20px 20px;
+    opacity: 0.4;
+    z-index: -1;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+.header {
+    background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+    color: white;
+    padding: 1.2rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--shadow-md);
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.brand-logo i {
+    font-size: 1.8rem;
+}
+
+.brand-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.user-avatar {
+    position: relative;
+    width: 44px;
+    height: 44px;
+}
+
+.avatar-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-weight: bold;
+    font-size: 1.2rem;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.avatar-circle:hover {
+    transform: scale(1.1);
+}
+
+.avatar-status {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    background-color: var(--success);
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.user-name {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.logout-btn {
+    background-color: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    backdrop-filter: blur(5px);
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.logout-btn:hover {
+    background-color: white;
+    color: var(--primary);
+    transform: translateY(-3px);
+}
+
+/* Navigation */
+.nav {
+    background-color: var(--white);
+    margin: 25px 0;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--gray-light);
+}
+
+.nav-links {
+    display: flex;
+    position: relative;
+}
+
+.nav-indicator {
+    position: absolute;
+    bottom: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 10px 10px 0 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 -2px 10px rgba(52, 152, 219, 0.3);
+}
+
+.nav-links a {
+    padding: 18px 24px;
+    color: var(--dark);
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    transition: all 0.3s ease;
+    z-index: 1;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+    flex: 1;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.nav-links a:hover {
+    color: var(--primary);
+}
+
+.nav-links a.active {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: var(--primary);
+}
+
+.nav-links a i {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover i {
+    transform: translateY(-3px);
+    color: var(--primary);
+}
+
+/* Location Content */
+.page-title {
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-title i {
+    color: var(--primary);
+    font-size: 1.6rem;
+}
+
+.location-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: var(--transition);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--gray-light);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--primary), var(--secondary));
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-card:hover::before {
+    width: 100%;
+    opacity: 0.05;
+}
+
+.stat-icon {
+    width: 65px;
+    height: 65px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.1) rotate(10deg);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    color: var(--gray);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Progress Bar */
+.progress-container {
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-light);
+    transition: var(--transition);
+}
+
+.progress-container:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.progress-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--dark);
+}
+
+.progress-bar-container {
+    height: 12px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 10px;
+    width: 0%;
+    transition: width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+}
+
+.progress-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+/* Locations Container */
+.locations-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.location-filter {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 15px 20px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-light);
+}
+
+.filter-label {
+    color: var(--gray);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.filter-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: none;
+    background-color: rgba(52, 152, 219, 0.1);
+    color: var(--dark);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.filter-btn.active {
+    background-color: var(--primary);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+.filter-btn:hover {
+    background-color: rgba(52, 152, 219, 0.2);
+    transform: translateY(-2px);
+}
+
+.filter-search {
+    margin-left: auto;
+    position: relative;
+}
+
+.search-input {
+    padding: 10px 20px 10px 40px;
+    border: 1px solid var(--gray-light);
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: var(--radius-md);
+    outline: none;
+    width: 200px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.search-input:focus {
+    width: 250px;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+    border-color: var(--primary);
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray);
+}
+
+/* Location Card */
+.location-card {
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid var(--gray-light);
+}
+
+.location-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-5px);
+}
+
+.location-header {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: 25px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.location-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.location-title-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background-color: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.location-title-text {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.location-count {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.location-content {
+    padding: 0;
+}
+
+.location-list {
+    list-style: none;
+}
+
+.location-item {
+    padding: 22px 25px;
+    border-bottom: 1px solid var(--gray-light);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.location-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--primary), var(--secondary));
+    opacity: 0;
+    transition: all 0.4s ease;
+}
+
+.location-item:hover::before {
+    opacity: 1;
+}
+
+.location-item:last-child {
+    border-bottom: none;
+}
+
+.location-item:hover {
+    background-color: rgba(52, 152, 219, 0.05);
+    padding-left: 35px;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.location-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    transition: all 0.4s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.location-item:hover .location-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: var(--shadow-md);
+}
+
+.location-details {
+    flex: 1;
+}
+
+.location-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--dark);
+    transition: all 0.3s ease;
+}
+
+.location-item:hover .location-name {
+    color: var(--primary);
+}
+
+.location-address {
+    color: var(--gray);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.location-address i {
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+.location-status {
+    padding: 6px 14px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    background-color: rgba(52, 152, 219, 0.1);
+    color: var(--primary);
+    margin-top: 8px;
+    display: inline-block;
+}
+
+.location-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.action-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(142, 68, 173, 0.1));
+    color: var(--dark);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.action-btn::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    top: 100%;
+    left: 0;
+    transition: all 0.3s ease;
+    z-index: 0;
+}
+
+.action-btn i {
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover::before {
+    top: 0;
+}
+
+.action-btn:hover i {
+    color: white;
+    transform: translateY(-3px);
+}
+
+.action-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.action-tooltip {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--dark);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: var(--shadow-md);
+    z-index: 10;
+}
+
+.action-btn:hover .action-tooltip {
+    opacity: 1;
+    visibility: visible;
+    bottom: -30px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.empty-icon {
+    width: 110px;
+    height: 110px;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(142, 68, 173, 0.1));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 2.8rem;
+    color: var(--gray);
+    box-shadow: var(--shadow-sm);
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 10px;
+}
+
+.empty-text {
+    font-size: 1rem;
+    color: var(--gray);
+    margin-bottom: 25px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.empty-action {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow-sm);
+}
+
+.empty-action:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Timeline */
+.timeline-container {
+    position: relative;
+    margin-top: 40px;
+    padding-bottom: 20px;
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 25px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-light);
+    transition: var(--transition);
+}
+
+.timeline-container:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.timeline-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--dark);
+}
+
+.timeline-line {
+    position: absolute;
+    top: 60px;
+    left: 35px;
+    width: 4px;
+    height: calc(100% - 80px);
+    background: linear-gradient(to bottom, var(--primary), var(--primary-light), rgba(52, 152, 219, 0.1));
+    border-radius: 4px;
+}
+
+.timeline-item {
+    display: flex;
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.timeline-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    margin-right: 25px;
+    flex-shrink: 0;
+    margin-top: 5px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
+}
+
+.timeline-content {
+    background-color: var(--light);
+    border-radius: var(--radius-md);
+    padding: 15px 20px;
+    flex: 1;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-light);
+    transition: var(--transition);
+}
+
+.timeline-content:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateX(5px);
+}
+
+.timeline-time {
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-bottom: 5px;
+}
+
+.timeline-event {
+    font-weight: 500;
+    color: var(--dark);
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.page-item {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    color: var(--dark);
+    border: 1px solid var(--gray-light);
+    background-color: var(--white);
+}
+
+.page-item.active {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    box-shadow: var(--shadow-sm);
+    border: none;
+}
+
+.page-item:hover:not(.active) {
+    background-color: rgba(52, 152, 219, 0.1);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Notification */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow-md);
+    z-index: 9999;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.notification.success {
+    background-color: rgba(46, 204, 113, 0.1);
+    border-left: 4px solid var(--success);
+}
+
+.notification.error {
+    background-color: rgba(231, 76, 60, 0.1);
+    border-left: 4px solid var(--danger);
+}
+
+.notification.info {
+    background-color: rgba(52, 152, 219, 0.1);
+    border-left: 4px solid var(--primary);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .location-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .header-inner {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .user-info {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .nav-links {
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+    
+    .nav-links a {
+        padding: 15px;
+        flex: none;
+        min-width: 100px;
+        justify-content: center;
+    }
+    
+    .location-filter {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .filter-search {
+        width: 100%;
+        margin-top: 10px;
+        margin-left: 0;
+    }
+    
+    .search-input {
+        width: 100%;
+    }
+    
+    .search-input:focus {
+        width: 100%;
+    }
+    
+    .location-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .location-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .location-actions {
+        align-self: flex-end;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <!-- <header class="header">
+        <div class="container">
+            <div class="header-inner">
+                <div class="brand">
+                    <div class="brand-logo">
+                        <i class="fas fa-recycle"></i>
+                    </div>
+                    <div class="brand-name">WasteManage Pro</div>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <div class="avatar-circle" id="header-avatar">
+                            <span id="header-avatar-initials">JD</span>
+                            <img id="header-avatar-img" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+                        </div>
+                        <div class="avatar-status"></div>
+                    </div>
+                    <span class="user-name" id="header-name">John Doe</span>
+                    <a href="/login" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div> -->
+    </header>
+    
+    <!-- Main Content -->
+    <main class="container main-content">
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="nav-links">
+                <a href="/staffhome">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="/viewassignedloc" class="active">
+                    <i class="fas fa-map-marker-alt"></i> Assigned Locations
+                </a>
+                <!-- <a href="/collectionteams">
+                    <i class="fas fa-users"></i> Collection Teams
+                </a> -->
+                <!-- <a href="/reports">
+                    <i class="fas fa-chart-bar"></i> Reports
+                </a> -->
+                <!-- <a href="/profile">
+                    <i class="fas fa-user-circle"></i> My Profile
+                </a> -->
+                <div class="nav-indicator" style="left: 25%; width: 20%;"></div>
+            </div>
+        </nav>
+
+        <!-- Page Title -->
+        <h1 class="page-title">
+            <i class="fas fa-map-marked-alt"></i>
+            Assigned Locations
+        </h1>
+        
+        <!-- Daily Progress Bar - New Feature -->
+        <div class="progress-container">
+            <div class="progress-title">Daily Collection Progress</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="daily-progress-bar"></div>
+            </div>
+            <div class="progress-stats">
+                <div id="progress-percentage">0%</div>
+                <div><span id="completed-count">0</span> of <span id="total-count">{{ tt|length }}</span> locations</div>
+            </div>
+        </div>
+        
+        <!-- Stats -->
+        <div class="location-stats">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="total-locations">{{ tt|length }}</div>
+                    <div class="stat-label">Total Locations</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="completed-locations">0</div>
+                    <div class="stat-label">Completed Today</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="pending-locations">{{ tt|length }}</div>
+                    <div class="stat-label">Pending Locations</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-route"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value">--</div>
+                    <div class="stat-label">Total Distance</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filter -->
+        <div class="locations-container">
+            <div class="location-filter">
+                <div class="filter-label">Filter by:</div>
+                <div class="filter-options">
+                    <button class="filter-btn active">All</button>
+                    <button class="filter-btn">Residential</button>
+                    <button class="filter-btn">Commercial</button>
+                    <button class="filter-btn">Industrial</button>
+                </div>
+                <div class="filter-search">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search locations...">
+                </div>
+            </div>
+            
+            <!-- Locations Card -->
+            <div class="location-card">
+                <div class="location-header">
+                    <div class="location-title">
+                        <div class="location-title-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <div class="location-title-text">Assigned Locations</div>
+                    </div>
+                    <div class="location-count">
+                        <i class="fas fa-list"></i>
+                        <span id="location-total">{{ tt|length }}</span> locations
+                    </div>
+                </div>
+                
+                <div class="location-content">
+                    <ul class="location-list">
+                        {% if tt %}
+                            {% for t in tt %}
+                            <li class="location-item" style="animation: fadeInUp 0.5s forwards;">
+                                <div class="location-icon">
+                                    <i class="fas fa-map-pin"></i>
+                                </div>
+                                <div class="location-details">
+                                    <div class="location-name">{{ t.Area }}</div>
+                                    <div class="location-address">
+                                        <i class="fas fa-street-view"></i> 
+                                        {% if t.area %}{{ t.area }}{% else %}Area details not available{% endif %}
+                                    </div>
+                                    <div class="location-status">Ready for collection</div>
+                                </div>
+                                <div class="location-actions">
+                                    <button class="action-btn view-location" data-location="{{ t.Location }}">
+                                        <i class="fas fa-eye"></i>
+                                        <span class="action-tooltip">View on map</span>
+                                    </button>
+                                    <button class="action-btn directions" data-location="{{ t.Location }}">
+                                        <i class="fas fa-directions"></i>
+                                        <span class="action-tooltip">Get directions</span>
+                                    </button>
+                                    <button class="action-btn mark-completed" data-location="{{ t.Location }}">
+                                        <i class="fas fa-check"></i>
+                                        <span class="action-tooltip">Mark as completed</span>
+                                    </button>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="fas fa-map"></i>
+                                </div>
+                                <div class="empty-title">No locations assigned yet</div>
+                                <div class="empty-text">You don't have any assigned waste collection locations at the moment. Check back later or contact your supervisor.</div>
+                                <button class="empty-action">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                            </div>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Recent Activity Timeline - New Feature -->
+            <div class="timeline-container">
+                <div class="timeline-title">Recent Activity</div>
+                <div class="timeline-line"></div>
+                <div id="timeline-items">
+                    <!-- Timeline items will be added via JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            {% if tt|length > 10 %}
+            <div class="pagination">
+                <div class="page-item">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+                <div class="page-item active">1</div>
+                <div class="page-item">2</div>
+                <div class="page-item">3</div>
+                <div class="page-item">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+    
+    <script>
+        // Initialize page with animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize navigation indicator
+            initNavIndicator();
+            
+            // Animate location items
+            animateLocationItems();
+            
+            // Initialize location action buttons
+            initLocationActions();
+            
+            // Initialize stats counter animation
+            animateCounters();
+            
+            // Initialize filters
+            initFilters();
+            
+            // Initialize progress bar
+            updateProgressBar();
+            
+            // Initialize timeline
+            initTimeline();
+        });
+        
+        // Navigation indicator
+        function initNavIndicator() {
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const navIndicator = document.querySelector('.nav-indicator');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    const linkWidth = this.offsetWidth;
+                    const linkLeft = this.offsetLeft;
+                    
+                    navIndicator.style.width = `${linkWidth}px`;
+                    navIndicator.style.left = `${linkLeft}px`;
+                });
+            });
+            
+            document.querySelector('.nav-links').addEventListener('mouseleave', function() {
+                const activeLink = document.querySelector('.nav-links a.active');
+                if (activeLink) {
+                    const linkWidth = activeLink.offsetWidth;
+                    const linkLeft = activeLink.offsetLeft;
+                    
+                    navIndicator.style.width = `${linkWidth}px`;
+                    navIndicator.style.left = `${linkLeft}px`;
+                }
+            });
+            
+            // Set initial position
+            const activeLink = document.querySelector('.nav-links a.active');
+            if (activeLink) {
+                const linkWidth = activeLink.offsetWidth;
+                const linkLeft = activeLink.offsetLeft;
+                
+                navIndicator.style.width = `${linkWidth}px`;
+                navIndicator.style.left = `${linkLeft}px`;
+            }
+        }
+        
+        // Animate location items
+        function animateLocationItems() {
+            const items = document.querySelectorAll('.location-item');
+            items.forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.1}s`;
+            });
+        }
+        
+// Initialize location actions
+function initLocationActions() {
+    // View location on map
+    document.querySelectorAll('.view-location').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const location = this.getAttribute('data-location');
+            const locationItem = this.closest('.location-item');
+            const locationName = locationItem.querySelector('.location-name').innerText;
+            const locationAddress = locationItem.querySelector('.location-address').innerText.replace('Area details not available', '').trim();
+            
+            // Combine name and address for a better map search
+            const searchQuery = locationAddress ? 
+                `${locationName}, ${locationAddress}` : locationName;
+            
+            // Open in Google Maps
+            const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
+            window.open(googleMapsUrl, '_blank');
+            
+            // Add to timeline
+            addTimelineItem(locationName, 'viewed');
+            
+            // Show notification
+            showNotification(`Viewing location: ${locationName}`, 'info');
+        });
+    });
+    
+    // Get directions
+    document.querySelectorAll('.directions').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const locationItem = this.closest('.location-item');
+            const locationName = locationItem.querySelector('.location-name').innerText;
+            const locationAddress = locationItem.querySelector('.location-address').innerText.replace('Area details not available', '').trim();
+            
+            // Combine name and address for a better map search
+            const destination = locationAddress ? 
+                `${locationName}, ${locationAddress}` : locationName;
+            
+            // Get user's current location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+                    
+                    // Open Google Maps with directions
+                    const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${encodeURIComponent(destination)}&travelmode=driving`;
+                    window.open(directionsUrl, '_blank');
+                    
+                    // Add to timeline
+                    addTimelineItem(locationName, 'directions');
+                    
+                }, error => {
+                    showNotification('Unable to access your location. Please enable location services.', 'error');
+                });
+            } else {
+                showNotification('Geolocation is not supported by your browser.', 'error');
+            }
+        });
+    });
+    
+    // Mark as completed
+    document.querySelectorAll('.mark-completed').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const locationItem = this.closest('.location-item');
+            const locationName = locationItem.querySelector('.location-name').innerText;
+            
+            // Get completed locations from localStorage
+            const completedLocations = getCompletedLocations();
+            
+            // Add this location if not already present
+            if (!completedLocations.includes(locationName)) {
+                completedLocations.push(locationName);
+                saveCompletedLocations(completedLocations);
+            }
+            
+            // Add completion animation
+            locationItem.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+            locationItem.style.transition = 'all 0.5s ease';
+            setTimeout(() => {
+                locationItem.style.opacity = '0';
+                locationItem.style.height = '0';
+                locationItem.style.padding = '0';
+                locationItem.style.margin = '0';
+                locationItem.style.overflow = 'hidden';
+                
+                // Update counters
+                updatePageStatistics();
+                
+                // Update progress bar
+                updateProgressBar();
+                
+                // Add to timeline
+                addTimelineItem(locationName, 'completed');
+                
+                // Show notification
+                showNotification(`Location "${locationName}" marked as completed!`, 'success');
+            }, 300);
+        });
+    });
+}
+        
+        // Animate counters
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-value');
+            counters.forEach(counter => {
+                const target = parseInt(counter.innerText) || 0;
+                let count = 0;
+                const duration = 1500; // ms
+                const increment = Math.ceil(target / (duration / 30));
+                
+                if (target > 0) {
+                    counter.innerText = '0';
+                    const timer = setInterval(() => {
+                        count += increment;
+                        if (count >= target) {
+                            counter.innerText = target;
+                            clearInterval(timer);
+                        } else {
+                            counter.innerText = count;
+                        }
+                    }, 30);
+                }
+            });
+        }
+        
+        // Initialize filters
+        function initFilters() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Skip if it's the reset or show completed button
+                    if (this.innerHTML.includes('Reset') || this.innerHTML.includes('Show Completed')) {
+                        return;
+                    }
+                    
+                    // Remove active class from all buttons
+                    filterButtons.forEach(b => {
+                        if (!b.innerHTML.includes('Reset') && !b.innerHTML.includes('Show Completed')) {
+                            b.classList.remove('active');
+                        }
+                    });
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Filter logic would go here
+                    // For demo, we'll just show a notification
+                    const filterType = this.innerText;
+                    showNotification(`Filtered by: ${filterType}`, 'info');
+                });
+            });
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-input');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const locationItems = document.querySelectorAll('.location-item');
+                
+                locationItems.forEach(item => {
+                    const locationName = item.querySelector('.location-name').innerText.toLowerCase();
+                    const locationAddress = item.querySelector('.location-address').innerText.toLowerCase();
+                    
+                    if (locationName.includes(searchTerm) || locationAddress.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        // Store completed locations in localStorage
+        function saveCompletedLocations(locations) {
+            localStorage.setItem('completedLocations', JSON.stringify(locations));
+        }
+        
+        // Get completed locations from localStorage
+        function getCompletedLocations() {
+            const saved = localStorage.getItem('completedLocations');
+            return saved ? JSON.parse(saved) : [];
+        }
+        
+        // Update the page statistics based on completed locations
+        function updatePageStatistics() {
+            const completedLocations = getCompletedLocations();
+            const totalLocationsElement = document.getElementById('total-locations');
+            const completedLocationsElement = document.getElementById('completed-locations');
+            const pendingLocationsElement = document.getElementById('pending-locations');
+            const locationTotalElement = document.getElementById('location-total');
+            
+            const totalLocations = parseInt(totalLocationsElement.innerText);
+            
+            // Update completed count
+            completedLocationsElement.innerText = completedLocations.length;
+            
+            // Update pending count
+            pendingLocationsElement.innerText = totalLocations - completedLocations.length;
+            
+            // Update completed-count in progress bar
+            document.getElementById('completed-count').innerText = completedLocations.length;
+            document.getElementById('total-count').innerText = totalLocations;
+            
+            // The total doesn't change
+            locationTotalElement.innerText = totalLocations;
+        }
+        
+        // Mark locations as completed in the UI
+        function markCompletedInUI() {
+            const completedLocations = getCompletedLocations();
+            const locationItems = document.querySelectorAll('.location-item');
+            
+            locationItems.forEach(item => {
+                const locationName = item.querySelector('.location-name').innerText;
+                if (completedLocations.includes(locationName)) {
+                    // Completely hide this location as it's already completed
+                    item.style.display = 'none';
+                }
+            });
+        }
+        
+        // Update progress bar
+        function updateProgressBar() {
+            const completedLocations = getCompletedLocations();
+            const totalLocations = parseInt(document.getElementById('total-locations').innerText) || 0;
+            const progressPercentage = totalLocations > 0 ? Math.round((completedLocations.length / totalLocations) * 100) : 0;
+            
+            // Update progress bar width
+            document.getElementById('daily-progress-bar').style.width = `${progressPercentage}%`;
+            document.getElementById('progress-percentage').innerText = `${progressPercentage}%`;
+        }
+        
+        // Initialize timeline
+        function initTimeline() {
+            const timelineContainer = document.getElementById('timeline-items');
+            timelineContainer.innerHTML = ''; // Clear existing items
+            
+            // Add a welcome item
+            const welcomeItem = document.createElement('div');
+            welcomeItem.className = 'timeline-item';
+            welcomeItem.innerHTML = `
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-time">${new Date().toLocaleTimeString()}</div>
+                    <div class="timeline-event">Welcome to your daily collection route!</div>
+                </div>
+            `;
+            timelineContainer.appendChild(welcomeItem);
+            
+            // Add items for previously completed locations
+            const completedLocations = getCompletedLocations();
+            completedLocations.forEach(location => {
+                addTimelineItem(location, 'completed', false);
+            });
+        }
+        
+        // Add item to timeline
+        function addTimelineItem(location, action, animate = true) {
+            const timelineContainer = document.getElementById('timeline-items');
+            const timelineItem = document.createElement('div');
+            timelineItem.className = 'timeline-item';
+            
+            if (animate) {
+                timelineItem.style.opacity = '0';
+                timelineItem.style.transform = 'translateY(20px)';
+            }
+            
+            let message = '';
+            switch (action) {
+                case 'completed':
+                    message = `Completed collection at "${location}"`;
+                    break;
+                case 'viewed':
+                    message = `Viewed location "${location}" on map`;
+                    break;
+                case 'directions':
+                    message = `Got directions to "${location}"`;
+                    break;
+                default:
+                    message = `Action at "${location}"`;
+            }
+            
+            timelineItem.innerHTML = `
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-time">${new Date().toLocaleTimeString()}</div>
+                    <div class="timeline-event">${message}</div>
+                </div>
+            `;
+            
+            // Insert at the top of the timeline
+            if (timelineContainer.firstChild) {
+                timelineContainer.insertBefore(timelineItem, timelineContainer.firstChild);
+            } else {
+                timelineContainer.appendChild(timelineItem);
+            }
+            
+            if (animate) {
+                // Animate in
+                setTimeout(() => {
+                    timelineItem.style.transition = 'all 0.5s ease';
+                    timelineItem.style.opacity = '1';
+                    timelineItem.style.transform = 'translateY(0)';
+                }, 10);
+            }
+        }
+        
+        // Initialize the page with persistent data
+        document.addEventListener('DOMContentLoaded', function() {
+            // First apply our persistent state BEFORE other initialization
+            markCompletedInUI();
+            updatePageStatistics();
+            updateProgressBar();
+            
+            // Then run original initialization code
+            initNavIndicator();
+            animateLocationItems();
+            initFilters();
+            initTimeline();
+            
+            // Add a reset button to the filter section
+            const filterOptions = document.querySelector('.filter-options');
+            const resetButton = document.createElement('button');
+            resetButton.className = 'filter-btn';
+            resetButton.innerHTML = '<i class="fas fa-undo"></i> Reset Completed';
+            resetButton.addEventListener('click', function() {
+                // Clear localStorage
+                localStorage.removeItem('completedLocations');
+                
+                // Reload the page to reset the UI
+                location.reload();
+                
+                // Show notification
+                showNotification('All locations have been reset!', 'info');
+            });
+            filterOptions.appendChild(resetButton);
+            
+            // Add "Show Completed" toggle in filter options
+            const showCompletedButton = document.createElement('button');
+            showCompletedButton.className = 'filter-btn';
+            showCompletedButton.innerHTML = '<i class="fas fa-eye"></i> Show Completed';
+            showCompletedButton.addEventListener('click', function() {
+                const completedLocations = getCompletedLocations();
+                const locationItems = document.querySelectorAll('.location-item');
+                
+                if (this.classList.contains('active')) {
+                    // If active, hide completed locations again
+                    locationItems.forEach(item => {
+                        const locationName = item.querySelector('.location-name').innerText;
+                        if (completedLocations.includes(locationName)) {
+                            item.style.display = 'none';
+                        }
+                    });
+                    this.classList.remove('active');
+                    this.innerHTML = '<i class="fas fa-eye"></i> Show Completed';
+                } else {
+                    // If not active, show all locations
+                    locationItems.forEach(item => {
+                        const locationName = item.querySelector('.location-name').innerText;
+                        if (completedLocations.includes(locationName)) {
+                            item.style.display = 'flex';
+                            // Add visual indicator that it's completed
+                            item.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                            item.querySelector('.location-status').innerText = 'Completed';
+                            item.querySelector('.location-status').style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+                        }
+                    });
+                    this.classList.add('active');
+                    this.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Completed';
+                }
+            });
+            filterOptions.appendChild(showCompletedButton);
+        });
+        
+        // Notification function
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            // Add content
+            notification.innerHTML = `
+                <i class="${type === 'success' ? 'fas fa-check-circle' : type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-info-circle'}" 
+                   style="color: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--info)'};
+                          font-size: 1.2rem;">
+                </i>
+                <span style="color: var(--text-dark);">${message}</span>
+            `;
+            
+            // Add to DOM
+            document.body.appendChild(notification);
+            
+            // Add styles for animation
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateY(20px)';
+            
+            // Animation
+            setTimeout(() => {
+                notification.style.transition = 'all 0.3s ease';
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateY(0)';
+            }, 10);
+            
+            // Remove after delay
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

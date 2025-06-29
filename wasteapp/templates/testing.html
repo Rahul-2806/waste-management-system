@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Listing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Modern CSS Reset and Variables */
+        :root {
+            --primary: #2874f0;
+            --primary-dark: #1a56db;
+            --secondary: #fb641b;
+            --secondary-hover: #e85d17;
+            --rating: #388e3c;
+            --background: #f1f3f6;
+            --card: #ffffff;
+            --text: #212121;
+            --text-muted: #6b7280;
+            --text-light: #9ca3af;
+            --price: #212121;
+            --discount: #388e3c;
+            --border: #e5e7eb;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+            --radius: 0.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+        }
+
+        /* Container styling */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Header styling */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            color: #ffe11b;
+            font-style: italic;
+        }
+
+        .search-bar {
+            flex-grow: 1;
+            max-width: 600px;
+            margin: 0 2rem;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.125rem;
+            font-size: 0.875rem;
+            outline: none;
+        }
+
+        .search-bar button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            padding: 0 1rem;
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .header-actions button {
+            background: none;
+            border: none;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Main content */
+        .main {
+            padding: 2rem 0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-left: 0.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        /* Product grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Product card */
+        .product-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            animation: cardFadeIn 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .product-image {
+            position: relative;
+            padding-top: 100%;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 1rem;
+            transition: transform 0.5s;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.08);
+        }
+
+        .product-info {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+        }
+
+        .product-category {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-rating {
+            display: inline-flex;
+            align-items: center;
+            background: var(--rating);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+
+        .product-rating span {
+            margin-left: 0.25rem;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .current-price {
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--price);
+        }
+
+        .original-price {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-decoration: line-through;
+        }
+
+        .discount {
+            font-size: 0.875rem;
+            color: var(--discount);
+            font-weight: 500;
+        }
+
+        .product-action {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* New arrival badge */
+        .new-badge {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 0.25rem;
+            z-index: 10;
+            transform: translateY(-20px);
+            opacity: 0;
+            animation: badgeSlideDown 0.5s ease-out 0.6s forwards;
+        }
+
+        /* Out of stock overlay */
+        .out-of-stock {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            z-index: 5;
+        }
+
+        /* Filters sidebar */
+        .page-layout {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .filters {
+            width: 280px;
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 1rem;
+            box-shadow: var(--shadow-sm);
+            height: fit-content;
+            animation: slideInLeft 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .filter-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-option input {
+            accent-color: var(--primary);
+        }
+
+        .filter-option label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .products-container {
+            flex-grow: 1;
+        }
+
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .products-count {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .sort-options {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sort-options select {
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.25rem;
+            background: var(--card);
+            color: var(--text);
+            font-size: 0.875rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .loading-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            margin: 0 5px;
+            animation: loadingBounce 1.2s infinite ease-in-out;
+        }
+
+        .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 0.5rem;
+        }
+
+        .page-button {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .page-button:hover, .page-button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Animations */
+        @keyframes cardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes badgeSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes loadingBounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .page-layout {
+                flex-direction: column;
+            }
+            
+            .filters {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+            
+            .search-bar {
+                margin: 0 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+            
+            .search-bar {
+                order: 3;
+                margin: 1rem 0 0;
+                max-width: 100%;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 576px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">Shop<span>Flip</span></a>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for products, brands and more">
+                    <button>🔍</button>
+                </div>
+                <div class="header-actions">
+                    <button>📦 Orders</button>
+                    <button>🛒 Cart</button>
+                    <button>👤 Login</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main<main class="main">
+        <div class="container">
+            <div class="page-layout">
+                <div class="filters">
+                    <div class="filter-section">
+                        <div class="filter-title">Categories</div>
+                        <div class="filter-options">
+                            <div class="filter-option">
+                                <input type="checkbox" id="electronics">
+                                <label for="electronics">Electronics</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="clothing">
+                                <label for="clothing">Clothing</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="home">
+                                <label for="home">Home & Kitchen</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="beauty">
+                                <label for="beauty">Beauty & Personal Care</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="sports">
+                                <label for="sports">Sports & Outdoors</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="filter-title">Price Range</div>
+                        <div class="filter-options">
+                            <div class="filter-option">
+                                <input type="checkbox" id="price1">
+                                <label for="price1">Under $25</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="price2">
+                                <label for="price2">$25 - $50</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="price3">
+                                <label for="price3">$50 - $100</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="price4">
+                                <label for="price4">$100 - $200</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="price5">
+                                <label for="price5">$200 & Above</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="filter-title">Rating</div>
+                        <div class="filter-options">
+                            <div class="filter-option">
+                                <input type="checkbox" id="rating4">
+                                <label for="rating4">4★ & above</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="rating3">
+                                <label for="rating3">3★ & above</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="rating2">
+                                <label for="rating2">2★ & above</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="filter-title">Availability</div>
+                        <div class="filter-options">
+                            <div class="filter-option">
+                                <input type="checkbox" id="instock">
+                                <label for="instock">In Stock</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="special">
+                                <label for="special">Special Offers</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="products-container">
+                    <div class="products-header">
+                        <h2 class="section-title">Featured Products</h2>
+                        <div class="sort-options">
+                            <span>Sort by:</span>
+                            <select>
+                                <option>Popularity</option>
+                                <option>Price: Low to High</option>
+                                <option>Price: High to Low</option>
+                                <option>Newest First</option>
+                                <option>Rating</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="products-count">
+                        Showing 1-12 of 48 products
+                    </div>
+
+                    <div class="products-grid">
+                        <!-- Product 1 -->
+                        <div class="product-card" style="animation-delay: 0.1s;">
+                            <div class="new-badge">New</div>
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300" alt="Wireless Earbuds">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">Wireless Bluetooth Earbuds with Noise Cancellation</div>
+                                <div class="product-category">Electronics</div>
+                                <div class="product-rating">4.5 <span>★</span></div>
+                                <div class="product-price">
+                                    <span class="current-price">$79.99</span>
+                                    <span class="original-price">$129.99</span>
+                                    <span class="discount">38% off</span>
+                                </div>
+                                <div class="product-action">
+                                    <button class="btn btn-primary">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 2 -->
+                        <div class="product-card" style="animation-delay: 0.2s;">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300" alt="Smart Watch">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">Smart Watch with Heart Rate Monitor</div>
+                                <div class="product-category">Electronics</div>
+                                <div class="product-rating">4.3 <span>★</span></div>
+                                <div class="product-price">
+                                    <span class="current-price">$149.99</span>
+                                    <span class="original-price">$199.99</span>
+                                    <span class="discount">25% off</span>
+                                </div>
+                                <div class="product-action">
+                                    <button class="btn btn-primary">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 3 -->
+                        <div class="product-card" style="animation-delay: 0.3s;">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300" alt="Laptop Backpack">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">Water Resistant Laptop Backpack with USB Charging Port</div>
+                                <div class="product-category">Fashion</div>
+                                <div class="product-rating">4.7 <span>★</span></div>
+                                <div class="product-price">
+                                    <span class="current-price">$45.99</span>
+                                    <span class="original-price">$59.99</span>
+                                    <span class="discount">23% off</span>
+                                </div>
+                                <div class="product-action">
+                                    <button class="btn btn-primary">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 4 -->
+                        <div class="product-card" style="animation-delay: 0.4s;">
+                            <div class="out-of-stock">Out of Stock</div>
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300" alt="Wireless Keyboard">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">Wireless Mechanical Keyboard with RGB Lighting</div>
+                                <div class="product-category">Electronics</div>
+                                <div class="product-rating">4.2 <span>★</span></div>
+                                <div class="product-price">
+                                    <span class="current-price">$89.99</span>
+                                    <span class="original-price">$119.99</span>
+                                    <span class="discount">25% off</span>
+                                </div>
+                                <div class="product-action">
+                                    <button class="btn btn-secondary">Notify Me</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 5 -->
+                        <div class="product-card" style="animation-delay: 0.5s;">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300" alt="Stainless Steel Water Bottle">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">Insulated Stainless Steel Water Bottle</div>
+                                <div class="product-category">Home & Kitchen</div>
+                                <div class="product-rating">4.8 <span>★</span></div>
+                                <div class="product-price">
+                                    <span class="current-price">$24.99</span>
+                                    <span class="original-price">$34.99</span>
+                                    <span class="discount">29% off</span>
+                                </div>
+                                <div class="product-action">
+                                    <button class="btn btn-primary">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 6 -->
+                        <div class="product-card" style="animation-delay: 0.6s;">
+                            <div class="new-badge">New</div>
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300" alt="Yoga Mat">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">Non-Slip Exercise Yoga Mat with Carrying Strap</div>
+                                <div class="product-category">Sports & Outdoors</div>
+                                <div class="product-rating">4.6 <span>★</span></div>
+                                <div class="product-price">
+                                    <span class="current-price">$29.99</span>
+                                    <span class="original-price">$39.99</span>
+                                    <span class="discount">25% off</span>
+                                </div>
+                                <div class="product-action">
+                                    <button class="btn btn-primary">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add more products with increasing animation delays -->
+                        <!-- Product 7 -->
+                        <div class="product-card" style="animation-delay: 0.7s;">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300" alt="Portable Charger">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">20000mAh Fast Charging Portable Power Bank</div>
+                                <div class="product-category">Electronics</div>
+                                <div class="product-rating">4.4 <span>★</span></div>
+                                <div class="product-price">
+                                    <span class="current-price">$39.99</span>
+                                    <span class="original-price">$59.99</span>
+                                    <span class="discount">33% off</span>
+                                </div>
+                                <div class="product-action">
+                                    <button class="btn btn-primary">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 8 -->
+                        <div class="product-card" style="animation-delay: 0.8s;">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300" alt="Slow Cooker">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">6-Quart Programmable Slow Cooker</div>
+                                <div class="product-category">Home & Kitchen</div>
+                                <div class="product-rating">4.5 <span>★</span></div>
+                                <div class="product-price">
+                                    <span class="current-price">$49.99</span>
+                                    <span class="original-price">$69.99</span>
+                                    <span class="discount">29% off</span>
+                                </div>
+                                <div class="product-action">
+                                    <button class="btn btn-primary">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 9 -->
+                        <div class="product-card" style="animation-delay: 0.9s;">
+                            <div class="new-badge">New</div>
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300" alt="Bluetooth Speaker">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">Portable Waterproof Bluetooth Speaker</div>
+                                <div class="product-category">Electronics</div>
+                                <div class="product-rating">4.2 <span>★</span></div>
+                                <div class="product-price">
+                                    <span class="current-price">$59.99</span>
+                                    <span class="original-price">$79.99</span>
+                                    <span class="discount">25% off</span>
+                                </div>
+                                <div class="product-action">
+                                    <button class="btn btn-primary">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 10 -->
+                        <div class="product-card" style="animation-delay: 1s;">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300" alt="Coffee Maker">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">12-Cup Programmable Coffee Maker</div>
+                                <div class="product-category">Home & Kitchen</div>
+                                <div class="product-rating">4.1 <span>★</span></div>
+                                <div class="product-price">
+                                    <span class="current-price">$69.99</span>
+                                    <span class="original-price">$89.99</span>
+                                    <span class="discount">22% off</span>
+                                </div>
+                                <div class="product-action">
+                                    <button class="btn btn-primary">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 11 -->
+                        <div class="product-card" style="animation-delay: 1.1s;">
+                            <div class="out-of-stock">Out of Stock</div>
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300" alt="Fitness Tracker">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">Fitness Activity Tracker with Heart Rate Monitor</div>
+                                <div class="product-<div class="product-category">Electronics</div>
+                                <div class="product-rating">4.3 <span>★</span></div>
+                                <div class="product-price">
+                                    <span class="current-price">$54.99</span>
+                                    <span class="original-price">$79.99</span>
+                                    <span class="discount">31% off</span>
+                                </div>
+                                <div class="product-action">
+                                    <button class="btn btn-secondary">Notify Me</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 12 -->
+                        <div class="product-card" style="animation-delay: 1.2s;">
+                            <div class="product-image">
+                                <img src="https://via.placeholder.com/300" alt="Hair Dryer">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">Professional Ionic Hair Dryer with Diffuser</div>
+                                <div class="product-category">Beauty & Personal Care</div>
+                                <div class="product-rating">4.4 <span>★</span></div>
+                                <div class="product-price">
+                                    <span class="current-price">$44.99</span>
+                                    <span class="original-price">$59.99</span>
+                                    <span class="discount">25% off</span>
+                                </div>
+                                <div class="product-action">
+                                    <button class="btn btn-primary">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pagination">
+                        <a href="#" class="active">1</a>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#">4</a>
+                        <a href="#" class="next">Next</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-columns">
+                <div class="footer-column">
+                    <h3>Shop</h3>
+                    <ul>
+                        <li><a href="#">New Arrivals</a></li>
+                        <li><a href="#">Best Sellers</a></li>
+                        <li><a href="#">Deals & Promotions</a></li>
+                        <li><a href="#">Clearance</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Customer Service</h3>
+                    <ul>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Shipping Policy</a></li>
+                        <li><a href="#">Returns & Refunds</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>My Account</h3>
+                    <ul>
+                        <li><a href="#">Sign In</a></li>
+                        <li><a href="#">View Cart</a></li>
+                        <li><a href="#">My Wishlist</a></li>
+                        <li><a href="#">Order History</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>About Us</h3>
+                    <ul>
+                        <li><a href="#">Our Story</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="social-links">
+                    <a href="#"><i class="fa fa-facebook"></i></a>
+                    <a href="#"><i class="fa fa-twitter"></i></a>
+                    <a href="#"><i class="fa fa-instagram"></i></a>
+                    <a href="#"><i class="fa fa-pinterest"></i></a>
+                </div>
+                <div class="payment-methods">
+                    <img src="https://via.placeholder.com/50" alt="Visa">
+                    <img src="https://via.placeholder.com/50" alt="Mastercard">
+                    <img src="https://via.placeholder.com/50" alt="PayPal">
+                    <img src="https://via.placeholder.com/50" alt="Amex">
+                </div>
+                <div class="copyright">
+                    &copy; 2025 Your E-commerce Store. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>

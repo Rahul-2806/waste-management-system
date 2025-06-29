@@ -1,0 +1,28 @@
+import openai
+
+# Set your API key here
+openai.api_key = "your_openai_api_key"
+
+def chatbot(prompt):
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # or "gpt-4" if you have access
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        reply = response['choices'][0]['message']['content'].strip()
+        return reply
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+# Run a sample chat loop
+if __name__ == "__main__":
+    print("Chatbot is ready! (type 'exit' to quit)")
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == "exit":
+            break
+        response = chatbot(user_input)
+        print("Bot:", response)

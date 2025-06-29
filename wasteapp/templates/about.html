@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Waste Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #38a169;
+            --primary-light: #48bb7d;
+            --primary-dark: #2f855a;
+            --bg-light: #f8fafc;
+            --text-dark: #1a202c;
+            --card-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 30%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            animation: pulseBackground 8s ease-in-out infinite;
+        }
+
+        header h1 {
+            position: relative;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            text-align: center;
+            margin: 0;
+            opacity: 0;
+            animation: slideInUp 1s forwards;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        .content-section {
+            background: white;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            transform: translateY(30px);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .content-section.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .content-section h2 {
+            color: var(--primary);
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .content-section h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 60px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .content-section.visible h2::after {
+            transform: scaleX(1);
+        }
+
+        .content-section p {
+            font-size: 1.1rem;
+            color: #4a5568;
+            line-height: 1.8;
+        }
+
+        .content-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .content-section ul li {
+            padding: 0.5rem 0;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .content-section ul li::before {
+            content: '•';
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            transform: scale(1.5);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 2px solid var(--primary);
+        }
+
+        .btn:hover {
+            background-color: transparent;
+            color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
+        }
+
+        footer {
+            background-color: var(--primary-dark);
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255,255,255,0.3), 
+                transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulseBackground {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @media (hover: hover) {
+            .content-section {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            .content-section:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-bg"></div>
+        <h1>Waste Management: A Key to a Cleaner Future</h1>
+    </header>
+
+    <div class="container">
+        <!-- Original content sections remain exactly the same -->
+        <div class="content-section">
+            <h2>Why Waste Management Matters</h2>
+            <p>Waste management is crucial for maintaining the cleanliness of our cities and protecting natural resources. With rising population and increasing urbanization, waste production has soared, and so has the pressure on systems designed to handle it. Proper waste management helps:</p>
+            <ul>
+                <li><strong>Reduce pollution</strong>: Proper disposal prevents harmful chemicals from entering water sources, soil, and the air.</li>
+                <li><strong>Conserve resources</strong>: Recycling allows for the reuse of valuable materials like metals, plastics, and paper, reducing the need for raw material extraction.</li>
+                <li><strong>Promote sustainability</strong>: By diverting waste from landfills, we can move towards more sustainable living practices, including composting, waste-to-energy, and upcycling.</li>
+            </ul>
+            <a href="#" class="btn">Learn More</a>
+        </div>
+
+        <div class="content-section">
+            <h2>Types of Waste</h2>
+            <p>Waste can be broadly categorized into:</p>
+            <ul>
+                <li><strong>Municipal Waste</strong>: Household and commercial waste, including food scraps, paper, glass, and plastics.</li>
+                <li><strong>Industrial Waste</strong>: Waste produced by industries such as manufacturing, mining, and agriculture. Often more hazardous, it needs special treatment.</li>
+                <li><strong>Electronic Waste (E-waste)</strong>: Discarded electrical or electronic devices, including old computers, phones, and batteries.</li>
+                <li><strong>Organic Waste</strong>: Biodegradable waste such as food scraps and yard waste, which can be composted to enrich soil.</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>Waste Management Techniques</h2>
+            <p>1. <strong>Reduce</strong>: Minimize the amount of waste generated by choosing products with minimal packaging and using resources wisely.</p>
+            <p>2. <strong>Reuse</strong>: Reusing items reduces the need for new products and helps conserve resources.</p>
+            <p>3. <strong>Recycle</strong>: Materials like paper, plastic, glass, and metal can be recycled into new products, reducing the need for raw materials.</p>
+            <p>4. <strong>Composting</strong>: Organic waste such as food scraps and yard waste can be turned into nutrient-rich compost, which can be used to enrich soil.</p>
+            <p>5. <strong>Waste-to-Energy</strong>: This involves converting non-recyclable waste into usable energy, reducing the waste sent to landfills while generating electricity.</p>
+        </div>
+
+        <div class="content-section">
+            <h2>The Role of Individuals in Waste Management</h2>
+            <p>Everyone can contribute to waste management by:</p>
+            <ul>
+                <li><strong>Segregating waste</strong>: Separating recyclable and non-recyclable waste at home can make waste processing more efficient.</li>
+                <li><strong>Supporting local recycling programs</strong>: Participate in community recycling initiatives to reduce waste in landfills.</li>
+                <li><strong>Composting</strong>: Start composting food scraps to reduce waste and produce valuable fertilizer for your garden.</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>A Call to Action</h2>
+            <p>It's time for us to rethink how we produce, use, and dispose of materials. Proper waste management is a shared responsibility, and each individual, business, and government has a role to play in creating a cleaner, greener world for future generations.</p>
+            <a href="#" class="btn">Get Involved</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Waste Management. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Intersection Observer for scroll animations
+        const sections = document.querySelectorAll('.content-section');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

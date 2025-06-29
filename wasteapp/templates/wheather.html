@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Weather Monitoring - Kerala Waste Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        .blinking {
+            animation: blink 1.5s linear infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0.5; }
+        }
+        .live-dot {
+            height: 8px;
+            width: 8px;
+            background-color: #e53e3e;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .weather-icon {
+            font-size: 2.5rem;
+        }
+        .map-container {
+            position: relative;
+            height: 350px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDUwIj48cGF0aCBkPSJNOTUsMTA1YzAsLTUsMTAsLTI1LDI1LC0yNWMxMCwwLDIwLDUsNDAsMzVjNSwxMCw1LDI1LDUsMzVjMCwxMCwtNSwyMCwtMTAsMzBjLTUsMTAsLTEwLDIwLC0xNSwyNWMtNSw1LC0xMCwxNSwtMjAsMjBjLTUsMTAsLTEwLDIwLC0xMCwzMGMwLDEwLDUsMTUsMTUsMjBjNSw1LDEwLDEwLDIwLDE1YzEwLDUsMjAsMTUsMjUsMjVjNSwxMCwxNSwyMCwzMCwyNWMxMCw1LDIwLDE1LDI1LDI1YzUsMTAsMTAsMTUsMTUsMTVjMTAsMCwyMCwtNSwyNSwtMTBjNSwtNSwxMCwtMTUsMTUsLTI1YzUsLTEwLDEwLC0yMCwxMCwtMzBjMCwtMTAsLTUsLTIwLC0xNSwtMzBjLTUsLTEwLC0xMCwtMTUgLC0xNSwtMTVjLTEwLDAgLC0yMCw1LC0yNSwxMGMtNSw1LC0xMCw1LC0xNSw1Yy01LDAsLTEwLC01LC0xNSwtMTVjLTUsLTEwLC01LC0yMCwtNSwtMzVjMCwtMTAsNSwtMTUsMTAsLTIwYzUsLTUsMTAsLTEwLDE1LC0xMGMxMCwtNSwxNSwtMTAsMTUsLTIwYzAsLTEwLC01LC0yMCwtMTAsLTMwYy01LC0xMCwtMTAsLTE1LC0xNSwtMTVjLTUsMCwtMTAsNSwtMTUsMTVjLTUsMTAsLTUsMjAsLTUsMzBjMCwxMCwtNSwxNSwtMTAsMTVjLTUsMCwtMTAsLTUsLTE1LC0xNWMtNSwtNSwtMTAsLTEwLC0xNSwtMTBjLTUsMCwtMTAsNSwtMTUsMTVjLTUsMTAsLTEwLDE1LC0xNSwxNWMtNSwwLC0xMCwtNSwtMTUsLTE1eiIgZmlsbD0iI2U5ZWZmMyIgc3Ryb2tlPSIjY2JkNWUxIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .alert-point {
+            position: absolute;
+            height: 14px;
+            width: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 0 8px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .alert-point:hover {
+            transform: scale(1.5);
+        }
+        .alert-point.high {
+            background-color: #f56565;
+        }
+        .alert-point.moderate {
+            background-color: #f6ad55;
+        }
+        .alert-point.low {
+            background-color: #48bb78;
+        }
+        .tooltip {
+            position: absolute;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            z-index: 50;
+            display: none;
+            min-width: 200px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <header class="bg-green-700 text-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-recycle text-3xl mr-3"></i>
+                <h1 class="text-xl font-bold">Waste Management System</h1>
+            </div>
+            <!-- <nav class="hidden md:flex space-x-6">
+                <a href="#" class="hover:text-green-200 transition">Dashboard</a>
+                <a href="#" class="hover:text-green-200 transition">Routes</a>
+                <a href="#" class="hover:text-green-200 transition">Collection</a>
+                <a href="#" class="hover:text-green-200 transition">Analytics</a>
+                <a href="#" class="text-green-200 font-medium">Weather</a>
+            </nav> -->
+            <!-- <div class="flex items-center space-x-4">
+                <span class="hidden md:inline-block">Admin Portal</span>
+                <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user"></i>
+                </div> -->
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-6">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center">
+                <h2 class="text-2xl font-bold text-gray-800">Real-time Weather Monitoring</h2>
+                <div class="flex items-center ml-4 text-red-600 blinking">
+                    <span class="live-dot"></span>
+                    <span class="text-sm font-medium">LIVE</span>
+                </div>
+            </div>
+            <div class="text-sm text-gray-600">
+                Last updated: <span id="lastUpdated" class="font-medium">Updating...</span>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm text-gray-500">Current Temperature</p>
+                        <h3 id="currentTemp" class="text-3xl font-bold text-gray-800">--°C</h3>
+                    </div>
+                    <div class="p-2 rounded-full bg-orange-100 text-orange-600">
+                        <i class="fas fa-temperature-high"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <div class="flex items-center">
+                        <span id="tempChange" class="text-green-600 text-sm">
+                            <i class="fas fa-arrow-up"></i> +0.5°C
+                        </span>
+                        <span class="text-gray-500 text-xs ml-2">from 1h ago</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm text-gray-500">Humidity Level</p>
+                        <h3 id="humidityLevel" class="text-3xl font-bold text-gray-800">--%</h3>
+                    </div>
+                    <div class="p-2 rounded-full bg-blue-100 text-blue-600">
+                        <i class="fas fa-tint"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <div class="flex items-center">
+                        <span id="humidityChange" class="text-red-600 text-sm">
+                            <i class="fas fa-arrow-down"></i> -2%
+                        </span>
+                        <span class="text-gray-500 text-xs ml-2">from 1h ago</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm text-gray-500">Rainfall (Today)</p>
+                        <h3 id="rainfall" class="text-3xl font-bold text-gray-800">-- mm</h3>
+                    </div>
+                    <div class="p-2 rounded-full bg-indigo-100 text-indigo-600">
+                        <i class="fas fa-cloud-rain"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <div class="flex items-center">
+                        <span id="rainfallStatus" class="text-yellow-600 text-sm">Moderate</span>
+                        <span class="text-gray-500 text-xs ml-2">Expected to increase</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm text-gray-500">Wind Speed</p>
+                        <h3 id="windSpeed" class="text-3xl font-bold text-gray-800">-- km/h</h3>
+                    </div>
+                    <div class="p-2 rounded-full bg-gray-100 text-gray-600">
+                        <i class="fas fa-wind"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <div class="flex items-center">
+                        <span id="windDirection" class="text-gray-600 text-sm">Direction: --</span>
+                        <span id="windStatus" class="text-blue-600 text-xs ml-2">Stable</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weather Chart and Impact Map -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Weather Trends Chart -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Weather Trends</h3>
+                    <div class="flex space-x-2">
+                        <button class="chart-filter px-3 py-1 text-sm rounded-md bg-blue-600 text-white" data-period="24h">24h</button>
+                        <button class="chart-filter px-3 py-1 text-sm rounded-md bg-gray-200 text-gray-700" data-period="7d">7d</button>
+                        <button class="chart-filter px-3 py-1 text-sm rounded-md bg-gray-200 text-gray-700" data-period="30d">30d</button>
+                    </div>
+                </div>
+                <div class="h-72">
+                    <canvas id="weatherChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Real-time Monitoring Map -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Kerala Weather Impact Map</h3>
+                    <select id="impactFilter" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
+                        <option value="all">All Impacts</option>
+                        <option value="high">High Impact</option>
+                        <option value="moderate">Moderate Impact</option>
+                        <option value="low">Low Impact</option>
+                    </select>
+                </div>
+                <div class="map-container" id="keralaMap">
+                    <!-- Dynamic weather alert points will be added by JavaScript -->
+                    <div id="map-tooltip" class="tooltip"></div>
+                </div>
+                <div class="flex justify-between mt-4 text-sm">
+                    <div class="flex items-center">
+                        <span class="inline-block w-3 h-3 bg-red-500 rounded-full mr-1"></span>
+                        <span>High Impact</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="inline-block w-3 h-3 bg-orange-400 rounded-full mr-1"></span>
+                        <span>Moderate Impact</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-1"></span>
+                        <span>Low Impact</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Alerts and Waste Collection Status -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Real-time Weather Alerts -->
+            <div class="bg-white rounded-lg shadow-md p-6 col-span-1">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Live Weather Alerts</h3>
+                    <span id="alertCount" class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">3 active</span>
+                </div>
+                <div class="space-y-4 max-h-80 overflow-y-auto" id="alertsContainer">
+                    <!-- Alerts will be dynamically populated -->
+                </div>
+            </div>
+
+            <!-- Current Weather Conditions -->
+            <div class="bg-white rounded-lg shadow-md p-6 col-span-1">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Current Conditions</h3>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div id="mainTemp" class="text-4xl font-bold text-gray-800">--°C</div>
+                        <div id="feelsLike" class="text-gray-600">Feels like --°C</div>
+                        <div class="text-sm text-blue-600 mt-3">
+                            <i class="fas fa-tint mr-1"></i> <span id="mainHumidity">--%</span> Humidity
+                        </div>
+                        <div class="text-sm text-gray-600 mt-1">
+                            <i class="fas fa-wind mr-1"></i> Wind: <span id="mainWind">-- km/h --</span>
+                        </div>
+                        <div class="text-sm text-gray-600 mt-1">
+                            <i class="fas fa-cloud mr-1"></i> Cloud cover: <span id="cloudCover">--%</span>
+                        </div>
+                        <div class="text-sm text-gray-600 mt-1">
+                            <i class="fas fa-eye mr-1"></i> Visibility: <span id="visibility">-- km</span>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <i id="weatherIcon" class="fas fa-cloud-sun-rain weather-icon text-yellow-500"></i>
+                        <div id="weatherDesc" class="mt-2 text-gray-700">--</div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <div class="flex justify-between text-sm">
+                        <div>
+                            <div class="text-gray-600">Sunrise</div>
+                            <div id="sunrise" class="font-medium">--:-- AM</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-600">Sunset</div>
+                            <div id="sunset" class="font-medium">--:-- PM</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-600">Precipitation</div>
+                            <div id="precipitation" class="font-medium">--%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Waste Collection Real-time Impact -->
+            <div class="bg-white rounded-lg shadow-md p-6 col-span-1">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Collection Route Status</h3>
+                <div class="space-y-4" id="routeStatusContainer">
+                    <!-- Routes will be dynamically populated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- District-wise Weather Monitoring -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">District-wise Monitoring</h3>
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm text-gray-600">Auto-refresh:</span>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">District</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rain</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Humidity</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wind</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">3h Forecast</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Operations</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="districtTableBody">
+                        <!-- Districts will be dynamically populated -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Real-time Operation Recommendations -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">Real-time Recommendations</h3>
+                <button id="refreshRecommendations" class="px-3 py-1 bg-green-600 text-white rounded-md text-sm flex items-center">
+                    <i class="fas fa-sync-alt mr-1"></i> Refresh
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h4 class="font-medium text-blue-700 mb-2">Collection Routes</h4>
+                    <ul class="text-sm space-y-2 text-blue-800" id="routeRecommendations">
+                        <!-- Route recommendations will be dynamically populated -->
+                    </ul>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h4 class="font-medium text-green-700 mb-2">Processing Centers</h4>
+                    <ul class="text-sm space-y-2 text-green-800" id="processingRecommendations">
+                        <!-- Processing recommendations will be dynamically populated -->
+                    </ul>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <h4 class="font-medium text-purple-700 mb-2">Staff Deployment</h4>
+                    <ul class="text-sm space-y-2 text-purple-800" id="staffRecommendations">
+                        <!-- Staff recommendations will be dynamically populated -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-recycle text-3xl mr-3"></i>
+                        <span class="font-bold">Waste Management System</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mt-1">Sustainable Waste Management Solutions</p>
+                </div>
+                <div class="text-sm text-gray-400">
+                    <p>Weather data sourced from Kerala State Disaster Management Authority</p>
+                    <p>© 2025 Waste Management System - All rights reserved</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simulated real-time data system
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize timestamps
+            updateLastUpdated();
+            setInterval(updateLastUpdated, 30000); // Update every 30 seconds
+
+            // Initialize weather data
+            updateWeatherData();
+            setInterval(updateWeatherData, 60000); // Update every minute
+
+            // Initialize weather chart
+            initWeatherChart();
+
+            // Initialize Kerala map with alert points
+            initKeralaMap();
+
+            // Initialize alerts
+            updateAlerts();
+            setInterval(updateAlerts, 45000); // Update every 45 seconds
+
+            // Initialize route status
+            updateRouteStatus();
+            setInterval(updateRouteStatus, 120000); // Update every 2 minutes
+
+            // Initialize district data
+            updateDistrictData();
+            setInterval(updateDistrictData, 180000); // Update every 3 minutes
+
+            // Initialize recommendations
+            updateRecommendations();
+
+            // Set up refresh button for recommendations
+            document.getElementById('refreshRecommendations').addEventListener('click', function() {
+                this.classList.add('animate-pulse');
+                updateRecommendations();
+                setTimeout(() => {
+                    this.classList.remove('animate-pulse');
+                }, 1000);
+            });
+
+            // Set up chart period filters
+            document.querySelectorAll('.chart-filter').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.chart-filter').forEach(btn => {
+                        btn.classList.remove('bg-blue-600', 'text-white');
+                        btn.classList.add('bg-gray-200', 'text-gray-700');
+                    });
+                    this.classList.remove('bg-gray-200', 'text-gray-700');
+                    this.classList.add('bg-blue-600', 'text-white');
+                    updateChartPeriod(this.dataset.period);
+                });
+            });
+
+            // Set up impact filter
+            document.getElementById('impactFilter').addEventListener('change', function() {
+                filterMapPoints(this.value);
+            });
+        });
+
+        // Update last updated timestamp
+        function updateLastUpdated() {
+            document.getElementById('lastUpdated').textContent = moment().format('MMMM D, YYYY h:mm:ss A');
+        }
+
+        // Simulate real-time weather data updates
+        function updateWeatherData() {
+            // Simulate temperature changes
+            const temp = (Math.random() * 5 + 27).toFixed(1);
+            const tempChange = ((Math.random() * 2) - 0.7).toFixed(1);
+            const tempChangeIcon = tempChange > 0 ? '<i class="fas fa-arrow-up"></i>' : '<i class="fas fa-arrow-down"></i>';
+            const tempChangeClass = tempChange > 0 ? 'text-red-600' : 'text-blue-600';
+            
+            document.getElementById('currentTemp').textContent = `${temp}°C`;
+            document.getElementById('mainTemp').textContent = `${temp}°C`;
+            document.getElementById('feelsLike').textContent = `Feels like ${(parseFloat(temp) + 2.5).toFixed(1)}°C`;
+            document.getElementById('tempChange').className = tempChangeClass;
+            document.getElementById('tempChange').innerHTML = `${tempChangeIcon} ${Math.abs(tempChange)}°C`;
+            
+            // Simulate humidity changes
+            const humidity = Math.floor(Math.random() * 20 + 65);
+            const humidityChange = Math.floor((Math.random() * 8) - 3);
+            const humidityChangeIcon = humidityChange > 0 ? '<i class="fas fa-arrow-up"></i>' : '<i class="fas fa-arrow-down"></i>';
+            const humidityChangeClass = humidityChange > 0 ? 'text-blue-600' : 'text-orange-600';
+            
+            document.getElementById('humidityLevel').textContent = `${humidity}%`;
+            document.getElementById('mainHumidity').textContent = `${humidity}%`;
+            document.getElementById('humidityChange').className = humidityChangeClass;
+            document.getElementById('humidityChange').innerHTML = `${humidityChangeIcon} ${Math.abs(humidityChange)}%`;
+            
+            // Simulate rainfall changes
+            const rainfall = (Math.random() * 25 + 5).toFixed(1);
+            document.getElementById('rainfall').textContent = `${rainfall} mm`;
+            
+            const rainfallStatus = parseFloat(rainfall) > 20 ? 'Heavy' : parseFloat(rainfall) > 10 ? 'Moderate' : 'Light';
+            const rainfallStatusClass = parseFloat(rainfall) > 20 ? 'text-red-600' : parseFloat(rainfall) > 10 ? 'text-yellow-600' : 'text-green-600';
+            
+            document.getElementById('rainfallStatus').textContent = rainfallStatus;
+            document.getElementById('rainfallStatus').className = `${rainfallStatusClass} text-sm`;
+            
+            // Simulate wind speed changes
+            const windSpeed = Math.floor(Math.random() * 15 + 5);
+            const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+            const windDirection = directions[Math.floor(Math.random() * directions.length)];
+            
+            document.getElementById('windSpeed').textContent = `${windSpeed} km/h`;
+            document.getElementById('windDirection').textContent = `Direction: ${windDirection}`;
+            document.getElementById('mainWind').textContent = `${windSpeed} km/h ${windDirection}`;
+            
+            // Other weather details
+            document.getElementById('cloudCover').textContent = `${Math.floor(Math.random() * 40 + 60)}%`;
+            document.getElementById('visibility').textContent = `${(Math.random() * 5 + 3).toFixed(1)} km`;
+            
+            // Update precipitation chance
+            document.getElementById('precipitation').textContent = `${Math.floor(Math.random() * 30 + 50)}%`;
+            
+            // Update sunrise/sunset times (fixed values for demo)
+            document.getElementById('sunrise').textContent = '06:15 AM';
+            document.getElementById('sunset').textContent = '06:45 PM';
+            
+            // Update weather description and icon
+            const weatherConditions = [
+                { desc: 'Heavy Rain', icon: 'fa-cloud-showers-heavy' },
+                { desc: 'Scattered Showers', icon: 'fa-cloud-sun-rain' },
+                { desc: 'Light Rain', icon: 'fa-cloud-rain' },
+                { desc: 'Overcast', icon: 'fa-cloud' }
+            ];
+            
+            const currentCondition = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+            document.getElementById('weatherDesc').textContent = currentCondition.desc;
+            document.getElementById('weatherIcon').className = `fas ${currentCondition.icon} weather-icon text-yellow-500`;
+        }
+        
+        // Initialize weather chart
+        function initWeatherChart() {
+            const ctx = document.getElementById('weatherChart').getContext('2d');
+            
+            // Generate 24 hours of simulated data
+            const labels = [];
+            const tempData = [];
+            const rainData = [];
+            
+            for (let i = 0; i < 24; i++) {
+                const hour = moment().subtract(23 - i, 'hours').format('h A');
+                labels.push(hour);
+                tempData.push((Math.random() * 5 + 27).toFixed(1));
+                rainData.push((Math.random() * 8).toFixed(1));
+            }
+            
+            window.weatherChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Temperature (°C)',
+                            data: tempData,
+                            borderColor: 'rgb(239, 68, 68)',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Rainfall (mm)',
+                            data: rainData,
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Temperature (°C)'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                            title: {
+                                display: true,
+                                text: 'Rainfall (mm)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Update chart period (24h, 7d, 30d)
+        function updateChartPeriod(period) {
+            const labels = [];
+            const tempData = [];
+            const rainData = [];
+            
+            let count;
+            let format;
+            
+            switch(period) {
+                case '7d':
+                    count = 7;
+                    format = 'ddd';
+                    break;
+                case '30d':
+                    count = 30;
+                    format = 'MMM D';
+                    break;
+                default: // 24h
+                    count = 24;
+                    format = 'h A';
+            }
+            
+            for (let i = 0; i < count; i++) {
+                const time = period === '24h' 
+                    ? moment().subtract(count - 1 - i, 'hours').format(format)
+                    : moment().subtract(count - 1 - i, 'days').format(format);
+                
+                labels.push(time);
+                
+                // Generate more realistic data based on period
+                if (period === '24h') {
+                    tempData.push((Math.random() * 5 + 27).toFixed(1));
+                    rainData.push((Math.random() * 8).toFixed(1));
+                } else if (period === '7d') {
+                    tempData.push((Math.random() * 3 + 28).toFixed(1));
+                    rainData.push((Math.random() * 15 + 5).toFixed(1));
+                } else { // 30d
+                    tempData.push((Math.random() * 6 + 26).toFixed(1));
+                    rainData.push((Math.random() * 20 + 2).toFixed(1));
+                }
+            }
+            
+            window.weatherChart.data.labels = labels;
+            window.weatherChart.data.datasets[0].data = tempData;
+            window.weatherChart.data.datasets[1].data = rainData;
+            window.weatherChart.update();
+        }
+        
+        // Initialize Kerala map with alert points
+        function initKeralaMap() {
+            const mapContainer = document.getElementById('keralaMap');
+            const alertPoints = [
+                { x: 43, y: 30, impact: 'high', name: 'Kochi', details: 'Heavy rainfall (15-20 cm), flooding risk high, waste operations severely affected' },
+                { x: 50, y: 15, impact: 'high', name: 'Alappuzha', details: 'Heavy rainfall (12-18 cm), coastal areas affected, collection routes suspended' },
+                { x: 53, y: 50, impact: 'moderate', name: 'Thrissur', details: 'Moderate rainfall (7-12 cm), some routes affected, processing delays expected' },
+                { x: 60, y: 70, impact: 'moderate', name: 'Palakkad', details: 'Moderate rainfall (6-10 cm), minor operational impacts, monitor closely' },
+                { x: 35, y: 40, impact: 'high', name: 'Fort Kochi', details: 'Heavy rainfall (15-20 cm), coastal flooding, all waste operations paused' },
+                { x: 47, y: 35, impact: 'moderate', name: 'Aluva', details: 'Moderate rainfall (8-12 cm), river level rising, partial operations' },
+                { x: 42, y: 22, impact: 'high', name: 'Alleppey', details: 'Heavy rainfall (12-16 cm), backwaters affected, no waste collection' },
+                { x: 70, y: 85, impact: 'low', name: 'Wayanad', details: 'Light rainfall (3-6 cm), normal operations with minor delays' },
+                { x: 75, y: 90, impact: 'low', name: 'Kozhikode', details: 'Light rainfall (2-5 cm), operations proceeding as normal' },
+                { x: 30, y: 75, impact: 'moderate', name: 'Kannur', details: 'Moderate rainfall (7-10 cm), coastal operations adjusted' },
+                { x: 65, y: 25, impact: 'low', name: 'Kottayam', details: 'Light rainfall (3-7 cm), minimal impact on operations' },
+                { x: 80, y: 15, impact: 'low', name: 'Trivandrum', details: 'Light rainfall (2-5 cm), normal waste collection schedule' }
+            ];
+            
+            // Create alert points
+            alertPoints.forEach(point => {
+                const alertPoint = document.createElement('div');
+                alertPoint.className = `alert-point ${point.impact}`;
+                alertPoint.style.left = `${point.x}%`;
+                alertPoint.style.top = `${point.y}%`;
+                alertPoint.setAttribute('data-name', point.name);
+                alertPoint.setAttribute('data-impact', point.impact);
+                alertPoint.setAttribute('data-details', point.details);
+                
+                // Add event listeners for tooltips
+                alertPoint.addEventListener('mouseenter', showTooltip);
+                alertPoint.addEventListener('mouseleave', hideTooltip);
+                
+                mapContainer.appendChild(alertPoint);
+            });
+        }
+        
+        // Show tooltip on map points
+        function showTooltip(e) {
+            const tooltip = document.getElementById('map-tooltip');
+            const point = e.target;
+            
+            tooltip.innerHTML = `
+                <div class="font-medium">${point.dataset.name}</div>
+                <div class="text-xs mt-1">${point.dataset.details}</div>
+                <div class="text-xs mt-2 font-medium ${point.dataset.impact === 'high' ? 'text-red-600' : point.dataset.impact === 'moderate' ? 'text-yellow-600' : 'text-green-600'}">
+                    ${point.dataset.impact.charAt(0).toUpperCase() + point.dataset.impact.slice(1)} Impact
+                </div>
+            `;
+            
+            tooltip.style.left = `${e.target.offsetLeft + 20}px`;
+            tooltip.style.top = `${e.target.offsetTop - 10}px`;
+            tooltip.style.display = 'block';
+        }
+        
+        // Hide tooltip
+        function hideTooltip() {
+            document.getElementById('map-tooltip').style.display = 'none';
+        }
+        
+        // Filter map points based on impact level
+        function filterMapPoints(impact) {
+            const points = document.querySelectorAll('.alert-point');
+            
+            points.forEach(point => {
+                if (impact === 'all' || point.dataset.impact === impact) {
+                    point.style.display = 'block';
+                } else {
+                    point.style.display = 'none';
+                }
+            });
+        }
+        
+        // Update alerts
+        function updateAlerts() {
+            const alertsContainer = document.getElementById('alertsContainer');
+            const alerts = [
+                {
+                    type: 'warning',
+                    title: 'Heavy Rain Warning',
+                    message: 'Heavy rainfall expected in parts of Ernakulam, Thrissur, and Malappuram districts today.',
+                    time: '10 mins ago',
+                    icon: 'exclamation-triangle',
+                    color: 'yellow'
+                },
+                {
+                    type: 'danger',
+                    title: 'Flash Flood Alert',
+                    message: 'Potential flash flooding in low-lying areas of Fort Kochi and Mattancherry.',
+                    time: '25 mins ago',
+                    icon: 'water',
+                    color: 'red'
+                },
+                {
+                    type: 'info',
+                    title: 'High Humidity Advisory',
+                    message: 'High humidity levels across the state may affect waste decomposition rates.',
+                    time: '1 hour ago',
+                    icon: 'info-circle',
+                    color: 'blue'
+                }
+            ];
+            
+            // Simulate randomized alerts based on time
+            const now = new Date();
+            if (now.getSeconds() % 20 === 0) {
+                // Occasionally add a new alert
+                const newAlerts = [
+                    {
+                        type: 'warning',
+                        title: 'Wind Speed Increasing',
+                        message: 'Wind speeds increasing in coastal areas. Secure outdoor waste bins and containers.',
+                        time: 'Just now',
+                        icon: 'wind',
+                        color: 'yellow'
+                    },
+                    {
+                        type: 'info',
+                        title: 'Route Change Notification',
+                        message: 'Collection routes in Kochi City modified due to waterlogging. Check updated schedule.',
+                        time: 'Just now',
+                        icon: 'route',
+                        color: 'blue'
+                    }
+                ];
+                
+                const randomAlert = newAlerts[Math.floor(Math.random() * newAlerts.length)];
+                alerts.unshift(randomAlert);
+                if (alerts.length > 5) alerts.pop();
+            }
+            
+            // Update alert count
+            document.getElementById('alertCount').textContent = `${alerts.length} active`;
+            
+            // Clear and rebuild alerts container
+            alertsContainer.innerHTML = '';
+            
+            alerts.forEach(alert => {
+                const alertEl = document.createElement('div');
+                alertEl.className = `bg-${alert.color}-50 border-l-4 border-${alert.color}-400 p-4 rounded`;
+                alertEl.innerHTML = `
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-${alert.icon} text-${alert.color}-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-${alert.color}-700 font-medium">${alert.title}</p>
+                            <p class="text-xs text-${alert.color}-600 mt-1">
+                                ${alert.message}
+                            </p>
+                            <p class="text-xs text-gray-500 mt-1">${alert.time}</p>
+                        </div>
+                    </div>
+                `;
+                alertsContainer.appendChild(alertEl);
+            });
+        }
+        
+        // Update route status
+        function updateRouteStatus() {
+            const routeStatusContainer = document.getElementById('routeStatusContainer');
+            const routes = [
+                {
+                    name: 'Kochi City Area',
+                    status: 'Completed',
+                    percent: 100,
+                    statusColor: 'green',
+                    icon: 'check-circle'
+                },
+                {
+                    name: 'Kakkanad IT Corridor',
+                    status: 'In Progress',
+                    percent: 82,
+                    statusColor: 'blue',
+                    icon: 'clock'
+                },
+                {
+                    name: 'Aluva Township',
+                    status: 'In Progress',
+                    percent: 55,
+                    statusColor: 'yellow',
+                    icon: 'truck'
+                },
+                {
+                    name: 'Edappally-Kalamassery Industrial Belt',
+                    status: 'Delayed',
+                    percent: 0,
+                    statusColor: 'red',
+                    icon: 'exclamation-circle'
+                },
+                {
+                    name: 'Tripunithura Heritage Zone',
+                    status: 'Scheduled',
+                    percent: 0,
+                    statusColor: 'gray',
+                    icon: 'calendar'
+                }
+            ];
+            
+            // Simulate changes to route progress
+            routes.forEach(route => {
+                if (route.status === 'In Progress') {
+                    // Randomly increase progress for in-progress routes
+                    const increase = Math.floor(Math.random() * 5);
+                    route.percent = Math.min(99, route.percent + increase);
+                    
+                    // If reached completion
+                    if (route.percent >= 99) {
+                        route.percent = 100;
+                        route.status = 'Completed';
+                        route.statusColor = 'green';
+                        route.icon = 'check-circle';
+                    }
+                } else if (route.status === 'Delayed' && Math.random() > 0.7) {
+                    // Randomly start delayed routes
+                    route.status = 'In Progress';
+                    route.percent = Math.floor(Math.random() * 20);
+                    route.statusColor = 'yellow';
+                    route.icon = 'truck';
+                } else if (route.status === 'Scheduled' && Math.random() > 0.9) {
+                    // Randomly start scheduled routes
+                    route.status = 'In Progress';
+                    route.percent = Math.floor(Math.random() * 10);
+                    route.statusColor = 'blue';
+                    route.icon = 'clock';
+                }
+            });
+            
+            // Clear and rebuild routes container
+            routeStatusContainer.innerHTML = '';
+            
+            routes.forEach(route => {
+                const routeEl = document.createElement('div');
+                routeEl.innerHTML = `
+                    <div class="flex justify-between mb-1">
+                        <span class="text-sm font-medium">${route.name}</span>
+                        <span class="text-sm font-medium text-${route.statusColor}-600">
+                            <i class="fas fa-${route.icon} mr-1"></i>
+                            ${route.status}${route.percent > 0 && route.percent < 100 ? ` (${route.percent}%)` : ''}
+                        </span>
+                    </div>
+                    <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-${route.statusColor}-500 rounded-full" style="width: ${route.percent}%"></div>
+                    </div>
+                `;
+                routeStatusContainer.appendChild(routeEl);
+            });
+        }
+        
+        // Update district data
+        function updateDistrictData() {
+            const districtTableBody = document.getElementById('districtTableBody');
+            const districts = [
+                { name: 'Ernakulam', temp: 29.2, rain: 'Heavy', humidity: 78, wind: '12 km/h SW', forecast: 'Heavy Rain', operations: 'High Impact' },
+                { name: 'Thrissur', temp: 28.7, rain: 'Moderate', humidity: 75, wind: '8 km/h W', forecast: 'Moderate Rain', operations: 'Medium Impact' },
+                { name: 'Alappuzha', temp: 29.0, rain: 'Heavy', humidity: 80, wind: '15 km/h SW', forecast: 'Heavy Rain', operations: 'High Impact' },
+                { name: 'Kottayam', temp: 30.1, rain: 'Light', humidity: 72, wind: '6 km/h SE', forecast: 'Light Rain', operations: 'Low Impact' },
+                { name: 'Idukki', temp: 27.3, rain: 'Moderate', humidity: 82, wind: '10 km/h E', forecast: 'Moderate Rain', operations: 'Medium Impact' },
+                { name: 'Kollam', temp: 30.5, rain: 'Light', humidity: 68, wind: '7 km/h S', forecast: 'Scattered Showers', operations: 'Low Impact' },
+                { name: 'Thiruvananthapuram', temp: 31.2, rain: 'Light', humidity: 65, wind: '9 km/h S', forecast: 'Clear', operations: 'Normal' }
+            ];
+            
+            // Randomly update some district data
+            districts.forEach(district => {
+                district.temp = (parseFloat(district.temp) + (Math.random() * 0.6 - 0.3)).toFixed(1);
+                
+                // Occasionally change rain status
+                if (Math.random() > 0.8) {
+                    const rainOptions = ['Heavy', 'Moderate', 'Light', 'None'];
+                    const currentIndex = rainOptions.indexOf(district.rain);
+                    let newIndex = currentIndex;
+                    
+                    // Move one step up or down in intensity
+                    if (Math.random() > 0.5 && currentIndex < rainOptions.length - 1) {
+                        newIndex = currentIndex + 1;
+                    } else if (currentIndex > 0) {
+                        newIndex = currentIndex - 1;
+                    }
+                    
+                    district.rain = rainOptions[newIndex];
+                    
+                    // Update forecast based on rain
+                    const forecastOptions = {
+                        'Heavy': ['Heavy Rain', 'Thunderstorms'],
+                        'Moderate': ['Moderate Rain', 'Intermittent Showers'],
+                        'Light': ['Light Rain', 'Scattered Showers', 'Drizzle'],
+                        'None': ['Cloudy', 'Partly Cloudy', 'Clear']
+                    };
+                    
+                    district.forecast = forecastOptions[district.rain][Math.floor(Math.random() * forecastOptions[district.rain].length)];
+                    
+                    // Update operations impact
+                    const operationsMap = {
+                        'Heavy': 'High Impact',
+                        'Moderate': 'Medium Impact',
+                        'Light': 'Low Impact',
+                        'None': 'Normal'
+                    };
+                    
+                    district.operations = operationsMap[district.rain];
+                }
+                
+                // Update humidity
+                district.humidity = Math.min(95, Math.max(60, parseInt(district.humidity) + (Math.floor(Math.random() * 7) - 3)));
+                
+                // Occasionally update wind
+                if (Math.random() > 0.7) {
+                    const speed = Math.floor(Math.random() * 12) + 5;
+                    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+                    const direction = directions[Math.floor(Math.random() * directions.length)];
+                    district.wind = `${speed} km/h ${direction}`;
+                }
+            });
+            
+            // Clear and rebuild district table
+            districtTableBody.innerHTML = '';
+            
+            districts.forEach(district => {
+                const row = document.createElement('tr');
+                
+                // Determine status colors
+                let rainClass, operationsClass;
+                
+                switch(district.rain) {
+                    case 'Heavy':
+                        rainClass = 'text-red-600';
+                        break;
+                    case 'Moderate':
+                        rainClass = 'text-yellow-600';
+                        break;
+                    case 'Light':
+                        rainClass = 'text-blue-600';
+                        break;
+                    default:
+                        rainClass = 'text-gray-600';
+                }
+                
+                switch(district.operations) {
+                    case 'High Impact':
+                        operationsClass = 'bg-red-100 text-red-800';
+                        break;
+                    case 'Medium Impact':
+                        operationsClass = 'bg-yellow-100 text-yellow-800';
+                        break;
+                    case 'Low Impact':
+                        operationsClass = 'bg-blue-100 text-blue-800';
+                        break;
+                    default:
+                        operationsClass = 'bg-green-100 text-green-800';
+                }
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${district.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${district.temp}°C</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${rainClass}">${district.rain}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${district.humidity}%</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${district.wind}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${district.forecast}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${operationsClass}">
+                            ${district.operations}
+                        </span>
+                    </td>
+                `;
+                
+                districtTableBody.appendChild(row);
+            });
+        }
+        
+        // Update recommendations
+        function updateRecommendations() {
+            const routeRecommendations = [
+                'Prioritize high-ground areas for collection',
+                'Delay collection in flood-prone areas',
+                'Use covered vehicles for wet waste transport',
+                'Avoid Marine Drive area during high tide (2-4 PM)',
+                'Reschedule collections in Fort Kochi until tomorrow',
+                'Add 2 backup vehicles for Kakkanad routes',
+                'Skip narrow alleyways in old town areas'
+            ];
+            
+            const processingRecommendations = [
+                'Cover all outdoor composting units',
+                'Check drainage systems at transfer stations',
+                'Protect recyclable materials from moisture',
+                'Delay outdoor sorting operations',
+                'Move paper waste to covered storage immediately',
+                'Run additional leachate treatment cycles',
+                'Prioritize processing of food waste today'
+            ];
+            
+            const staffRecommendations = [
+                'Provide rain gear to all field staff',
+                'Deploy additional staff in high-impact areas',
+                'Have backup drivers on standby',
+                'Schedule indoor training sessions',
+                'Authorize overtime for evening shift',
+                'Issue safety advisory for slippery conditions',
+                'Provide warm beverages for outdoor staff'
+            ];
+            
+            // Get subsets of recommendations based on current time
+            const timeBasedSeed = new Date().getMinutes();
+            
+            function getRecommendations(list, count) {
+                // Use time-based seed to select items somewhat deterministically
+                const shuffled = [...list].sort(() => 0.5 - Math.random());
+                return shuffled.slice(0, count);
+            }
+            
+            // Update recommendation lists
+            const routeList = document.getElementById('routeRecommendations');
+            const processingList = document.getElementById('processingRecommendations');
+            const staffList = document.getElementById('staffRecommendations');
+            
+            routeList.innerHTML = '';
+            getRecommendations(routeRecommendations, 4).forEach(rec => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-check-circle mr-1"></i> ${rec}`;
+                routeList.appendChild(li);
+            });
+            
+            processingList.innerHTML = '';
+            getRecommendations(processingRecommendations, 4).forEach(rec => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-check-circle mr-1"></i> ${rec}`;
+                processingList.appendChild(li);
+            });
+            
+            staffList.innerHTML = '';
+            getRecommendations(staffRecommendations, 4).forEach(rec => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-check-circle mr-1"></i> ${rec}`;
+                staffList.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>

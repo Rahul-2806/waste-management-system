@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table>
+
+    <form action="/updatecart/">
+
+        <input type="hidden" name="bi" value="{{t.Pid}}">
+<tr>
+    <td>Quantity</td>
+
+       <td> <input type="number" name="qty" min="1" max="{{t.qty}}" required >
+    </td>
+</tr>
+<tr>
+    <td>
+        <input type="submit"  value="update">
+    </td>
+</tr>
+</form>
+</table>
+</body>
+</html>

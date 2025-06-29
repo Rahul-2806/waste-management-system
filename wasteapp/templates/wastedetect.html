@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reliable Waste Detection Camera</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ml5/0.12.2/ml5.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1 {
+            color: #2e7d32;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        #videoContainer {
+            position: relative;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 640px;
+        }
+        #video {
+            width: 100%;
+            max-width: 640px;
+            border-radius: 8px;
+            border: 2px solid #2e7d32;
+        }
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            max-width: 640px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+        button {
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #1b5e20;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #status {
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        #detectionResults {
+            width: 100%;
+            max-width: 640px;
+            margin: 20px auto;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 8px;
+            text-align: left;
+        }
+        .waste-type {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .recyclable {
+            background-color: #4caf50;
+            color: white;
+        }
+        .organic {
+            background-color: #8bc34a;
+            color: white;
+        }
+        .hazardous {
+            background-color: #f44336;
+            color: white;
+        }
+        .general {
+            background-color: #9e9e9e;
+            color: white;
+        }
+        .electronic {
+            background-color: #ff9800;
+            color: white;
+        }
+        #legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        #loadingIndicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            font-size: 24px;
+            flex-direction: column;
+        }
+        .spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #4caf50;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .progress {
+            width: 250px;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        .progress-bar {
+            height: 20px;
+            background-color: #4caf50;
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        #toggleMode {
+            background-color: #1976d2;
+            margin-top: 15px;
+        }
+        #toggleMode:hover {
+            background-color: #0d47a1;
+        }
+        .continuous-mode {
+            background-color: #ff9800;
+        }
+        .continuous-mode:hover {
+            background-color: #e65100;
+        }
+        #uploadContainer {
+            margin: 15px 0;
+            padding: 15px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 640px;
+        }
+        #imageUpload {
+            margin-bottom: 10px;
+        }
+        #uploadedImage {
+            max-width: 100%;
+            display: none;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+        .tab-container {
+            width: 100%;
+            max-width: 640px;
+            margin-bottom: 15px;
+        }
+        .tab {
+            background-color: #f1f1f1;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            padding: 10px 20px;
+            margin-right: 5px;
+            font-size: 16px;
+        }
+        .tab.active {
+            background-color: #2e7d32;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingIndicator">
+        <div class="spinner"></div>
+        <div>Loading Waste Detection Model...</div>
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Reliable Waste Detection Camera</h1>
+        <p>Point your camera at waste items for accurate detection and classification</p>
+        
+        <div class="tab-container">
+            <button class="tab active" onclick="openTab('cameraTab')">Camera Mode</button>
+            <button class="tab" onclick="openTab('uploadTab')">Upload Image</button>
+        </div>
+        
+        <div id="cameraTab" class="tab-content active">
+            <div id="videoContainer">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas"></canvas>
+            </div>
+            
+            <div id="controls">
+                <button id="startBtn">Start Camera</button>
+                <button id="captureBtn" disabled>Detect Waste</button>
+                <button id="stopBtn" disabled>Stop Camera</button>
+                <button id="toggleMode" disabled>Enable Continuous Mode</button>
+            </div>
+        </div>
+        
+        <div id="uploadTab" class="tab-content">
+            <div id="uploadContainer">
+                <input type="file" id="imageUpload" accept="image/*">
+                <button id="analyzeBtn" disabled>Analyze Image</button>
+                <div>
+                    <img id="uploadedImage" alt="Uploaded image">
+                </div>
+            </div>
+        </div>
+        
+        <div id="status">Ready to start</div>
+        
+        <div id="legend">
+            <span class="waste-type recyclable">Recyclable</span>
+            <span class="waste-type organic">Organic</span>
+            <span class="waste-type hazardous">Hazardous</span>
+            <span class="waste-type electronic">Electronic</span>
+            <span class="waste-type general">General Waste</span>
+        </div>
+        
+        <div id="detectionResults">
+            <h3>Detection Results:</h3>
+            <p>No items detected yet. Use camera or upload an image to detect waste.</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const startBtn = document.getElementById('startBtn');
+        const captureBtn = document.getElementById('captureBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const toggleModeBtn = document.getElementById('toggleMode');
+        const statusText = document.getElementById('status');
+        const detectionResults = document.getElementById('detectionResults');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const progressBar = document.getElementById('progressBar');
+        const imageUpload = document.getElementById('imageUpload');
+        const uploadedImage = document.getElementById('uploadedImage');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        
+        // Canvas context
+        const ctx = canvas.getContext('2d');
+        
+        // Global variables
+        let detector;
+        let isModelLoaded = false;
+        let isContinuousMode = false;
+        let animationId;
+        
+        // Waste classification mapping
+        const wasteClassification = {
+            // Recyclable items
+            'bottle': 'recyclable',
+            'cup': 'recyclable',
+            'wine glass': 'recyclable',
+            'fork': 'recyclable',
+            'knife': 'recyclable',
+            'spoon': 'recyclable',
+            'bowl': 'recyclable',
+            'can': 'recyclable',
+            'plastic': 'recyclable',
+            'metal': 'recyclable',
+            'aluminum': 'recyclable',
+            'newspaper': 'recyclable',
+            'book': 'recyclable',
+            'glass': 'recyclable',
+            
+            // Organic items
+            'apple': 'organic',
+            'sandwich': 'organic',
+            'orange': 'organic',
+            'broccoli': 'organic',
+            'carrot': 'organic',
+            'hot dog': 'organic',
+            'pizza': 'organic',
+            'donut': 'organic',
+            'cake': 'organic',
+            'banana': 'organic',
+            'fruit': 'organic',
+            'food': 'organic',
+            
+            // Electronic waste
+            'tv': 'electronic',
+            'laptop': 'electronic',
+            'mouse': 'electronic',
+            'remote': 'electronic',
+            'keyboard': 'electronic',
+            'cell phone': 'electronic',
+            'microwave': 'electronic',
+            'oven': 'electronic',
+            'toaster': 'electronic',
+            'refrigerator': 'electronic',
+            'computer': 'electronic',
+            
+            // Hazardous waste
+            'scissors': 'hazardous',
+            'battery': 'hazardous',
+            'lighter': 'hazardous',
+            'medicine': 'hazardous',
+            'syringe': 'hazardous',
+            'chemicals': 'hazardous',
+            
+            // General waste (default)
+            'plastic bag': 'general',
+            'backpack': 'general',
+            'umbrella': 'general',
+            'handbag': 'general',
+            'tie': 'general',
+            'suitcase': 'general',
+            'frisbee': 'general',
+            'skateboard': 'general',
+            'clothing': 'general',
+            'fabric': 'general'
+        };
+        
+        // Load model on page load using ML5.js
+        window.onload = async () => {
+            try {
+                updateProgress(10);
+                statusText.textContent = 'Loading waste detection model...';
+                
+                // Load MobileNet model through ML5.js
+                updateProgress(30);
+                
+                // Create image classifier with MobileNet
+                ml5.imageClassifier('MobileNet')
+                    .then(model => {
+                        detector = model;
+                        isModelLoaded = true;
+                        updateProgress(100);
+                        statusText.textContent = 'Model loaded successfully. Ready to detect waste.';
+                        
+                        // Enable the analyze button for uploaded images
+                        analyzeBtn.disabled = false;
+                        
+                        setTimeout(() => {
+                            loadingIndicator.style.display = 'none';
+                        }, 1000);
+                    })
+                    .catch(err => {
+                        statusText.textContent = 'Error loading model: ' + err.message;
+                        statusText.style.color = 'red';
+                        console.error('Error loading model:', err);
+                        loadingIndicator.style.display = 'none';
+                    });
+            } catch (err) {
+                statusText.textContent = 'Error in setup: ' + err.message;
+                statusText.style.color = 'red';
+                console.error('Error in setup:', err);
+                loadingIndicator.style.display = 'none';
+            }
+        };
+        
+        // Update progress bar
+        function updateProgress(percent) {
+            progressBar.style.width = percent + '%';
+        }
+        
+        // Tab functionality
+        function openTab(tabName) {
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            const tabs = document.getElementsByClassName('tab');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Handle image upload
+        imageUpload.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImage.src = e.target.result;
+                    uploadedImage.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Analyze uploaded image
+        analyzeBtn.addEventListener('click', async () => {
+            if (!isModelLoaded || !uploadedImage.src) return;
+            
+            analyzeBtn.disabled = true;
+            statusText.textContent = 'Analyzing uploaded image...';
+            
+            try {
+                const results = await detector.classify(uploadedImage);
+                const detectedItems = processClassifications(results);
+                displayDetectionResults(detectedItems);
+                
+                statusText.textContent = `Analysis complete - Found ${results.length} possible item(s)`;
+            } catch (err) {
+                statusText.textContent = 'Analysis error: ' + err.message;
+                statusText.style.color = 'red';
+                console.error('Analysis error:', err);
+            }
+            
+            analyzeBtn.disabled = false;
+        });
+        
+        // Start camera
+        startBtn.addEventListener('click', async () => {
+            if (!isModelLoaded) {
+                statusText.textContent = 'Please wait for the model to load.';
+                return;
+            }
+            
+            try {
+                const constraints = {
+                    video: {
+                        facingMode: 'environment', // Use rear camera if available
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    }
+                };
+                
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = stream;
+                
+                video.onloadedmetadata = () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    
+                    startBtn.disabled = true;
+                    captureBtn.disabled = false;
+                    stopBtn.disabled = false;
+                    toggleModeBtn.disabled = false;
+                    
+                    statusText.textContent = 'Camera active - Point at waste items';
+                    statusText.style.color = '#2e7d32';
+                };
+            } catch (err) {
+                statusText.textContent = 'Error accessing camera: ' + err.message;
+                statusText.style.color = 'red';
+                console.error('Error accessing camera:', err);
+            }
+        });
+        
+        // Capture and detect waste
+        captureBtn.addEventListener('click', async () => {
+            if (!video.srcObject || !isModelLoaded) return;
+            
+            // Disable button during processing
+            captureBtn.disabled = true;
+            statusText.textContent = 'Analyzing...';
+            
+            try {
+                await detectWaste();
+            } catch (err) {
+                statusText.textContent = 'Detection error: ' + err.message;
+                statusText.style.color = 'red';
+                console.error('Detection error:', err);
+            }
+            
+            captureBtn.disabled = false;
+        });
+        
+        // Stop camera
+        stopBtn.addEventListener('click', () => {
+            if (video.srcObject) {
+                // Stop continuous detection if active
+                if (isContinuousMode) {
+                    cancelAnimationFrame(animationId);
+                    isContinuousMode = false;
+                    toggleModeBtn.textContent = 'Enable Continuous Mode';
+                    toggleModeBtn.classList.remove('continuous-mode');
+                }
+                
+                // Stop all tracks
+                video.srcObject.getTracks().forEach(track => track.stop());
+                video.srcObject = null;
+                
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Reset UI
+                startBtn.disabled = false;
+                captureBtn.disabled = true;
+                stopBtn.disabled = true;
+                toggleModeBtn.disabled = true;
+                
+                statusText.textContent = 'Camera inactive';
+                statusText.style.color = '#333';
+                
+                // Reset detection results
+                detectionResults.innerHTML = '<h3>Detection Results:</h3><p>No items detected yet. Use camera or upload an image to detect waste.</p>';
+            }
+        });
+        
+        // Toggle continuous detection mode
+        toggleModeBtn.addEventListener('click', () => {
+            if (!video.srcObject || !isModelLoaded) return;
+            
+            isContinuousMode = !isContinuousMode;
+            
+            if (isContinuousMode) {
+                toggleModeBtn.textContent = 'Disable Continuous Mode';
+                toggleModeBtn.classList.add('continuous-mode');
+                captureBtn.disabled = true;
+                statusText.textContent = 'Continuous detection active...';
+                
+                // Start continuous detection
+                continuousDetection();
+            } else {
+                toggleModeBtn.textContent = 'Enable Continuous Mode';
+                toggleModeBtn.classList.remove('continuous-mode');
+                captureBtn.disabled = false;
+                statusText.textContent = 'Camera active - Point at waste items';
+                
+                // Stop continuous detection
+                cancelAnimationFrame(animationId);
+                
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        });
+        
+        // Continuous detection function
+        function continuousDetection() {
+            detectWaste().then(() => {
+                if (isContinuousMode) {
+                    animationId = requestAnimationFrame(continuousDetection);
+                }
+            }).catch(err => {
+                console.error('Continuous detection error:', err);
+                statusText.textContent = 'Detection error: ' + err.message;
+                isContinuousMode = false;
+                toggleModeBtn.textContent = 'Enable Continuous Mode';
+                toggleModeBtn.classList.remove('continuous-mode');
+                captureBtn.disabled = false;
+            });
+        }
+        
+        // Detect waste in the current video frame
+        async function detectWaste() {
+            // Draw video frame to canvas for display
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Run classification on the current video frame
+            const results = await detector.classify(video);
+            
+            // Process classifications
+            const detectedItems = processClassifications(results);
+            
+            // Display results
+            displayDetectionResults(detectedItems);
+            
+            // Draw detected items on canvas
+            drawClassifications(results);
+            
+            statusText.textContent = `Detection complete - Found ${results.length} possible item(s)`;
+            return results;
+        }
+        
+        // Process model classifications into waste categories
+        function processClassifications(results) {
+            let detectedItems = [];
+            
+            results.forEach(result => {
+                const label = result.label.toLowerCase();
+                let category = 'general';  // Default category
+                
+                // Check if any waste category keywords are in the label
+                for (const [key, value] of Object.entries(wasteClassification)) {
+                    if (label.includes(key)) {
+                        category = value;
+                        break;
+                    }
+                }
+                
+                // Get the plain label without noise
+                const plainLabel = result.label.split(',')[0].trim();
+                
+                detectedItems.push({
+                    item: plainLabel,
+                    category: category,
+                    confidence: Math.round(result.confidence * 100)
+                });
+            });
+            
+            return detectedItems;
+        }
+        
+        // Display detection results in the results section
+        function displayDetectionResults(items) {
+            let html = '<h3>Detection Results:</h3>';
+            
+            if (items.length === 0) {
+                html += '<p>No waste items detected. Try again with different items or lighting.</p>';
+            } else {
+                html += '<ul>';
+                items.forEach(item => {
+                    html += `<li><span class="waste-type ${item.category}">${item.category}</span> ${item.item} (${item.confidence}% confidence)</li>`;
+                });
+                html += '</ul>';
+                
+                // Add waste disposal tips
+                html += '<h4>Waste Disposal Tips:</h4>';
+                
+                // Group items by category
+                const categories = {};
+                items.forEach(item => {
+                    if (!categories[item.category]) {
+                        categories[item.category] = [];
+                    }
+                    categories[item.category].push(item.item);
+                });
+                
+                // Add tips for each category
+                html += '<ul>';
+                
+                if (categories.recyclable) {
+                    html += `<li><span class="waste-type recyclable">Recyclable</span>: 
+                        ${categories.recyclable.join(', ')} should be clean, dry, and placed in recycling bins.</li>`;
+                }
+                
+                if (categories.organic) {
+                    html += `<li><span class="waste-type organic">Organic</span>: 
+                        ${categories.organic.join(', ')} should be composted if possible.</li>`;
+                }
+                
+                if (categories.hazardous) {
+                    html += `<li><span class="waste-type hazardous">Hazardous</span>: 
+                        ${categories.hazardous.join(', ')} require special disposal at designated collection points.</li>`;
+                }
+                
+                if (categories.electronic) {
+                    html += `<li><span class="waste-type electronic">Electronic</span>: 
+                        ${categories.electronic.join(', ')} should be taken to e-waste recycling centers.</li>`;
+                }
+                
+                if (categories.general) {
+                    html += `<li><span class="waste-type general">General</span>: 
+                        ${categories.general.join(', ')} go in regular trash bins.</li>`;
+                }
+                
+                html += '</ul>';
+                
+                // Add environmental impact information
+                html += '<h4>Environmental Impact:</h4>';
+                html += '<p>Proper waste sorting and disposal helps reduce landfill usage, conserves natural resources, and reduces pollution.</p>';
+            }
+            
+            detectionResults.innerHTML = html;
+        }
+        
+        // Draw classifications on the canvas
+        function drawClassifications(results) {
+            // Clear previous drawings first, then redraw the video frame
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // No object detection with bounding boxes in MobileNet,
+            // so we'll just draw labels at the top of the canvas
+            
+            // Draw a semi-transparent overlay at the top
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(0, 0, canvas.width, 30 * results.length);
+            
+            // Draw classification labels
+            ctx.font = '16px Arial';
+            ctx.fillStyle = 'white';
+            
+            results.forEach((result, index) => {
+                // Get the waste category
+                const label = result.label.toLowerCase();
+                let category = 'general';
+                
+                for (const [key, value] of Object.entries(wasteClassification)) {
+                    if (label.includes(key)) {
+                        category = value;
+                        break;
+                    }
+                }
+                
+                // Get color for the category
+                let categoryColor;
+                switch (category) {
+                    case 'recyclable':
+                        categoryColor = '#4caf50';
+                        break;
+                    case 'organic':
+                        categoryColor = '#8bc34a';
+                        break;
+                    case 'hazardous':
+                        categoryColor = '#f44336';
+                        break;
+                    case 'electronic':
+                        categoryColor = '#ff9800';
+                        break;
+                    default:
+                        categoryColor = '#9e9e9e';  // general waste
+                }
+                
+                // Get the plain label without noise
+                const plainLabel = result.label.split(',')[0].trim();
+                
+                // Draw colored circle for category
+                ctx.fillStyle = categoryColor;
+                ctx.beginPath();
+                ctx.arc(15, 15 + (index * 30), 8, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // Draw text
+                ctx.fillStyle = 'white';
+                const confidence = Math.round(result.confidence * 100);
+                ctx.fillText(`${plainLabel} (${confidence}%) - ${category}`, 30, 20 + (index * 30));
+            });
+        }
+        
+        // Handle resize events to adjust canvas dimensions
+        window.addEventListener('resize', () => {
+            if (video.videoWidth) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                // Re-draw if in continuous mode
+                if (isContinuousMode) {
+                    detectWaste().catch(console.error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

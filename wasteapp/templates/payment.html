@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Payment System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-color: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --secondary-color: #10b981;
+            --accent-color: #f43f5e;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: #94a3b8;
+            --card-width: 420px;
+            --card-height: 270px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: 
+                radial-gradient(circle at 25% 10%, rgba(99, 102, 241, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 75% 30%, rgba(16, 185, 129, 0.05) 0%, transparent 25%),
+                radial-gradient(circle at 50% 70%, rgba(244, 63, 94, 0.05) 0%, transparent 30%);
+            background-attachment: fixed;
+        }
+
+        .payment-container {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            gap: 2rem;
+            background: var(--card-background);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: all 0.5s ease;
+            animation: fadeInUp 1s ease both;
+        }
+
+        .payment-container:hover {
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .left-panel {
+            flex: 3;
+            padding: 1.5rem;
+        }
+
+        .right-panel {
+            flex: 1;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 2px solid #f1f5f9;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method:hover {
+            border-color: var(--primary-light);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .payment-method img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .payment-method span {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .payment-method.active {
+            border-color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.1);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.2);
+        }
+
+        .payment-details {
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .payment-details.active {
+            display: block;
+        }
+
+        /* 3D Card Styles */
+        .card-container {
+            position: relative;
+            width: var(--card-width);
+            height: var(--card-height);
+            margin: 0 auto 2rem;
+            perspective: 1000px;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            cursor: pointer;
+        }
+
+        .card-container:hover .card {
+            transform: rotateY(5deg) rotateX(5deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transform: rotateY(180deg);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-content {
+            padding: 25px;
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .card-chip {
+            width: 60px;
+            height: 45px;
+            background: linear-gradient(145deg, #e6b400, #ffd700);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chip-line {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .chip-line-1 {
+            top: 10px;
+            left: 12px;
+            right: 12px;
+            height: 5px;
+        }
+
+        .chip-line-2 {
+            top: 20px;
+            left: 12px;
+            right: 12px;
+            height: 5px;
+        }
+
+        .chip-line-3 {
+            top: 30px;
+            left: 12px;
+            right: 12px;
+            height: 5px;
+        }
+
+        .card-nfc {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            width: 30px;
+            height: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+        }
+
+        .card-nfc::before,
+        .card-nfc::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+        }
+
+        .card-nfc::before {
+            width: 15px;
+            height: 15px;
+        }
+
+        .card-nfc::after {
+            width: 5px;
+            height: 5px;
+        }
+
+        .card-number {
+            font-size: 22px;
+            letter-spacing: 2px;
+            color: white;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .card-number span {
+            display: inline-block;
+            width: 22%;
+        }
+
+        .card-holder {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-holder-name {
+            max-width: 90%; /* Increased from 60% to 90% to show more of the name */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-expiry {
+            font-weight: 500;
+            color: white;
+        }
+
+        .card-issuer {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            font-size: 30px;
+            color: white;
+            opacity: 0.8;
+        }
+
+        .card-back-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .magnetic-strip {
+            height: 50px;
+            background-color: rgba(0, 0, 0, 0.7);
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .signature-strip {
+            height: 40px;
+            background: #f5f5f5;
+            margin: 20px;
+            padding: 5px;
+            border-radius: 4px;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .signature {
+            font-family: 'Caveat', cursive;
+            color: #333;
+            font-size: 22px;
+            opacity: 0.7;
+            width: 80%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .cvv {
+            position: absolute;
+            right: 10px;
+            background: #fff;
+            color: #333;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Flip animation */
+        .card-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .card-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Glow effects */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(130deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.07) 15%, 
+                rgba(255, 255, 255, 0) 50%, 
+                rgba(255, 255, 255, 0.03) 85%, 
+                rgba(255, 255, 255, 0.1) 100%
+            );
+            border-radius: 16px;
+            z-index: 2;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .card-container:hover .card::before {
+            opacity: 1;
+        }
+
+        /* Hologram effect */
+        .hologram {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            width: 50px;
+            height: 35px;
+            background: linear-gradient(30deg, 
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0.2),
+                rgba(255, 255, 255, 0.3),
+                rgba(255, 255, 255, 0.2)
+            );
+            border-radius: 5px;
+            opacity: 0.8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hologram::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: -100px;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, 
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0.5),
+                rgba(255, 255, 255, 0.1)
+            );
+            animation: hologram-animation 5s linear infinite;
+        }
+
+        @keyframes hologram-animation {
+            0% { transform: rotate(0deg) translateY(0); }
+            100% { transform: rotate(360deg) translateY(0); }
+        }
+
+        /* Floating elements */
+        .floating-circles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 16px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .floating-circle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: -20px;
+            right: -20px;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            bottom: -50px;
+            left: -30px;
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 70px;
+            height: 70px;
+            top: 50%;
+            right: 20%;
+        }
+
+        /* Form styles */
+        .payment-form {
+            margin-top: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-details input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #f1f5f9;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--text-primary);
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .payment-details input:focus {
+            border-color: var(--primary-light);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            background-color: white;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .input-group {
+            flex: 1;
+        }
+
+        .pay-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--secondary-color), #0d9488);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pay-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .pay-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.3),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(30deg);
+            transition: all 0.4s ease;
+            opacity: 0;
+        }
+
+        .pay-button:hover::after {
+            animation: shine 1.5s ease;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) rotate(30deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateX(100%) rotate(30deg);
+                opacity: 0;
+            }
+        }
+
+        .cod-info {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+        }
+
+        .cod-info h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .cod-info p {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .payment-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .payment-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .payment-popup {
+            background: var(--card-background);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
+            padding: 2rem;
+            text-align: center;
+            transform: translateY(30px);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
+        }
+
+        .payment-overlay.active .payment-popup {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .processing-container {
+            margin: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .processing-indicator {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1.5rem;
+        }
+
+        .circle-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid #f1f5f9;
+            border-top-color: var(--primary-color);
+            animation: spin 1.5s infinite linear;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            color: var(--secondary-color);
+            font-size: 40px;
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
+        }
+
+        .checkmark.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .pulse {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            opacity: 0.3;
+            transform: scale(0.8);
+            animation: pulse 2s infinite;
+        }
+
+        .payment-status {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .payment-message {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .continue-btn {
+            background: linear-gradient(135deg, var(--secondary-color), #0d9488);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(10px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .continue-btn.active {
+            display: inline-block;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.1; }
+            100% { transform: scale(0.8); opacity: 0.3; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .payment-container { 
+                flex-direction: column; 
+                padding: 1.5rem; 
+            }
+            .payment-method { padding: 0.8rem; }
+            .card-container {
+                width: 100%;
+                height: calc((100vw - 6rem) * 0.63); /* Maintain aspect ratio */
+                max-height: var(--card-height);
+            }
+            .card-number {
+                font-size: 16px;
+            }
+            .pay-button { padding: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="left-panel">
+            <h2>Choose Payment Method</h2>
+
+            <div class="payment-method active" data-method="card">
+                <img src="https://img.icons8.com/color/48/000000/credit-card.png" alt="Card">
+                <span>Credit/Debit Card</span>
+            </div>
+
+            <div class="payment-method" data-method="cod">
+                <img src="https://img.icons8.com/color/48/000000/cash-in-hand.png" alt="COD">
+                <span>Cash on Delivery</span>
+            </div>
+
+            <form action="/paymentaction">
+                <div id="card" class="payment-details active">
+                    <div class="card-container">
+                        <div class="card">
+                            <button type="button" class="card-toggle" id="flipCard">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            
+                            <!-- Card Front -->
+                            <div class="card-front">
+                                <div class="card-content">
+                                    <div>
+                                        <div class="card-chip">
+                                            <div class="chip-line chip-line-1"></div>
+                                            <div class="chip-line chip-line-2"></div>
+                                            <div class="chip-line chip-line-3"></div>
+                                        </div>
+                                        <div class="card-nfc"></div>
+                                    </div>
+                                    
+                                    <div class="card-number">
+                                        <span id="cardDigit1">****</span>
+                                        <span id="cardDigit2">****</span>
+                                        <span id="cardDigit3">****</span>
+                                        <span id="cardDigit4">****</span>
+                                    </div>
+                                    
+                                    <div class="card-holder">
+                                        <div>
+                                            <div style="color: rgba(255, 255, 255, 0.7); font-size: 10px; margin-bottom: 5px;">CARD HOLDER</div>
+                                            <div class="card-holder-name" id="cardHolderDisplay">CARDHOLDER NAME</div>
+                                        </div>
+                                        <div>
+                                            <div style="color: rgba(255, 255, 255, 0.7); font-size: 10px; margin-bottom: 5px;">EXPIRES</div>
+                                            <div class="card-expiry" id="cardExpiryDisplay">MM/YY</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="floating-circles">
+                                        <div class="floating-circle"></div>
+                                        <div class="floating-circle"></div>
+                                        <div class="floating-circle"></div>
+                                    </div>
+                                    
+                                    <div class="hologram"></div>
+                                    <div class="card-issuer"><i class="fab fa-cc-visa"></i></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Card Back -->
+                            <div class="card-back">
+                                <div class="card-back-content">
+                                    <div class="magnetic-strip"></div>
+                                    <div class="signature-strip">
+                                        <div class="signature" id="signatureDisplay">Cardholder Name</div>
+                                        <div class="cvv" id="cvvDisplay">***</div>
+                                    </div>
+                                    <div style="padding: 0 20px; font-size: 12px; color: rgba(255, 255, 255, 0.7);">
+                                        This card is property of the issuer. If found, please return to the nearest bank.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-form">
+                        <div class="form-group">
+                            <label class="form-label" for="cardNumber">Card Number</label>
+                            <input type="text" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX" maxlength="19">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="cardholderName">Cardholder Name</label>
+                            <input type="text" id="cardholderName" placeholder="Name on Card">
+                        </div>
+                        
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label class="form-label" for="expiryDate">Expiry Date</label>
+                                <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            
+                            <div class="input-group">
+                                <label class="form-label" for="cvv">CVV</label>
+                                <input type="text" id="cvv" placeholder="XXX" maxlength="3">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="pay-button"><i class="fas fa-credit-card"></i> Pay Now</button>
+                    </div>
+                </div>
+            </form>
+
+            <form action="/orderaction">
+                <div id="cod" class="payment-details">
+                    <div class="cod-info">
+                        <h3>Cash on Delivery</h3>
+                        <p>Pay in cash when your order arrives</p>
+                        <button type="submit" class="pay-button"><i class="fas fa-hand-holding-usd"></i> Confirm Order</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="paymentOverlay" class="payment-overlay">
+        <div class="payment-popup">
+            <h2>Processing Payment</h2>
+            <div class="processing-container">
+                <div class="processing-indicator">
+                    <div class="pulse"></div>
+                    <div id="circleAnimation" class="circle-animation"></div>
+                    <div id="checkmark" class="checkmark"><i class="fas fa-check"></i></div>
+                </div>
+                <div id="paymentStatus" class="payment-status">Processing...</div>
+                <div id="paymentMessage" class="payment-message">Please wait while we process your payment</div>
+            </div>
+            <button id="continueButton" class="continue-btn"><i class="fas fa-shopping-bag"></i> Continue Shopping</button>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', () => {
+                document.querySelectorAll('.payment-method, .payment-details').forEach(el => {
+                    el.classList.remove('active');
+                });
+
+                method.classList.add('active');
+                document.getElementById(method.dataset.method).classList.add('active');
+            });
+        });
+
+        // Flip card functionality
+        const flipCard = document.getElementById('flipCard');
+        const card = document.querySelector('.card');
+        
+        flipCard.addEventListener('click', () => {
+            card.classList.toggle('flipped');
+        });
+
+        // Card number input formatting and preview
+        const cardNumberInput = document.getElementById('cardNumber');
+        const cardDigit1 = document.getElementById('cardDigit1');
+        const cardDigit2 = document.getElementById('cardDigit2');
+        const cardDigit3 = document.getElementById('cardDigit3');
+        const cardDigit4 = document.getElementById('cardDigit4');
+
+        cardNumberInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            if (value.length > 16) value = value.substr(0, 16);
+            
+            // Format with spaces
+            value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            e.target.value = value;
+            
+            // Update card preview
+            const parts = value.split(' ');
+            cardDigit1.textContent = parts[0] || '****';
+            cardDigit2.textContent = parts[1] || '****';
+            cardDigit3.textContent = parts[2] || '****';
+            cardDigit4.textContent = parts[3] || '****';
+        });
+
+        // Cardholder name input and preview
+        const cardholderNameInput = document.getElementById('cardholderName');
+        const cardHolderDisplay = document.getElementById('cardHolderDisplay');
+        const signatureDisplay = document.getElementById('signatureDisplay');
+
+        cardholderNameInput.addEventListener('input', function(e) {
+            const value = e.target.value.toUpperCase();
+            cardHolderDisplay.textContent = value || 'CARDHOLDER NAME';
+            signatureDisplay.textContent = value || 'Cardholder Name';
+        });
+
+        // Expiry date input and preview
+        const expiryDateInput = document.getElementById('expiryDate');
+        const cardExpiryDisplay = document.getElementById('cardExpiryDisplay');
+
+        expiryDateInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^\d]/g, '');
+            
+            if (value.length > 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            
+            e.target.value = value;
+            cardExpiryDisplay.textContent = value || 'MM/YY';
+        });
+
+        // CVV input and preview
+        const cvvInput = document.getElementById('cvv');
+        const cvvDisplay = document.getElementById('cvvDisplay');
+
+        cvvInput.addEventListener('input', function(e) {
+            const value = e.target.value.replace(/[^\d]/g, '').substring(0, 3);
+            e.target.value = value;
+            cvvDisplay.textContent = value || '***';
+            
+            // Always ensure card is flipped when typing in CVV
+            if (!card.classList.contains('flipped')) {
+                card.classList.add('flipped');
+            }
+        });
+
+        // Focus on CVV flips the card
+        cvvInput.addEventListener('focus', function() {
+            if (!card.classList.contains('flipped')) {
+                card.classList.add('flipped');
+            }
+        });
+
+        // Focus on other inputs flips the card back
+        [cardNumberInput, cardholderNameInput, expiryDateInput].forEach(input => {
+            input.addEventListener('focus', function() {
+                if (card.classList.contains('flipped')) {
+                    card.classList.remove('flipped');
+                }
+            });
+        });
+        
+        // Add a click event to the card container to flip back from CVV view
+        cardContainer.addEventListener('click', function(e) {
+            // Only flip back if we're not clicking in the CVV input area
+            if (card.classList.contains('flipped') && e.target !== cvvInput) {
+                card.classList.remove('flipped');
+            }
+        });
+
+        // 3D card effect - mouse movement
+        const cardContainer = document.querySelector('.card-container');
+        const card3d = document.querySelector('.card');
+
+        cardContainer.addEventListener('mousemove', function(e) {
+            if (card.classList.contains('flipped')) return; // Disable effect when card is flipped
+            
+            const rect = cardContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left; // x position within the element
+            const y = e.clientY - rect.top; // y position within the element
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateY = (x - centerX) / 15;
+            const rotateX = (centerY - y) / 15;
+            
+            card3d.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
+        });
+
+        cardContainer.addEventListener('mouseleave', function() {
+            if (!card.classList.contains('flipped')) {
+                card3d.style.transform = 'rotateY(0) rotateX(0)';
+            }
+        });
+
+        // Payment animation
+        const paymentOverlay = document.getElementById('paymentOverlay');
+        const circleAnimation = document.getElementById('circleAnimation');
+        const checkmark = document.getElementById('checkmark');
+        const paymentStatus = document.getElementById('paymentStatus');
+        const paymentMessage = document.getElementById('paymentMessage');
+        const continueButton = document.getElementById('continueButton');
+
+        function showPaymentAnimation(paymentMethod) {
+            paymentOverlay.classList.add('active');
+
+            setTimeout(() => {
+                circleAnimation.style.display = 'none';
+                checkmark.classList.add('active');
+
+                if (paymentMethod === 'cod') {
+                    paymentStatus.textContent = 'Order Placed!';
+                    paymentMessage.textContent = 'You will pay in cash upon delivery.';
+                } else {
+                    paymentStatus.textContent = 'Payment Successful!';
+                    paymentMessage.textContent = 'Your order has been processed.';
+                }
+
+                setTimeout(() => {
+                    continueButton.classList.add('active');
+                }, 1000);
+            }, 3000);
+        }
+
+        function resetPaymentAnimation() {
+            paymentOverlay.classList.remove('active');
+
+            setTimeout(() => {
+                circleAnimation.style.display = 'block';
+                checkmark.classList.remove('active');
+                paymentStatus.textContent = 'Processing...';
+                paymentMessage.textContent = 'Please wait while we process your payment.';
+                continueButton.classList.remove('active');
+            }, 300);
+        }
+
+        document.querySelectorAll('.pay-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent form submission for demo
+                const activeMethod = document.querySelector('.payment-method.active');
+                const paymentMethod = activeMethod ? activeMethod.dataset.method : 'card';
+                showPaymentAnimation(paymentMethod);
+            });
+        });
+
+        continueButton.addEventListener('click', () => {
+            resetPaymentAnimation();
+            // Optional: Redirect to another page
+            // window.location.href = "/thank-you";
+        });
+
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-color: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --secondary-color: #10b981;
+            --accent-color: #f43f5e;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem;
+            background-image: 
+                radial-gradient(circle at 25% 10%, rgba(99, 102, 241, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 75% 30%, rgba(16, 185, 129, 0.05) 0%, transparent 25%),
+                radial-gradient(circle at 50% 70%, rgba(244, 63, 94, 0.05) 0%, transparent 30%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-details {
+            background: var(--card-background);
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            padding: 2.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            animation: fadeInUp 1s ease both;
+            transition: all 0.5s ease;
+        }
+
+        .product-details:hover {
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .product-image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            transition: all 0.5s ease;
+            border-radius: 12px;
+        }
+
+        .product-details:hover .product-image {
+            transform: scale(1.03);
+        }
+
+        .product-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-info h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .product-info p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .product-info strong {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .product-info .price {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .cart-form {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .cart-form label {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .cart-form input[type="number"] {
+            width: 80px;
+            padding: 0.8rem;
+            border: 2px solid #f1f5f9;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--text-primary);
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .cart-form input[type="number"]:focus {
+            border-color: var(--primary-light);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            background-color: white;
+        }
+
+        .cart-form button {
+            background: linear-gradient(135deg, var(--secondary-color), #0d9488);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cart-form button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .no-details {
+            background: var(--card-background);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            animation: fadeInUp 1s ease both;
+        }
+
+        .no-details i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .cart-success {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--secondary-color), #0d9488);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideIn 0.5s ease forwards, slideOut 0.5s ease 2.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .product-details { 
+                grid-template-columns: 1fr; 
+                padding: 1.5rem; 
+            }
+            .product-image { height: 250px; }
+            .product-info h1 { font-size: 1.5rem; }
+            .cart-form { 
+                flex-direction: column; 
+                align-items: stretch; 
+            }
+            .cart-form input[type="number"] { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if tt %}
+            {% for t in tt %}
+                <div class="product-details">
+                    <div class="product-image-container">
+                        <img src="/Uploads/{{ t.Img }}" alt="{{ t.Item }}" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h1>{{ t.Item }}</h1>
+                        <p><strong>Category:</strong> {{ t.Category }}</p>
+                        <p><strong>Subcategory:</strong> {{ t.Subcategory }}</p>
+                        <p><strong>Description:</strong> {{ t.Des }}</p>
+                        <p class="price">₹{{ t.Amnt }}</p>
+                        <form action="/addtocart/" method="GET" class="cart-form" onsubmit="showSuccess(event, '{{ t.Pid }}')">
+                            <input type="hidden" name="bi" value="{{ t.Pid }}">
+                            <label for="qty-{{ t.Pid }}">Quantity:</label>
+                            <input type="number" name="qty" id="qty-{{ t.Pid }}" min="1" max="{{ t.Stock }}" value="1" required>
+                            <button type="submit"><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-details">
+                <i class="fas fa-box-open"></i>
+                <p>No product details available.</p>
+            </div>
+        {% endif %}
+
+        <div id="cartSuccess" class="cart-success" style="display: none;">
+            <i class="fas fa-check-circle"></i>
+            <span>Item added to cart successfully!</span>
+        </div>
+    </div>
+
+    <script>
+        function showSuccess(event, productId) {
+            event.preventDefault();
+            const form = event.target;
+            const qty = form.querySelector(`#qty-${productId}`).value;
+
+            // Add to local storage
+            let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            if (!cartItems.includes(productId)) {
+                cartItems.push(productId);
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            }
+
+            // Show success notification
+            const success = document.getElementById('cartSuccess');
+            success.style.display = 'flex';
+            setTimeout(() => {
+                success.style.display = 'none';
+            }, 3000);
+
+            // Update cart count
+            const cartEvent = new Event('storage');
+            window.dispatchEvent(cartEvent);
+
+            // Submit form to server
+            form.submit();
+        }
+    </script>
+</body>
+</html>

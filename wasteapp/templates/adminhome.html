@@ -1,0 +1,2537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Waste Management Admin</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #6b48ff;      /* Updated purple */
+            --secondary: #00ddeb;    /* Updated turquoise */
+            --accent: #ff6b81;       /* Updated coral */
+            --dark: #1a1b2e;         /* Updated dark blue-gray */
+            --light: #f5f7fa;        /* Updated light gray-blue */
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.1);
+            --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, #f5f7fa 0%, #e4e9f0 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        
+        .sidebar {
+            background: var(--gradient);
+            transition: var(--transition-normal);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .sidebar-link {
+            transition: var(--transition-normal);
+            border-left: 4px solid transparent;
+        }
+        
+        .sidebar-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #FFFFFF;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-link.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid #FFFFFF;
+        }
+        
+        .avatar-container:hover .avatar-overlay {
+            opacity: 1;
+        }
+        
+        .card {
+            transition: var(--transition-bounce);
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .stat-card {
+            border-left: 5px solid var(--primary);
+        }
+        
+        .quick-link {
+            transition: var(--transition-bounce);
+        }
+        
+        .quick-link:hover {
+            transform: translateY(-5px) scale(1.05);
+            background-color: white;
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Alert Animation */
+        @keyframes slideInRight {
+            0% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            0% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        .alert-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            max-width: 400px;
+            width: 100%;
+            z-index: 1100;
+        }
+
+        .alert {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            display: flex;
+            align-items: stretch;
+            animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 4s;
+            transform: translateX(120%);
+            opacity: 0;
+        }
+        
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOut {
+            to {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+        }
+        
+        .alert-color {
+            width: 5px;
+        }
+        
+        .alert-success .alert-color {
+            background-color: var(--primary);
+        }
+        
+        .alert-error .alert-color {
+            background-color: var(--accent);
+        }
+        
+        .alert-warning .alert-color {
+            background-color: #FF9800;
+        }
+        
+        .alert-content {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            flex-grow: 1;
+        }
+        
+        .alert-icon {
+            margin-right: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .alert-success .alert-icon {
+            color: var(--primary);
+        }
+        
+        .alert-error .alert-icon {
+            color: var(--accent);
+        }
+        
+        .alert-warning .alert-icon {
+            color: #FF9800;
+        }
+        
+        .alert-message {
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .alert-close {
+            color: #9E9E9E;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-left: 0.5rem;
+        }
+        
+        .alert-popup {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            animation: slideInRight 0.5s forwards;
+            box-shadow: var(--shadow-lg);
+            max-width: 90%;
+            width: 350px;
+        }
+        
+        .alert-popup.hide {
+            animation: slideOutRight 0.5s forwards;
+        }
+        
+        /* Animation for cards */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animated-card {
+            animation: fadeInUp 0.6s forwards;
+            opacity: 0;
+        }
+        
+        .animated-card:nth-child(1) { animation-delay: 0.1s; }
+        .animated-card:nth-child(2) { animation-delay: 0.2s; }
+        .animated-card:nth-child(3) { animation-delay: 0.3s; }
+        .animated-card:nth-child(4) { animation-delay: 0.4s; }
+        .animated-card:nth-child(5) { animation-delay: 0.5s; }
+        .animated-card:nth-child(6) { animation-delay: 0.6s; }
+        
+        /* Progress bar animation */
+        @keyframes growProgress {
+            0% { width: 0; }
+        }
+        
+        .progress-bar {
+            animation: growProgress 1.5s ease-out forwards;
+        }
+        
+        /* Pulse effect for notifications */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Wave animation for stats */
+        .wave {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.2;
+            background: linear-gradient(45deg, var(--secondary), transparent);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            animation: wave 8s ease-in-out infinite alternate;
+        }
+        
+        @keyframes wave {
+            0% {
+                border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            }
+            50% {
+                border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+            }
+            100% {
+                border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            }
+        }
+        
+        /* Notification badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 18px;
+            height: 18px;
+            background-color: var(--accent);
+            color: white;
+            border-radius: 50%;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Waste composition chart */
+        .composition-item {
+            transition: var(--transition-normal);
+        }
+
+        .composition-item:hover {
+            transform: translateX(5px);
+            background-color: rgba(107, 72, 255, 0.05);
+            border-radius: 8px;
+            padding-left: 8px;
+        }
+
+        /* Map styles */
+        .map-container {
+            height: 300px;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--shadow-md);
+        }
+
+        .map-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(0,0,0,0.05), rgba(0,0,0,0.05));
+            z-index: 1;
+        }
+
+        .map-marker {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        .map-marker.alert {
+            background-color: var(--accent);
+            box-shadow: 0 0 0 rgba(255, 107, 129, 0.4);
+            animation: pulse-red 2s infinite;
+        }
+
+        .map-marker.normal {
+            background-color: var(--primary);
+        }
+
+        .map-marker:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 3;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 107, 129, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 107, 129, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 107, 129, 0);
+            }
+        }
+
+        /* New Features */
+        .feature-badges .badge {
+            transition: var(--transition-bounce);
+        }
+
+        .feature-badges .badge:hover {
+            transform: scale(1.1);
+        }
+
+        /* Smart bin indicator */
+        .bin-fill-indicator {
+            width: 20px;
+            height: 100px;
+            background-color: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            margin: 0 auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .bin-fill-level {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--gradient);
+            transition: height 1s ease-out;
+        }
+
+        .bin-fill-critical .bin-fill-level {
+            background-color: var(--accent);
+        }
+
+        .bin-fill-warning .bin-fill-level {
+            background-color: #FFB347;
+        }
+
+        /* Weather impact card */
+        .weather-impact {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .weather-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: #FFB347;
+        }
+
+        .weather-impact-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Waste handling guide tooltips */
+        .waste-tip {
+            position: relative;
+            cursor: help;
+        }
+
+        .waste-tip:hover .waste-tip-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        .waste-tip-content {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%) translateY(0);
+            width: 200px;
+            background-color: white;
+            color: #333;
+            text-align: center;
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .waste-tip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: white transparent transparent transparent;
+        }
+
+        /* Carbon footprint tracker */
+        .carbon-tracker {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .carbon-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .carbon-unit {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Community initiatives */
+        .community-card {
+            border-left: 5px solid var(--secondary);
+        }
+
+        /* Waste-to-energy */
+        .energy-card {
+            border-left: 5px solid var(--primary);
+        }
+
+        /* Landfill capacity */
+        .landfill-card {
+            border-left: 5px solid var(--accent);
+        }
+
+        .landfill-capacity-bar {
+            height: 24px;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #e2e8f0;
+        }
+
+        .landfill-capacity-used {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            transition: width 1.5s ease-out;
+        }
+
+        .tab-active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        /* Animated background */
+        .animated-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            right: -50px;
+            animation: float 15s infinite alternate ease-in-out;
+        }
+        
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            left: 10%;
+            animation: float 20s infinite alternate-reverse ease-in-out;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            100% {
+                transform: translate(50px, 50px) rotate(360deg);
+            }
+        }
+        
+        .page-header {
+            background: var(--gradient);
+            color: white;
+            padding: 40px 0 60px;
+            margin-bottom: -30px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0 0 16px 16px;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTI4MCAxNDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTMyMCAyOGMzMjAgMCAzMjAgODQgNjQwIDg0IDE2MCAwIDI0MCA0MiAzMjAgNDJ2LTE1NEgweiIgZmlsbC1vcGFjaXR5PSIuMDUiLz48cGF0aCBkPSJNMzIwIDU2YzMyMCAwIDMyMCA4NCA2NDAgODQgMTYwIDAgMjQwIDQyIDMyMCA0MlYwSDB6IiBmaWxsLW9wYWNpdHk9Ii4wNyIvPjwvc3ZnPg==');
+            background-size: cover;
+            opacity: 0.3;
+        }
+        
+        .feedback-card {
+            position: relative;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-normal);
+            overflow: hidden;
+        }
+        
+        .feedback-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .feedback-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .modal-overlay.active .modal {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .modal-header {
+            padding: 2rem 2rem 1rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .modal-header-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+        }
+        
+        .modal-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: rgba(255, 107, 129, 0.1);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-body {
+            padding: 0 2rem 1.5rem;
+            text-align: center;
+            color: #546E7A;
+        }
+        
+        .modal-actions {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            border-top: 1px solid #ECEFF1;
+        }
+        
+        .btn-modal {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            cursor: pointer;
+        }
+        
+        .btn-cancel {
+            background-color: #F5F5F5;
+            color: #546E7A;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #E0E0E0;
+        }
+        
+        .btn-confirm {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .btn-confirm:hover {
+            background-color: #ff4f64;
+            box-shadow: 0 4px 8px rgba(255, 107, 129, 0.25);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background-color: white;
+            color: var(--primary);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-bounce);
+            z-index: 100;
+            border: 2px solid transparent;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            background-color: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-male {
+            background-color: rgba(107, 72, 255, 0.1);
+            color: var(--primary);
+        }
+        
+        .badge-female {
+            background-color: rgba(255, 107, 129, 0.1);
+            color: var(--accent);
+        }
+        
+        .badge i {
+            margin-right: 0.35rem;
+            font-size: 0.7rem;
+        }
+        
+        .action-links {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: var(--transition-bounce);
+            cursor: pointer;
+        }
+        
+        .btn-edit {
+            background-color: rgba(107, 72, 255, 0.12);
+            color: var(--primary);
+        }
+        
+        .btn-edit:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(107, 72, 255, 0.25);
+        }
+        
+        .btn-delete {
+            background-color: rgba(255, 107, 129, 0.12);
+            color: var(--accent);
+        }
+        
+        .btn-delete:hover {
+            background-color: var(--accent);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(255, 107, 129, 0.25);
+        }
+
+        /* Table styling */
+        .table-container {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        thead {
+            background-color: #F5F7F9;
+        }
+        
+        th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: #546E7A;
+            border-bottom: 2px solid #ECEFF1;
+            position: relative;
+            transition: var(--transition-normal);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 1.25rem 1.5rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #ECEFF1;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tbody tr {
+            cursor: pointer;
+            transform: translateY(30px);
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-out forwards;
+            animation-delay: calc(var(--row-index) * 0.1s + 0.3s);
+            transition: var(--transition-normal);
+        }
+        
+        tbody tr.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        tbody tr:hover {
+            background-color: rgba(107, 72, 255, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        tbody tr::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s ease;
+        }
+        
+        tbody tr:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="h-screen overflow-hidden flex flex-col">
+<div class="flex flex-1 overflow-hidden">
+    <!-- Sidebar -->
+    <div class="sidebar w-64 flex-shrink-0 text-white hidden md:flex flex-col z-20">
+        <div class="p-4 flex items-center justify-center border-b border-purple-700">
+            <i class="fas fa-recycle text-3xl mr-3"></i>
+            <span class="text-xl font-bold">Admin Home</span>
+        </div>
+        
+        <!-- Profile Section -->
+        <div class="p-4 border-b border-purple-700">
+            <div class="flex flex-col items-center">
+                <div class="avatar-container relative mb-3">
+                    <img id="avatar-preview" src="/api/placeholder/100/100" alt="Admin Avatar" class="w-24 h-24 rounded-full object-cover border-4 border-white">
+                    <div class="avatar-overlay absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 transition-opacity duration-300 cursor-pointer">
+                        <i class="fas fa-camera text-white text-xl"></i>
+                    </div>
+                    <input type="file" id="avatar-upload" class="hidden" accept="image/*">
+                </div>
+                <h3 class="text-lg font-semibold" id="admin-name">John Doe</h3>
+                <p class="text-sm text-indigo-200">Waste Management Admin</p>
+                <button class="mt-2 text-xs text-indigo-200 hover:text-white" id="edit-profile-btn">
+                    <i class="fas fa-edit mr-1"></i> Edit Profile
+                </button>
+            </div>
+        </div>
+        
+        <!-- Navigation Links -->
+        <nav class="flex-1 overflow-y-auto py-4">
+            <div class="px-4 py-2 text-xs text-indigo-200 uppercase">Main Menu</div>
+            <ul>
+                <li class="px-2 py-1">
+                    <a href="/viewcustomer" class="sidebar-link active flex items-center p-2 rounded-md">
+                        <i class="fas fa-users w-6 text-center"></i>
+                        <span class="ml-2">Customers</span>
+                    </a>
+                </li>
+                <li class="px-2 py-1">
+                    <a href="/viewstaff" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-user-tie w-6 text-center"></i>
+                        <span class="ml-2">Manage Staff</span>
+                    </a>
+                </li>
+                <li class="px-2 py-1">
+                    <a href="/viewproduct" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-box w-6 text-center"></i>
+                        <span class="ml-2">Products</span>
+                    </a>
+                </li>
+                <li class="px-2 py-1">
+                    <a href="/viewcategory" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-tags w-6 text-center"></i>
+                        <span class="ml-2">Categories</span>
+                    </a>
+                </li>
+                <li class="px-2 py-1">
+                    <a href="/viewlocation" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-map-marker-alt w-6 text-center"></i>
+                        <span class="ml-2">Locations</span>
+                    </a>
+                </li>
+                <li class="px-2 py-1">
+                    <a href="/viewapplication" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-file-alt w-6 text-center"></i>
+                        <span class="ml-2">Application</span>
+                    </a>
+                </li>
+                <li class="px-2 py-1">
+                    <a href="/viewmanagerate" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-percentage w-6 text-center"></i>
+                        <span class="ml-2">Rates</span>
+                    </a>
+                </li>
+                <li class="px-2 py-1">
+                    <a href="/viewpayment" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-credit-card w-6 text-center"></i>
+                        <span class="ml-2">Payments</span>
+                    </a>
+                </li>
+                <li class="px-2 py-1">
+                    <a href="/assignlocation" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-map-pin w-6 text-center"></i>
+                        <span class="ml-2">Assign Location</span>
+                        <div class="notification-badge ml-2">8</div>
+                    </a>
+                </li>
+                <!-- <li class="px-2 py-1">
+                    <a href="/viewproduct" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-shopping-cart w-6 text-center"></i>
+                        <span class="ml-2">Shopping</span>
+                    </a>
+                </li> -->
+                <li class="px-2 py-1">
+                    <a href="/orders" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-clipboard-list w-6 text-center"></i>
+                        <span class="ml-2">Orders</span>
+                    </a>
+                </li>
+
+                <li class="px-2 py-1">
+                    <a href="/viewFeedback" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-comment-alt w-6 text-center"></i>
+                        <span class="ml-2">Feedback</span>
+                    </a>
+                </li>
+                
+                </li>
+
+                <!-- New Waste Management Features -->
+                <div class="px-4 py-2 text-xs text-indigo-200 uppercase mt-4">Waste Management</div>
+                <!-- <li class="px-2 py-1">
+                    <a href="/biogasmonitoring" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-burn w-6 text-center"></i>
+                        <span class="ml-2">Biogas Monitoring</span>
+                        <div class="notification-badge ml-2">5</div>
+                    </a>
+                </li> -->
+                
+                <!-- <li class="px-2 py-1">
+                    <a href="/reports" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-chart-bar w-6 text-center"></i>
+                        <span class="ml-2">Reports & Analytics</span>
+                    </a> -->
+                <li class="px-2 py-1">
+                    <a href="/fleet" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-truck w-6 text-center"></i>
+                        <span class="ml-2">Fleet</span>
+                    </a>
+                </li>
+                <li class="px-2 py-1">
+                    <a href="/adminbiomon" class="sidebar-link flex items-center p-2 rounded-md">
+                        <i class="fas fa-bolt w-6 text-center"></i>
+                        <span class="ml-2">Waste-to-Energy</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Logout Button -->
+        <div class="p-4 border-t border-purple-700">
+            <a href="/login" class="flex items-center text-white hover:text-red-200 transition duration-300">
+                <i class="fas fa-sign-out-alt mr-3"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Top Navigation Bar -->
+        <header class="bg-white shadow-sm z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center md:hidden">
+                        <button id="mobile-menu-button" class="text-gray-700 hover:text-gray-900 focus:outline-none">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center">
+                        <h1 class="text-xl font-semibold text-gray-800">Waste Management Dashboard</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <button class="text-gray-700 hover:text-gray-900 focus:outline-none">
+                                <i class="fas fa-search text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <button class="text-gray-700 hover:text-gray-900 focus:outline-none pulse">
+                                <i class="fas fa-bell text-xl"></i>
+                                <span class="notification-badge">5</span>
+                            </button>
+                        </div>
+                        <!-- New Weather Impact Indicator -->
+                        <div class="hidden sm:flex items-center mr-2 px-3 py-1 bg-purple-100 rounded-full">
+                            <i class="fas fa-cloud-rain text-purple-600 mr-2"></i>
+                            <span class="text-xs text-purple-800">Weather Impact: Moderate</span>
+                        </div>
+                        <div class="relative">
+                            <button class="flex items-center focus:outline-none">
+                                <div class="mr-2 hidden sm:block">
+                                    <span id="topbar-admin-name" class="text-gray-700">John Doe</span>
+                                </div>
+                                <img id="topbar-avatar" src="/api/placeholder/40/40" alt="Admin" class="h-8 w-8 rounded-full">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Page Content -->
+        <main class="flex-1 overflow-y-auto p-4 bg-gray-50">
+            <div class="max-w-7xl mx-auto">
+                <!-- Welcome Section with Enhanced Features Badge -->
+                <div class="page-header rounded-lg mb-6 relative overflow-hidden">
+                    <div class="animated-bg">
+                        <div class="shape shape-1"></div>
+                        <div class="shape shape-2"></div>
+                    </div>
+                    <div class="container mx-auto px-4 py-6 relative z-10">
+                        <h2 class="text-2xl font-bold text-white">Welcome back, <span class="text-indigo-200">Sir!</span></h2>
+                        <p class="text-gray-200 opacity-90 max-w-xl mt-2">Here's today's waste management overview</p>
+                        <div class="feature-badges flex flex-wrap gap-2 mt-4">
+                            <span class="badge inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-indigo-100 text-indigo-800">
+                                <i class="fas fa-check-circle mr-1"></i> Optimization Active
+                            </span>
+                            <span class="badge inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                                <i class="fas fa-robot mr-1"></i> Smart Routing
+                            </span>
+                            <span class="badge inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                                <i class="fas fa-chart-line mr-1"></i> Predictive Analysis
+                            </span>
+                            <span class="badge inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
+                                <i class="fas fa-cloud-rain mr-1"></i> Weather Adaptation
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+<!-- Key Performance Indicators and Sustainability Metrics -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <!-- Card 1: Modified - Changed to Carbon Footprint -->
+     <div class="block bg-white rounded-lg shadow-md overflow-hidden card animated-card feedback-card hover:shadow-lg transition-shadow duration-300" style="--card-index: 5">
+        <div class="p-4 flex items-center">
+            <div class="p-3 rounded-full bg-teal-100 mr-4">
+                <i class="fas fa-tint text-teal-600 text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Water Saved</p>
+                <h3 class="text-2xl font-bold">12.8K <span class="text-sm font-normal">gallons</span></h3>
+                <p class="text-teal-500 text-xs"><i class="fas fa-arrow-up"></i> 7.2% this month</p>
+            </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-2">
+            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden" data-percent="85%">
+                <div class="progress-bar h-full bg-teal-500 rounded-full" style="width: 85%"></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">85% of conservation target</p>
+        </div>
+    </div>
+    <!-- Card 2: Unchanged but with link added -->
+    <a href="/fleet" class="block bg-white rounded-lg shadow-md overflow-hidden card animated-card feedback-card hover:shadow-lg transition-shadow duration-300" style="--card-index: 2">
+        <div class="p-4 flex items-center">
+            <div class="p-3 rounded-full bg-purple-100 mr-4">
+                <i class="fas fa-truck text-purple-600 text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Active Vehicles</p>
+                <h3 class="text-2xl font-bold">22 <span class="text-sm font-normal">/ 28</span></h3>
+                <p class="text-red-500 text-xs"><i class="fas fa-arrow-down"></i> 1 under maintenance</p>
+            </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-2">
+            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden" data-percent="75%">
+                <div class="progress-bar h-full bg-purple-500 rounded-full" style="width: 75%"></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">75% fleet utilization</p>
+        </div>
+    </a>
+    <!-- Card 3: Unchanged but with link added -->
+    <div class="block bg-white rounded-lg shadow-md overflow-hidden card animated-card activity-card hover:shadow-lg transition-shadow duration-300" style="--card-index: 3">
+        <div class="p-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-100 mr-4 transition-all duration-300 hover:bg-blue-200">
+                    <i class="fas fa-users text-blue-600 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Total Users Viewed</p>
+                    <h3 class="text-2xl font-bold">3,285</h3>
+                    <div class="flex items-center">
+                        <span class="text-green-500 text-xs mr-2"><i class="fas fa-arrow-up"></i> 12% increase</span>
+                        <span class="text-gray-500 text-xs"><i class="fas fa-user-clock"></i> 8 online now</span>
+                    </div>
+                </div>
+            </div>
+            <div class="text-right">
+                <button class="text-blue-500 hover:text-blue-700 transition-colors duration-200">
+                    <!-- <i class="fas fa-ellipsis-v"></i> -->
+                </button>
+            </div>
+        </div>
+        <div class="px-4 py-3 border-t border-gray-100">
+            <div class="flex justify-between mb-1">
+                <span class="text-xs text-gray-600 font-medium">Daily Engagement</span>
+                <span class="text-xs text-gray-500">86% retention</span>
+            </div>
+            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div class="progress-bar h-full bg-blue-500 rounded-full" style="width: 86%"></div>
+            </div>
+        </div>
+    </div>
+        <!-- <div class="bg-gray-50 px-4 py-2 flex justify-between items-center">
+            <div class="flex items-center text-xs text-gray-500">
+                <span class="inline-block w-3 h-3 rounded-full bg-blue-500 mr-1"></span>
+                <span>Desktop: 68%</span>
+                <span class="inline-block w-3 h-3 rounded-full bg-green-500 mx-1 ml-3"></span>
+                <span>Mobile: 32%</span>
+            </div>
+            <button class="text-xs bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded transition-colors duration-200">
+                View Details
+            </button>
+        </div> -->
+    <!-- </a> -->
+    <!-- Card 4: Unchanged but with link added -->
+    <div class="block bg-white rounded-lg shadow-md overflow-hidden card animated-card feedback-card hover:shadow-lg transition-shadow duration-300" style="--card-index: 4">
+        <div class="p-4 flex items-center">
+            <div class="p-3 rounded-full bg-blue-100 mr-4">
+                <i class="fas fa-recycle text-blue-600 text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Recycling Rate</p>
+                <h3 class="text-2xl font-bold">42%</h3>
+                <p class="text-blue-500 text-xs"><i class="fas fa-arrow-up"></i> 5% improvement</p>
+            </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-2">
+            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden" data-percent="42%">
+                <div class="progress-bar h-full bg-blue-500 rounded-full" style="width: 42%"></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">Target: 50%</p>
+        </div>
+    </div>
+    <!-- New Card 5: Water Conservation with link added -->
+    <!-- <a href="/water-conservation" class="block bg-white rounded-lg shadow-md overflow-hidden card animated-card feedback-card hover:shadow-lg transition-shadow duration-300" style="--card-index: 5">
+        <div class="p-4 flex items-center">
+            <div class="p-3 rounded-full bg-teal-100 mr-4">
+                <i class="fas fa-tint text-teal-600 text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Water Saved</p>
+                <h3 class="text-2xl font-bold">12.8K <span class="text-sm font-normal">gallons</span></h3>
+                <p class="text-teal-500 text-xs"><i class="fas fa-arrow-up"></i> 7.2% this month</p>
+            </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-2">
+            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden" data-percent="85%">
+                <div class="progress-bar h-full bg-teal-500 rounded-full" style="width: 85%"></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">85% of conservation target</p>
+        </div>
+    </a> -->
+</div>
+
+                <!-- Two Column Layout: Map and Waste Composition -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Smart Bin Monitoring Map -->
+                    <div class="bg-white rounded-lg shadow-md p-6 card feedback-card" style="--card-index: 5">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Smart Bin Monitoring</h3>
+                        <div class="map-container bg-gray-100 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+                                <!-- Map SVG Content -->
+                                <!-- Background -->
+                                <rect width="800" height="600" fill="#f8f9fa"/>
+                                
+                                <!-- Water bodies - Arabian Sea and Backwaters -->
+                                <path d="M0,0 L0,600 L150,600 C170,500 180,400 200,350 C220,300 250,280 300,250 C350,220 380,200 400,150 C420,100 450,50 500,30 C550,10 600,0 650,0 L800,0 L800,600 L0,600" fill="#a8d5f0"/>
+                                
+                                <!-- Main land mass of Ernakulam -->
+                                <path d="M280,100 C300,150 350,180 400,220 C450,260 500,270 550,300 C600,330 650,350 680,400 C710,450 730,500 750,600 L500,600 C450,550 400,530 350,500 C300,470 270,450 230,400 C190,350 180,300 150,250 C120,200 100,150 150,100 C200,50 250,50 280,100" fill="#d1e7a7"/>
+                                
+                                <!-- Fort Kochi & Mattancherry -->
+                                <path d="M100,250 C120,270 140,280 150,300 C160,320 170,340 180,360 C190,380 200,400 180,420 C160,440 140,430 120,420 C100,410 80,400 60,380 C40,360 30,340 40,320 C50,300 70,290 90,280 C110,270 130,260 130,250 C130,240 110,230 100,250" fill="#dcc599"/>
+                                
+                                <!-- Marine Drive -->
+                                <path d="M300,400 C320,390 340,380 360,370 C380,360 400,350 420,360 C440,370 460,380 470,400 C480,420 470,440 450,450 C430,460 410,450 390,440 C370,430 350,420 330,420 C310,420 290,430 280,410 C270,390 280,410 300,400" fill="#c6e2ba" stroke="#888" stroke-width="1"/>
+                                
+                                <!-- Backwaters & Canals -->
+                                <path d="M200,350 C220,370 240,380 260,390 C280,400 300,410 320,420 C340,430 360,440 370,460 C380,480 370,500 350,510 C330,520 310,510 290,500 C270,490 250,480 230,470 C210,460 190,450 180,430 C170,410 180,390 200,380 C220,370 240,360 230,350 C220,340 200,330 200,350" fill="#a8d5f0"/>
+                                
+                                <!-- Roads -->
+                                <path d="M250,150 L550,300" stroke="#666" stroke-width="3" fill="none"/>
+                                <path d="M550,300 L680,400" stroke="#666" stroke-width="3" fill="none"/>
+                                <path d="M400,220 L350,500" stroke="#666" stroke-width="3" fill="none"/>
+                                <path d="M350,500 L500,600" stroke="#666" stroke-width="3" fill="none"/>
+                                <path d="M300,250 L600,330" stroke="#666" stroke-width="2" fill="none"/>
+                                <path d="M230,400 L450,450" stroke="#666" stroke-width="2" fill="none"/>
+                                <path d="M150,250 L300,250" stroke="#666" stroke-width="2" fill="none"/>
+                                
+                                <!-- Secondary roads -->
+                                <path d="M250,150 L300,250" stroke="#888" stroke-width="1.5" fill="none"/>
+                                <path d="M300,250 L350,500" stroke="#888" stroke-width="1.5" fill="none"/>
+                                <path d="M400,220 L450,450" stroke="#888" stroke-width="1.5" fill="none"/>
+                                <path d="M550,300 L450,450" stroke="#888" stroke-width="1.5" fill="none"/>
+                                <path d="M230,400 L350,500" stroke="#888" stroke-width="1.5" fill="none"/>
+                                
+                                <!-- Bridge markers -->
+                                <line x1="180" y1="360" x2="230" y2="400" stroke="#333" stroke-width="3" stroke-dasharray="5,3"/>
+                                <line x1="300" y1="250" x2="330" y2="230" stroke="#333" stroke-width="3" stroke-dasharray="5,3"/>
+                                
+                                <!-- Key locations -->
+                                <!-- Ernakulam City - Central Business District -->
+                                <circle cx="450" cy="450" r="15" fill="#6b48ff" stroke="#333" stroke-width="1"/>
+                                <text x="450" y="450" text-anchor="middle" dominant-baseline="middle" fill="white" font-family="Poppins" font-size="10" font-weight="bold">CBD</text>
+                                
+                                <!-- Fort Kochi -->
+                                <circle cx="120" cy="350" r="12" fill="#00ddeb" stroke="#333" stroke-width="1"/>
+                                <text x="120" y="350" text-anchor="middle" dominant-baseline="middle" fill="white" font-family="Poppins" font-size="8" font-weight="bold">FK</text>
+                                
+                                <!-- Willingdon Island -->
+                                <circle cx="250" cy="380" r="10" fill="#6b48ff" stroke="#333" stroke-width="1"/>
+                                <text x="250" y="380" text-anchor="middle" dominant-baseline="middle" fill="white" font-family="Poppins" font-size="7" font-weight="bold">WI</text>
+                                
+                                <!-- Marine Drive -->
+                                <circle cx="370" cy="420" r="8" fill="#00ddeb" stroke="#333" stroke-width="1"/>
+                                <text x="370" y="420" text-anchor="middle" dominant-baseline="middle" fill="white" font-family="Poppins" font-size="6" font-weight="bold">MD</text>
+                                
+                                <!-- Kakkanad -->
+                                <circle cx="550" cy="450" r="13" fill="#6b48ff" stroke="#333" stroke-width="1"/>
+                                <text x="550" y="450" text-anchor="middle" dominant-baseline="middle" fill="white" font-family="Poppins" font-size="9" font-weight="bold">KK</text>
+                                
+                                <!-- Edappally -->
+                                <circle cx="500" cy="350" r="10" fill="#00ddeb" stroke="#333" stroke-width="1"/>
+                                <text x="500" y="350" text-anchor="middle" dominant-baseline="middle" fill="white" font-family="Poppins" font-size="7" font-weight="bold">EP</text>
+                              
+                                <!-- Mattanchery -->
+                                <circle cx="180" cy="320" r="8" fill="#6b48ff" stroke="#333" stroke-width="1"/>
+                                <text x="180" y="320" text-anchor="middle" dominant-baseline="middle" fill="white" font-family="Poppins" font-size="6" font-weight="bold">MT</text>
+                                
+                                <!-- Infopark -->
+                                <circle cx="600" cy="430" r="10" fill="#6b48ff" stroke="#333" stroke-width="1"/>
+                                <text x="600" y="430" text-anchor="middle" dominant-baseline="middle" fill="white" font-family="Poppins" font-size="7" font-weight="bold">IP</text>
+                                
+                                <!-- Map Title and Legend -->
+                                <rect x="550" y="50" width="200" height="180" rx="10" ry="10" fill="white" stroke="#333" stroke-width="1" opacity="0.9"/>
+                                <text x="650" y="80" text-anchor="middle" font-family="Poppins" font-size="18" font-weight="bold" fill="#333">ERNAKULAM</text>
+                                <text x="650" y="100" text-anchor="middle" font-family="Poppins" font-size="14" fill="#555">Kochi, Kerala</text>
+                                
+                                <!-- Legend items -->
+                                <rect x="570" y="120" width="15" height="15" fill="#d1e7a7"/>
+                                <text x="595" y="133" font-family="Poppins" font-size="12" fill="#333">Mainland</text>
+                                
+                                <rect x="570" y="145" width="15" height="15" fill="#a8d5f0"/>
+                                <text x="595" y="158" font-family="Poppins" font-size="12" fill="#333">Water Bodies</text>
+                                
+                                <rect x="570" y="170" width="15" height="15" fill="#dcc599"/>
+                                <text x="595" y="183" font-family="Poppins" font-size="12" fill="#333">Historic Areas</text>
+                            </svg>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                            <div class="p-3 bg-indigo-50 rounded-lg">
+                                <p class="text-xs text-gray-600 mb-1">Normal</p>
+                                <p class="text-lg font-semibold text-indigo-600">73</p>
+                            </div>
+                            <div class="p-3 bg-purple-50 rounded-lg">
+                                <p class="text-xs text-gray-600 mb-1">Warning</p>
+                                <p class="text-lg font-semibold text-purple-600">12</p>
+                            </div>
+                            <div class="p-3 bg-red-50 rounded-lg">
+                                <p class="text-xs text-gray-600 mb-1">Critical</p>
+                                <p class="text-lg font-semibold text-red-600">5</p>
+                            </div>
+                            <div class="p-3 bg-gray-50 rounded-lg">
+                                <p class="text-xs text-gray-600 mb-1">Maintenance</p>
+                                <p class="text-lg font-semibold text-gray-600">3</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <a href="/ekmmap" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium inline-flex items-center">
+                                View Full Map <i class="fas fa-external-link-alt ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Waste Composition Analysis -->
+                    <div class="bg-white rounded-lg shadow-md p-6 card feedback-card" style="--card-index: 6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Waste Composition Analysis</h3>
+                        <div class="space-y-3 mb-4">
+                            <div class="composition-item flex items-center">
+                                <div class="w-1/2">
+                                    <span class="text-gray-700">Organic Waste</span>
+                                </div>
+                                <div class="w-1/2">
+                                    <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-indigo-500 rounded-full" style="width: 45%"></div>
+                                    </div>
+                                    <div class="flex justify-between mt-1">
+                                        <span class="text-xs text-gray-500">45%</span>
+                                        <span class="text-xs text-indigo-600">21.7 tons</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="composition-item flex items-center">
+                                <div class="w-1/2">
+                                    <span class="text-gray-700">Plastics</span>
+                                </div>
+                                <div class="w-1/2">
+                                    <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-blue-500 rounded-full" style="width: 25%"></div>
+                                    </div>
+                                    <div class="flex justify-between mt-1">
+                                        <span class="text-xs text-gray-500">25%</span>
+                                        <span class="text-xs text-blue-600">12.1 tons</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="composition-item flex items-center">
+                                <div class="w-1/2">
+                                    <span class="text-gray-700">Paper & Cardboard</span>
+                                </div>
+                                <div class="w-1/2">
+                                    <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-purple-500 rounded-full" style="width: 15%"></div>
+                                    </div>
+                                    <div class="flex justify-between mt-1">
+                                        <span class="text-xs text-gray-500">15%</span>
+                                        <span class="text-xs text-purple-600">7.2 tons</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="composition-item flex items-center">
+                                <div class="w-1/2">
+                                    <span class="text-gray-700">Glass</span>
+                                </div>
+                                <div class="w-1/2">
+                                    <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-red-500 rounded-full" style="width: 8%"></div>
+                                    </div>
+                                    <div class="flex justify-between mt-1">
+                                        <span class="text-xs text-gray-500">8%</span>
+                                        <span class="text-xs text-red-600">3.9 tons</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="composition-item flex items-center">
+                                <div class="w-1/2">
+                                    <span class="text-gray-700">Metal</span>
+                                </div>
+                                <div class="w-1/2">
+                                    <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-purple-500 rounded-full" style="width: 5%"></div>
+                                    </div>
+                                    <div class="flex justify-between mt-1">
+                                        <span class="text-xs text-gray-500">5%</span>
+                                        <span class="text-xs text-purple-600">2.4 tons</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="composition-item flex items-center">
+                                <div class="w-1/2">
+                                    <span class="text-gray-700">Other</span>
+                                </div>
+                                <div class="w-1/2">
+                                    <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gray-500 rounded-full" style="width: 2%"></div>
+                                    </div>
+                                    <div class="flex justify-between mt-1">
+                                        <span class="text-xs text-gray-500">2%</span>
+                                        <span class="text-xs text-gray-600">1.0 tons</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center mt-5 pt-2 border-t border-gray-100">
+                            <span class="text-sm text-gray-600">
+                                <i class="fas fa-arrow-up text-indigo-500"></i> 5% increase in recyclables since last month
+                            </span>
+                            <a href="/recyclinginsights" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                              Recycling Insights <i class="fas fa-chart-pie ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- New Feature: Carbon Footprint and Landfill Monitoring -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <!-- Carbon Footprint Tracker -->
+                    <div class="carbon-tracker rounded-lg shadow-md p-6 card feedback-card" style="--card-index: 7">
+                        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+                            <i class="fas fa-leaf mr-2"></i> Carbon Footprint Tracker
+                        </h3>
+                        <div class="flex items-baseline mb-3">
+                            <span class="carbon-value">28.4</span>
+                            <span class="carbon-unit ml-1">tCO₂e</span>
+                        </div>
+                        <p class="text-indigo-200 text-sm mb-4">12% reduction from last month</p>
+                        
+                        <div class="space-y-3 mb-4">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-indigo-200">Collection Fleet</span>
+                                    <span class="text-sm font-medium text-white">14.2 tCO₂e</span>
+                                </div>
+                                <div class="w-full h-2 bg-indigo-800 rounded-full overflow-hidden">
+                                    <div class="progress-bar h-full bg-indigo-300 rounded-full" style="width: 50%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-indigo-200">Landfill Emissions</span>
+                                    <span class="text-sm font-medium text-white">10.8 tCO₂e</span>
+                                </div>
+                                <div class="w-full h-2 bg-indigo-800 rounded-full overflow-hidden">
+                                    <div class="progress-bar h-full bg-indigo-300 rounded-full" style="width: 38%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-indigo-200">Processing Facilities</span>
+                                    <span class="text-sm font-medium text-white">3.4 tCO₂e</span>
+                                </div>
+                                <div class="w-full h-2 bg-indigo-800 rounded-full overflow-hidden">
+                                    <div class="progress-bar h-full bg-indigo-300 rounded-full" style="width: 12%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button class="w-full bg-indigo-800 hover:bg-indigo-900 text-white px-4 py-2 rounded-md transition duration-300 text-sm">
+                                <i class="fas fa-download mr-1"></i> Download Carbon Report
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-md p-6 card recycling-card feedback-card" style="--card-index: 8">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-recycle mr-2"></i> Recycling Performance
+                        </h3>
+                        
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-indigo-600">42%</div>
+                                <div class="text-sm text-gray-500">Diversion Rate</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-blue-600">83%</div>
+                                <div class="text-sm text-gray-500">Quality Score</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-purple-600">10T</div>
+                                <div class="text-sm text-gray-500">Monthly Volume</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium text-gray-700">Material Recovery</span>
+                                <span class="text-sm font-medium text-gray-700">Target: 50%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 42%"></div>
+                            </div>
+                            <div class="flex justify-between mt-1">
+                                <span class="text-xs text-gray-500">Current: 42%</span>
+                                <span class="text-xs text-amber-600">8% below target</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Contamination</span>
+                                    <span class="text-sm font-medium text-red-500">12.4%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                    <div class="bg-red-500 h-1.5 rounded-full" style="width: 12.4%"></div>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Participation</span>
+                                    <span class="text-sm font-medium text-indigo-500">76%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                    <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 76%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-3 bg-indigo-50 rounded-lg mb-4">
+                            <div class="flex items-start">
+                                <i class="fas fa-lightbulb text-indigo-500 mt-0.5 mr-2"></i>
+                                <div>
+                                    <p class="text-sm text-indigo-800 font-medium">Performance Insight</p>
+                                    <p class="text-xs text-indigo-700">Plastic contamination has decreased by 5.3% after recent education campaign</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Waste-to-Energy Monitoring -->
+                    <div class="bg-white rounded-lg shadow-md p-6 card energy-card feedback-card" style="--card-index: 9">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-bolt mr-2"></i> Waste-to-Energy
+                        </h3>
+                        
+                        <div class="flex items-baseline mb-2">
+                            <span class="text-3xl font-bold text-indigo-600">12.4</span>
+                            <span class="text-sm text-gray-500 ml-1">MWh Generated</span>
+                        </div>
+                        <p class="text-indigo-600 text-sm mb-4"><i class="fas fa-arrow-up"></i> 8% increase this month</p>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="p-3 bg-indigo-50 rounded-lg text-center">
+                                <div class="text-xl font-bold text-indigo-600">4,250</div>
+                                <div class="text-xs text-gray-500">Homes Powered</div>
+                            </div>
+                            <div class="p-3 bg-purple-50 rounded-lg text-center">
+                                <div class="text-xl font-bold text-purple-600">3.2K</div>
+                                <div class="text-xs text-gray-500">Tons Processed</div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3 mb-4">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Facility Efficiency</span>
+                                    <span class="text-sm font-medium text-indigo-600">87%</span>
+                                </div>
+                                <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="progress-bar h-full bg-indigo-500 rounded-full" style="width: 87%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Capacity Utilization</span>
+                                    <span class="text-sm font-medium text-blue-600">72%</span>
+                                </div>
+                                <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="progress-bar h-full bg-blue-500 rounded-full" style="width: 72%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a href="/adminbiomon" class="block text-center w-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-4 py-2 rounded-md transition duration-300 text-sm">
+                            <i class="fas fa-chart-line mr-1"></i> View Detailed Energy Dashboard
+                        </a>
+                    </div>
+                </div>
+
+               <!-- Waste Collection Progress -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6 card feedback-card" style="--card-index: 10">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Today's Collection Routes Progress - Ernakulam District</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Kochi City Area</span>
+                                <span class="text-sm font-medium text-indigo-600">Completed</span>
+                            </div>
+                            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden" data-percent="100%">
+                                <div class="h-full bg-indigo-500 rounded-full" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Kakkanad IT Corridor</span>
+                                <span class="text-sm font-medium text-blue-600">In Progress (82%)</span>
+                            </div>
+                            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden" data-percent="82%">
+                                <div class="progress-bar h-full bg-blue-500 rounded-full" style="width: 82%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Aluva Township</span>
+                                <span class="text-sm font-medium text-purple-600">In Progress (55%)</span>
+                            </div>
+                            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden" data-percent="55%">
+                                <div class="progress-bar h-full bg-purple-500 rounded-full" style="width: 55%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Edappally-Kalamassery Industrial Belt</span>
+                                <span class="text-sm font-medium text-gray-600">Scheduled (4:00 PM)</span>
+                            </div>
+                            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden" data-percent="0%">
+                                <div class="h-full bg-gray-400 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium">Tripunithura Heritage Zone</span>
+                                <span class="text-sm font-medium text-gray-600">Scheduled (5:30 PM)</span>
+                            </div>
+                            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden" data-percent="0%">
+                                <div class="h-full bg-gray-400 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Access Section -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6 card feedback-card" style="--card-index: 11">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        <a href="/viewcustomer" class="quick-link flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                            <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mb-2">
+                                <i class="fas fa-user text-xl"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">Customers</span>
+                        </a>
+                        <a href="/viewstaff" class="quick-link flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mb-2">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">Manage Staff</span>
+                        </a>
+                        <a href="/product" class="quick-link flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                            <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mb-2 relative">
+                                <i class="fas fa-box text-xl"></i>
+                                <span class="absolute -top-1 -right-1 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">8</span>
+                            </div>
+                            <span class="text-sm text-gray-700">Products</span>
+                        </a>
+                        <a href="/viewcategory" class="quick-link flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                            <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mb-2">
+                                <i class="fas fa-tags text-xl"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">Categories</span>
+                        </a>
+                        <a href="/viewlocation" class="quick-link flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                            <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mb-2">
+                                <i class="fas fa-map-marker-alt text-xl"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">Locations</span>
+                        </a>
+                        <!-- Additional quick actions -->
+                        <a href="/viewapplication" class="quick-link flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                            <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mb-2">
+                                <i class="fas fa-file-alt text-xl"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">Application</span>
+                        </a>
+                        <a href="/viewmanagerate" class="quick-link flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mb-2">
+                                <i class="fas fa-percentage text-xl"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">Rates</span>
+                        </a>
+                        <a href="/viewpayment" class="quick-link flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                            <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mb-2">
+                                <i class="fas fa-money-bill text-xl"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">Payments</span>
+                        </a>
+                        <a href="/assignlocation" class="quick-link flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                            <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mb-2">
+                                <i class="fas fa-map text-xl"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">Assign Location</span>
+                        </a>
+                        <a href="/viewproduct" class="quick-link flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                            <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mb-2">
+                                <i class="fas fa-shopping-cart text-xl"></i>
+                            </div>
+                            <span class="text-sm text-gray-700">Shopping</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Recent Activities -->
+                <div class="bg-white rounded-lg shadow-md p-6 card feedback-card" style="--card-index: 12">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Activities</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mr-3 flex-shrink-0">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-800">Kochi City Area collection route completed</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mr-3 flex-shrink-0">
+                                <i class="fas fa-wrench"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-800">Vehicle #KL-07-WM42 scheduled for maintenance</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 mr-3 flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-800">New complaint: Overflowing bin at MG Road, Ernakulam</p>
+                            </div>
+                        </div>
+                        <!-- <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3 flex-shrink-0">
+                                <i class="fas fa-recycle"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-800">Brahmapuram Recycling Center reported 3.2 tons processed</p>
+                            </div>
+                        </div> -->
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mr-3 flex-shrink-0">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-800">New staff member added: Anitha Thomas (Supervisor)</p>
+                            </div>
+                        </div>
+                        <!-- <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3 flex-shrink-0">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-800">Kalamassery Waste-to-Energy plant achieved 89% efficiency</p>
+                            </div>
+                        </div> -->
+                        <!-- <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 mr-3 flex-shrink-0">
+                                <i class="fas fa-mountain"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-800">Brahmapuram waste management site inspection completed</p>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+
+                <!-- Weather Impact on Waste Collection -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6 card weather-impact feedback-card" style="--card-index: 13">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Weather Impact on Operations</h3>
+                    <span class="weather-impact-badge bg-purple-100 text-purple-800">Moderate Impact</span>
+                    
+                    <div class="flex flex-col md:flex-row md:items-center mb-4">
+                        <div class="flex items-center mb-4 md:mb-0 md:mr-8">
+                            <i class="fas fa-cloud-rain weather-icon"></i>
+                            <div>
+                                <h4 class="font-medium text-gray-700">Heavy Monsoon Showers Expected</h4>
+                            </div>
+                        </div>
+                        <div class="flex-1 space-y-2">
+                            <div class="bg-purple-50 rounded-lg p-3">
+                                <p class="text-sm text-purple-800"><i class="fas fa-exclamation-circle mr-1"></i> Collection in Fort Kochi and Mattancherry areas may experience delays</p>
+                            </div>
+                            <div class="bg-indigo-50 rounded-lg p-3">
+                                <p class="text-sm text-indigo-800"><i class="fas fa-info-circle mr-1"></i> Smart bins in Marine Drive and Menaka areas may report increased weight due to rainwater</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                            <div class="p-2 rounded-full bg-indigo-100 text-indigo-600 mr-3">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-gray-800">Routes Adjusted</h5>
+                                <p class="text-xs text-gray-600">Kakkanad & Aluva prioritized</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                            <div class="p-2 rounded-full bg-blue-100 text-blue-600 mr-3">
+                                <i class="fas fa-tint-slash"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-gray-800">Drainage Checked</h5>
+                                <p class="text-xs text-gray-600">Edappally & Kaloor inspected</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                            <div class="p-2 rounded-full bg-purple-100 text-purple-600 mr-3">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-medium text-gray-800">Staff Notified</h5>
+                                <p class="text-xs text-gray-600">10 staff members alerted</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <a href="/wheather" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                            View Kerala Meteorological Forecast <i class="fas fa-cloud ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Waste Management Tips Section -->
+                <div class="bg-white rounded-lg shadow-md p-6 card feedback-card mb-8" style="--card-index: 14">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Waste Management Tips & Guidelines</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="border border-indigo-200 rounded-lg p-4 bg-indigo-50">
+                            <div class="flex items-center mb-3">
+                                <div class="p-2 bg-indigo-100 rounded-full text-indigo-600 mr-3">
+                                    <i class="fas fa-leaf"></i>
+                                </div>
+                                <h4 class="font-medium text-indigo-800">Organic Waste</h4>
+                            </div>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-indigo-600 mt-1 mr-2"></i>
+                                    <span>Keep food waste separate from garden waste when possible</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-indigo-600 mt-1 mr-2"></i>
+                                    <span>Use compostable bags for food waste collection</span>
+                                </li>
+                                <li class="flex items-start waste-tip">
+                                    <i class="fas fa-info-circle text-blue-600 mt-1 mr-2"></i>
+                                    <span>Prevent liquid buildup in organic waste containers</span>
+                                    <div class="waste-tip-content">
+                                        Adding dry materials like shredded paper or cardboard helps absorb excess moisture in food waste bins.
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                            <div class="flex items-center mb-3">
+                                <div class="p-2 bg-blue-100 rounded-full text-blue-600 mr-3">
+                                    <i class="fas fa-recycle"></i>
+                                </div>
+                                <h4 class="font-medium text-blue-800">Recyclables</h4>
+                            </div>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-blue-600 mt-1 mr-2"></i>
+                                    <span>Rinse containers before recycling to avoid contamination</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-blue-600 mt-1 mr-2"></i>
+                                    <span>Flatten cardboard boxes to optimize bin space</span>
+                                </li>
+                                <li class="flex items-start waste-tip">
+                                    <i class="fas fa-info-circle text-blue-600 mt-1 mr-2"></i>
+                                    <span>Remove caps from plastic bottles before recycling</span>
+                                    <div class="waste-tip-content">
+                                        Different types of plastic require different recycling processes. Separating caps helps with sorting.
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="border border-purple-200 rounded-lg p-4 bg-purple-50">
+                            <div class="flex items-center mb-3">
+                                <div class="p-2 bg-purple-100 rounded-full text-purple-600 mr-3">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <h4 class="font-medium text-purple-800">Hazardous Waste</h4>
+                            </div>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-purple-600 mt-1 mr-2"></i>
+                                    <span>Never mix different types of household chemicals</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-purple-600 mt-1 mr-2"></i>
+                                    <span>Keep hazardous materials in original containers when possible</span>
+                                </li>
+                                <li class="flex items-start waste-tip">
+                                    <i class="fas fa-info-circle text-blue-600 mt-1 mr-2"></i>
+                                    <span>Schedule special pickups for electronics and batteries</span>
+                                    <div class="waste-tip-content">
+                                        Electronic waste contains valuable materials that can be recovered and harmful substances that need proper handling.
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Mobile Sidebar Overlay -->
+<div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden"></div>
+
+<!-- Profile Edit Modal -->
+<div id="profile-modal" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header-gradient"></div>
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Edit Profile</h3>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-6 flex flex-col items-center">
+                <div class="avatar-container relative mb-3">
+                    <img id="modal-avatar-preview" src="/api/placeholder/100/100" alt="Admin Avatar" class="w-24 h-24 rounded-full object-cover border-4 border-indigo-500">
+                    <div class="avatar-overlay absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 transition-opacity duration-300 cursor-pointer">
+                        <i class="fas fa-camera text-white text-xl"></i>
+                    </div>
+                    <input type="file" id="modal-avatar-upload" name="img" class="hidden" accept="image/*">
+                </div>
+                <div class="text-center mb-4">
+                    <p class="text-sm text-gray-500 mb-1">Click on the avatar to change</p>
+                    <div class="flex gap-2 justify-center">
+                        <div class="w-8 h-8 rounded-full bg-indigo-500 cursor-pointer border-2 border-white hover:scale-110 transition-transform"></div>
+                        <div class="w-8 h-8 rounded-full bg-blue-500 cursor-pointer border-2 border-white hover:scale-110 transition-transform"></div>
+                        <div class="w-8 h-8 rounded-full bg-purple-500 cursor-pointer border-2 border-white hover:scale-110 transition-transform"></div>
+                        <div class="w-8 h-8 rounded-full bg-accent cursor-pointer border-2 border-white hover:scale-110 transition-transform"></div>
+                    </div>
+                </div>
+            </div>
+            <form>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                        Name
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500" id="name" type="text" value="John Doe">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                        Email
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500" id="email" type="email" value="john.doe@ecotrack.com">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="role">
+                        Role
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100" id="role" type="text" value="Waste Management Admin" disabled>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                        New Password
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500" id="password" type="password" placeholder="Leave blank to keep current password">
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" id="cancel-edit" class="btn-modal btn-cancel mr-2">
+                        Cancel
+                    </button>
+                    <button type="button" id="save-profile" class="btn-modal btn-confirm" style="background-color: var(--primary);">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Alert Container -->
+<div id="alert-container" class="alert-container"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+<script>
+    // Initialize profile data from localStorage on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadProfileData();
+        animateStatsOnScroll();
+        
+        // Apply animation delay to stats cards
+        document.querySelectorAll('.animated-card').forEach((card, index) => {
+            card.style.animationDelay = `${0.1 * (index + 1)}s`;
+        });
+        
+        // Initialize bin fill level animations
+        document.querySelectorAll('.bin-fill-level').forEach(bin => {
+            const height = bin.style.height;
+            bin.style.height = '0';
+            setTimeout(() => {
+                bin.style.height = height;
+            }, 500);
+        });
+    });
+
+    // Mobile menu toggle with overlay
+    document.getElementById('mobile-menu-button').addEventListener('click', function() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        
+        sidebar.classList.toggle('hidden');
+        sidebar.classList.toggle('md:flex');
+        sidebar.classList.toggle('fixed');
+        sidebar.classList.toggle('z-20');
+        sidebar.classList.toggle('h-full');
+        sidebar.classList.toggle('w-64');
+        
+        if (!sidebar.classList.contains('hidden')) {
+            overlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        } else {
+            overlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    });
+    
+    // Close sidebar when clicking overlay
+    document.getElementById('sidebar-overlay').addEventListener('click', function() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.add('hidden');
+        sidebar.classList.add('md:flex');
+        this.classList.add('hidden');
+        document.body.style.overflow = '';
+    });
+    
+    // Profile modal functionality
+    const profileModal = document.getElementById('profile-modal');
+    const editProfileBtn = document.getElementById('edit-profile-btn');
+    const closeModal = document.getElementById('close-modal');
+    const cancelEdit = document.getElementById('cancel-edit');
+    
+    editProfileBtn.addEventListener('click', function() {
+        profileModal.classList.add('active');
+        loadProfileDataToModal();
+    });
+    
+    closeModal.addEventListener('click', function() {
+        profileModal.classList.remove('active');
+    });
+    
+    cancelEdit.addEventListener('click', function() {
+        profileModal.classList.remove('active');
+    });
+    
+    // Avatar upload functionality
+    const avatarContainer = document.querySelector('.avatar-container');
+    const avatarUpload = document.getElementById('avatar-upload');
+    const modalAvatarContainer = document.querySelector('#profile-modal .avatar-container');
+    const modalAvatarUpload = document.getElementById('modal-avatar-upload');
+    
+    avatarContainer.addEventListener('click', function() {
+        avatarUpload.click();
+    });
+    
+    modalAvatarContainer.addEventListener('click', function() {
+        modalAvatarUpload.click();
+    });
+    
+    avatarUpload.addEventListener('change', handleAvatarChange);
+    modalAvatarUpload.addEventListener('change', handleModalAvatarChange);
+    
+    function handleAvatarChange(e) {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const imageData = event.target.result;
+                document.getElementById('avatar-preview').src = imageData;
+                document.getElementById('topbar-avatar').src = imageData; // Update top bar avatar
+                document.getElementById('modal-avatar-preview').src = imageData; // Update modal avatar
+                saveProfileData({ avatar: imageData });
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    }
+    
+    function handleModalAvatarChange(e) {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const imageData = event.target.result;
+                document.getElementById('modal-avatar-preview').src = imageData;
+                document.getElementById('avatar-preview').src = imageData;
+                document.getElementById('topbar-avatar').src = imageData; // Update top bar avatar
+                saveProfileData({ avatar: imageData });
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    }
+    
+    // Avatar border color selection
+    document.querySelectorAll('#profile-modal .rounded-full.cursor-pointer').forEach(colorEl => {
+        colorEl.addEventListener('click', function() {
+            const borderColor = this.classList[3]; // Get the background color class
+            const avatarBorder = document.getElementById('modal-avatar-preview');
+            // Remove existing border color classes
+            avatarBorder.classList.forEach(cls => {
+                if (cls.startsWith('border-')) {
+                    avatarBorder.classList.remove(cls);
+                }
+            });
+            // Add new border color class
+            avatarBorder.classList.add(borderColor.replace('bg-', 'border-'));
+            
+            // Apply same border to main avatar
+            const mainAvatar = document.getElementById('avatar-preview');
+            mainAvatar.classList.forEach(cls => {
+                if (cls.startsWith('border-')) {
+                    mainAvatar.classList.remove(cls);
+                }
+            });
+            mainAvatar.classList.add(borderColor.replace('bg-', 'border-'));
+            
+            saveProfileData({ borderColor: borderColor.replace('bg-', 'border-') });
+        });
+    });
+    
+    // Function to save profile data to localStorage
+    function saveProfileData(data) {
+        const currentData = JSON.parse(localStorage.getItem('adminProfile')) || {
+            name: 'John Doe',
+            email: 'john.doe@ecotrack.com',
+            avatar: '/api/placeholder/100/100',
+            borderColor: 'border-indigo-500'
+        };
+        
+        const updatedData = {
+            ...currentData,
+            ...data
+        };
+        
+        localStorage.setItem('adminProfile', JSON.stringify(updatedData));
+    }
+    
+    // Function to load profile data from localStorage
+    function loadProfileData() {
+        const profileData = JSON.parse(localStorage.getItem('adminProfile'));
+        if (profileData) {
+            if (profileData.name) {
+                document.getElementById('admin-name').textContent = profileData.name;
+                document.getElementById('topbar-admin-name').textContent = profileData.name; // Update top bar name
+            }
+            if (profileData.email && document.getElementById('email')) {
+                document.getElementById('email').value = profileData.email;
+            }
+            if (profileData.avatar) {
+                document.getElementById('avatar-preview').src = profileData.avatar;
+                document.getElementById('topbar-avatar').src = profileData.avatar; // Update top bar avatar
+                if (document.getElementById('modal-avatar-preview')) {
+                    document.getElementById('modal-avatar-preview').src = profileData.avatar;
+                }
+            }
+            if (profileData.borderColor) {
+                // Apply border color to avatars
+                const mainAvatar = document.getElementById('avatar-preview');
+                mainAvatar.classList.forEach(cls => {
+                    if (cls.startsWith('border-')) {
+                        mainAvatar.classList.remove(cls);
+                    }
+                });
+                mainAvatar.classList.add(profileData.borderColor);
+                
+                if (document.getElementById('modal-avatar-preview')) {
+                    const modalAvatar = document.getElementById('modal-avatar-preview');
+                    modalAvatar.classList.forEach(cls => {
+                        if (cls.startsWith('border-')) {
+                            modalAvatar.classList.remove(cls);
+                        }
+                    });
+                    modalAvatar.classList.add(profileData.borderColor);
+                }
+            }
+        }
+    }
+    
+    // Function to load profile data into modal
+    function loadProfileDataToModal() {
+        const profileData = JSON.parse(localStorage.getItem('adminProfile'));
+        if (profileData) {
+            document.getElementById('name').value = profileData.name || 'John Doe';
+            document.getElementById('email').value = profileData.email || 'john.doe@ecotrack.com';
+            document.getElementById('modal-avatar-preview').src = profileData.avatar || '/api/placeholder/100/100';
+        }
+    }
+    
+    // Animated alert popup function
+    function showAlert(message, type = 'success') {
+        const alertContainer = document.getElementById('alert-container');
+        
+        const icons = {
+            success: '<i class="fas fa-check-circle"></i>',
+            error: '<i class="fas fa-exclamation-circle"></i>',
+            warning: '<i class="fas fa-exclamation-triangle"></i>',
+            info: '<i class="fas fa-info-circle"></i>'
+        };
+        
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type}`;
+        alert.innerHTML = `
+            <div class="alert-color"></div>
+            <div class="alert-content">
+                <div class="alert-icon">${icons[type]}</div>
+                <div class="alert-message">${message}</div>
+                <button class="alert-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        
+        alertContainer.appendChild(alert);
+        
+        // Close on button click
+        alert.querySelector('.alert-close').addEventListener('click', () => {
+            alert.remove();
+        });
+        
+        // Auto remove after animation completes
+        setTimeout(() => {
+            alert.remove();
+        }, 5000);
+    }
+    
+    // Animate stats cards on scroll
+    function animateStatsOnScroll() {
+        const animateElements = document.querySelectorAll('.progress-bar');
+        
+        function checkPosition() {
+            animateElements.forEach(element => {
+                const positionFromTop = element.getBoundingClientRect().top;
+                
+                if (positionFromTop - window.innerHeight <= 0) {
+                    const width = element.getAttribute('style').split(':')[1].trim();
+                    element.style.width = '0';
+                    setTimeout(() => {
+                        element.style.width = width;
+                    }, 100);
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', checkPosition);
+        checkPosition(); // Check on page load
+    }
+    
+    // Save profile changes with animated alert
+    document.getElementById('save-profile').addEventListener('click', function() {
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        // Update displayed name everywhere
+        document.getElementById('admin-name').textContent = name;
+        document.getElementById('topbar-admin-name').textContent = name; // Update top bar name
+        
+        // Save to localStorage
+        const dataToSave = { name, email };
+        if (password) {
+            dataToSave.password = password;
+        }
+        saveProfileData(dataToSave);
+        
+        profileModal.classList.remove('active');
+        showAlert('Profile updated successfully!', 'success');
+    });
+    
+    // Animation for chart bars
+    setTimeout(() => {
+        document.querySelectorAll('.progress-bar').forEach(bar => {
+            bar.style.width = '0';
+            setTimeout(() => {
+                const width = bar.parentElement.getAttribute('data-percent') || bar.style.width;
+                bar.style.width = width;
+            }, 300);
+        });
+    }, 500);
+
+    // Smart Bin Tab Functionality
+    document.querySelectorAll('.inline-flex button').forEach(button => {
+        button.addEventListener('click', function() {
+            document.querySelectorAll('.inline-flex button').forEach(btn => {
+                btn.classList.remove('tab-active');
+            });
+            this.classList.add('tab-active');
+            showAlert('Filtering smart bins...', 'info');
+        });
+    });
+
+    // Weather Impact Real-time updates
+    setInterval(() => {
+        // Simulate real-time data updates
+        const currentImpacts = ['Moderate', 'Low', 'High'];
+        const randomImpact = currentImpacts[Math.floor(Math.random() * currentImpacts.length)];
+        const impactColors = {
+            'Low': 'bg-indigo-100 text-indigo-800',
+            'Moderate': 'bg-purple-100 text-purple-800',
+            'High': 'bg-red-100 text-red-800'
+        };
+        
+        const weatherBadge = document.querySelector('.weather-impact-badge');
+        if (weatherBadge) {
+            weatherBadge.className = `weather-impact-badge ${impactColors[randomImpact]}`;
+            weatherBadge.textContent = `${randomImpact} Impact`;
+        }
+    }, 30000); // Update every 30 seconds
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get the download button in the carbon tracker section
+    const downloadButton = document.querySelector('.carbon-tracker button');
+    
+    // Add click event listener to the button
+    if (downloadButton) {
+      downloadButton.addEventListener('click', generateCarbonReport);
+    }
+  });
+  
+  function generateCarbonReport() {
+    // Create new PDF document
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(20);
+    doc.setTextColor(107, 72, 255); // Updated to new theme color
+    doc.text("Carbon Footprint Report", 105, 20, { align: "center" });
+    
+    // Add subtitle
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Ernakulam Waste Management Division", 105, 30, { align: "center" });
+    doc.text("Monthly Analysis: February - March 2025", 105, 38, { align: "center" });
+    
+    // Add divider line
+    doc.setDrawColor(107, 72, 255); // Updated to new theme color
+    doc.setLineWidth(0.5);
+    doc.line(20, 42, 190, 42);
+    
+    // Executive summary
+    doc.setFontSize(16);
+    doc.setTextColor(107, 72, 255); // Updated to new theme color
+    doc.text("Executive Summary", 20, 55);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text("This report provides a detailed analysis of the carbon emissions", 20, 65);
+    doc.text("associated with waste management operations in the Ernakulam district.", 20, 73);
+    doc.text("Total carbon footprint: 28.4 tCO₂e", 20, 85);
+    doc.text("12% reduction from last month", 20, 93);
+    
+    // Emissions breakdown
+    doc.setFontSize(16);
+    doc.setTextColor(107, 72, 255); // Updated to new theme color
+    doc.text("Emissions Breakdown", 20, 110);
+    
+    // Create table with autotable
+    doc.autoTable({
+      startY: 120,
+      head: [['Emission Source', 'Current Month (tCO₂e)', 'Previous Month (tCO₂e)', 'Change (%)']],
+      body: [
+        ['Collection Fleet', '14.2', '16.1', '-11.8%'],
+        ['Landfill Emissions', '10.8', '12.5', '-13.6%'],
+        ['Processing Facilities', '3.4', '3.7', '-8.1%'],
+        ['Total Emissions', '28.4', '32.3', '-12.0%']
+      ],
+      headStyles: { fillColor: [107, 72, 255] }, // Updated to new theme color
+      theme: 'grid'
+    });
+    
+    // Detailed Analysis
+    const currentY = doc.lastAutoTable.finalY + 10;
+    doc.setFontSize(16);
+    doc.setTextColor(107, 72, 255); // Updated to new theme color
+    doc.text("Detailed Analysis", 20, currentY);
+    
+    doc.setFontSize(14);
+    doc.setTextColor(60, 60, 60);
+    doc.text("Collection Fleet (14.2 tCO₂e)", 20, currentY + 10);
+    
+    doc.setFontSize(11);
+    doc.text("The collection fleet continues to be the largest contributor to our carbon footprint,", 20, currentY + 18);
+    doc.text("accounting for 50% of total emissions. Recent optimizations in route planning and", 20, currentY + 26);
+    doc.text("the addition of electric collection vehicles have reduced emissions by 11.8%.", 20, currentY + 34);
+    
+    doc.setFontSize(14);
+    doc.setTextColor(60, 60, 60);
+    doc.text("Landfill Emissions (10.8 tCO₂e)", 20, currentY + 46);
+    
+    doc.setFontSize(11);
+    doc.text("Landfill emissions have decreased by 13.6% compared to the previous month.", 20, currentY + 54);
+    doc.text("This reduction is attributed to improved landfill gas capture systems and a", 20, currentY + 62);
+    doc.text("decrease in organic waste sent to landfill.", 20, currentY + 70);
+    
+    // Add second page
+    doc.addPage();
+    
+    // Carbon Reduction Initiatives
+    doc.setFontSize(16);
+    doc.setTextColor(107, 72, 255); // Updated to new theme color
+    doc.text("Carbon Reduction Initiatives", 20, 20);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text("1. Fleet Electrification Program", 25, 30);
+    doc.text("   • Target: Convert 40% of collection vehicles to electric by end of 2025", 25, 38);
+    doc.text("   • Status: 15% converted (4 vehicles)", 25, 46);
+    
+    doc.text("2. Organic Waste Diversion", 25, 56);
+    doc.text("   • Target: Reduce organic waste to landfill by 30% by end of 2025", 25, 64);
+    doc.text("   • Status: 15% reduction achieved", 25, 72);
+    
+    doc.text("3. Renewable Energy Transition", 25, 82);
+    doc.text("   • Target: 50% renewable energy use at all processing facilities", 25, 90);
+    doc.text("   • Status: 22% achieved", 25, 98);
+    
+    // Recommendations
+    doc.setFontSize(16);
+    doc.setTextColor(107, 72, 255); // Updated to new theme color
+    doc.text("Recommendations", 20, 115);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Based on the current data, we recommend the following actions:", 20, 125);
+    doc.text("1. Accelerate Fleet Electrification", 25, 135);
+    doc.text("2. Enhance Organic Waste Segregation", 25, 143);
+    doc.text("3. Optimize Collection Routes", 25, 151);
+    
+    // Footer
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text("Report generated on March 18, 2025", 105, 285, { align: "center" });
+    
+    // Add page numbers
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.text('Page ' + i + ' of ' + pageCount, 105, 290, { align: "center" });
+    }
+    
+    // Save the PDF
+    doc.save("Ernakulam_Carbon_Footprint_Report.pdf");
+    
+    // Show alert notification
+    showAlert('Carbon footprint report downloaded successfully!', 'success');
+  }
+</script>
+</body>
+</html>

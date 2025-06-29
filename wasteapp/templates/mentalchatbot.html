@@ -1,0 +1,3560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindfulAI - Mental Health Chatbot</title>
+    <style>
+        :root {
+            --primary-color: #5e72e4;
+            --secondary-color: #8392ab;
+            --accent-color: #11cdef;
+            --success-color: #2dce89;
+            --warning-color: #fb6340;
+            --danger-color: #f5365c;
+            --light-color: #f8f9fe;
+            --dark-color: #172b4d;
+            --gradient-start: #7795f8;
+            --gradient-end: #6772e5;
+            --shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fe;
+            color: var(--dark-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 20px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-button {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .mood-tracker {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mood-slider-container {
+            position: relative;
+            height: 40px;
+        }
+
+        .mood-slider {
+            width: 100%;
+            appearance: none;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #f5365c, #fb6340, #ffd600, #2dce89);
+            outline: none;
+            margin: 15px 0;
+        }
+
+        .mood-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .mood-slider::-webkit-slider-thumb:active {
+            transform: scale(1.2);
+        }
+
+        .mood-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+        }
+
+        .resources-list {
+            list-style-type: none;
+        }
+
+        .resource-item {
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .resource-item:hover {
+            background-color: var(--light-color);
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bot-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .bot-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--success-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(45, 206, 137, 0.7);
+            }
+            
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(45, 206, 137, 0);
+            }
+            
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(45, 206, 137, 0);
+            }
+        }
+
+        .chat-settings-button {
+            background: none;
+            border: none;
+            color: var(--secondary-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .chat-settings-button:hover {
+            color: var(--primary-color);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            animation: messageAppear 0.3s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes messageAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+            background-color: white;
+            border: 1px solid #eaeaea;
+            box-shadow: var(--shadow);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.7);
+            position: absolute;
+            bottom: -18px;
+            right: 10px;
+        }
+
+        .message.bot .message-time {
+            color: var(--secondary-color);
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 15px;
+            align-self: flex-start;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .chat-input-container {
+            margin-top: 1rem;
+            display: flex;
+            gap: 10px;
+            position: relative;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px 20px;
+            border-radius: 30px;
+            border: 1px solid #e0e0e0;
+            box-shadow: var(--shadow);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .chat-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(17, 205, 239, 0.25);
+        }
+
+        .input-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .chat-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .chat-button:active {
+            transform: translateY(-1px);
+        }
+
+        .sentiment-indicator {
+            position: absolute;
+            top: -30px;
+            left: 20px;
+            background-color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            font-size: 0.8rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: var(--transition);
+            color: var(--secondary-color);
+        }
+
+        .sentiment-indicator.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .suggestions-container {
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .suggestion-chip {
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            animation: chipAppear 0.3s ease-out forwards;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        @keyframes chipAppear {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .suggestion-chip:hover {
+            background-color: var(--light-color);
+            border-color: var(--accent-color);
+        }
+
+        /* Features Panel */
+        .features-panel {
+            width: 300px;
+            background-color: white;
+            box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.1);
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .mood-chart-container {
+            height: 200px;
+            margin-top: 10px;
+            position: relative;
+            background-color: #f8f9fe;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .mood-chart {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            padding: 10px;
+        }
+
+        .mood-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary-color), var(--accent-color));
+            margin: 0 2px;
+            border-radius: 3px 3px 0 0;
+            transition: height 0.5s ease;
+        }
+
+        .insights-container {
+            background-color: #f8f9fe;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .insight-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .insight-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .insight-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .insight-value {
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .features-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+        }
+
+        /* Animations and effects */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .highlight {
+            animation: highlight 1s ease;
+        }
+
+        @keyframes highlight {
+            0% {
+                background-color: rgba(94, 114, 228, 0.2);
+            }
+            100% {
+                background-color: transparent;
+            }
+        }
+
+        /* Theme Toggle */
+        .theme-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Dark theme variables */
+        [data-theme="dark"] {
+            --light-color: #2a2a2a;
+            --dark-color: #f8f9fe;
+        }
+
+        /* Dark theme styles */
+        [data-theme="dark"] body {
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        [data-theme="dark"] .sidebar, 
+        [data-theme="dark"] .features-panel {
+            background-color: #2a2a2a;
+            box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="dark"] .message.bot {
+            background-color: #2a2a2a;
+            border-color: #3a3a3a;
+        }
+
+        [data-theme="dark"] .chat-input,
+        [data-theme="dark"] .sentiment-indicator,
+        [data-theme="dark"] .suggestion-chip {
+            background-color: #2a2a2a;
+            border-color: #3a3a3a;
+            color: white;
+        }
+
+        [data-theme="dark"] .insights-container,
+        [data-theme="dark"] .mood-chart-container {
+            background-color: #3a3a3a;
+        }
+
+        [data-theme="dark"] .resource-item:hover {
+            background-color: #3a3a3a;
+        }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        .focus-visible:focus {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        /* Tooltip */
+        [data-tooltip] {
+            position: relative;
+        }
+
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 100;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <div class="logo-icon">
+                <i>M</i>
+            </div>
+            <span>MindfulAI</span>
+        </div>
+        <div class="nav-buttons">
+            <button class="nav-button" data-tooltip="Toggle Dark Mode">
+                <label class="theme-switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+            </button>
+            <button class="nav-button" data-tooltip="Help">?</button>
+        </div>
+    </header>
+
+    <main>
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Mood Tracker</h3>
+                <div class="mood-tracker">
+                    <div class="mood-slider-container">
+                        <input type="range" min="1" max="10" value="7" class="mood-slider" id="mood-slider">
+                    </div>
+                    <div class="mood-labels">
+                        <span>Not Great</span>
+                        <span>Okay</span>
+                        <span>Great</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Helpful Resources</h3>
+                <ul class="resources-list">
+                    <li class="resource-item">Anxiety Management</li>
+                    <li class="resource-item">Depression Support</li>
+                    <li class="resource-item">Sleep Improvement</li>
+                    <li class="resource-item">Meditation Guides</li>
+                    <li class="resource-item">Crisis Hotlines</li>
+                    <li class="resource-item">Self-Care Tips</li>
+                    <li class="resource-item">Stress Reduction</li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Previous Sessions</h3>
+                <ul class="resources-list">
+                    <li class="resource-item">March 18, 2025</li>
+                    <li class="resource-item">March 15, 2025</li>
+                    <li class="resource-item">March 12, 2025</li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <div class="bot-avatar">
+                        <i>M</i>
+                    </div>
+                    <div>
+                        <h2>MindfulAI Assistant</h2>
+                        <div class="bot-status">
+                            <div class="status-indicator"></div>
+                            <span>Online • AI-powered support</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="chat-settings-button">⚙️</button>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot" style="animation-delay: 0.1s;">
+                    <p>Hello! I'm MindfulAI, your mental health companion. How are you feeling today?</p>
+                    <span class="message-time">10:00 AM</span>
+                </div>
+            </div>
+
+            <div class="suggestions-container" id="suggestions-container">
+                <div class="suggestion-chip" style="animation-delay: 0.1s;">I'm feeling anxious</div>
+                <div class="suggestion-chip" style="animation-delay: 0.2s;">I need help with stress</div>
+                <div class="suggestion-chip" style="animation-delay: 0.3s;">What can you help with?</div>
+                <div class="suggestion-chip" style="animation-delay: 0.4s;">I'm having trouble sleeping</div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="sentiment-indicator" id="sentiment-indicator">Neutral tone detected</div>
+                <input type="text" class="chat-input" id="chat-input" placeholder="Type your message here..." aria-label="Type your message">
+                <div class="input-buttons">
+                    <button class="chat-button" id="voice-button" aria-label="Voice input">🎤</button>
+                    <button class="chat-button" id="send-button" aria-label="Send message">➤</button>
+                </div>
+            </div>
+        </div>
+
+        <aside class="features-panel">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Mood History</h3>
+                <div class="mood-chart-container">
+                    <div class="mood-chart">
+                        <div class="mood-bar" style="height: 60%;"></div>
+                        <div class="mood-bar" style="height: 40%;"></div>
+                        <div class="mood-bar" style="height: 30%;"></div>
+                        <div class="mood-bar" style="height: 50%;"></div>
+                        <div class="mood-bar" style="height: 65%;"></div>
+                        <div class="mood-bar" style="height: 75%;"></div>
+                        <div class="mood-bar" style="height: 70%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">AI Insights</h3>
+                <div class="insights-container">
+                    <div class="insight-item">
+                        <div class="insight-title">Mood Pattern</div>
+                        <div class="insight-value">Your mood tends to improve during evenings.</div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-title">Common Triggers</div>
+                        <div class="insight-value">Work stress and sleep quality appear to affect your anxiety levels.</div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-title">Coping Strategies</div>
+                        <div class="insight-value">Deep breathing exercises have been most effective for you.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Recommended Activities</h3>
+                <ul class="resources-list">
+                    <li class="resource-item">5-minute meditation</li>
+                    <li class="resource-item">Gratitude journaling</li>
+                    <li class="resource-item">Progressive muscle relaxation</li>
+                    <li class="resource-item">Mindful breathing exercise</li>
+                    <li class="resource-item">Positive affirmations</li>
+                </ul>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+
+       // Enhanced NLP Module with Intent Recognition and Advanced ML Capabilities
+class EnhancedNLPEngine {
+    constructor() {
+        // ========= EMOTION AND SENTIMENT LEXICONS =========
+        this.positiveWords = [
+            'happy', 'good', 'great', 'excellent', 'better', 'positive', 'joy', 'pleased', 
+            'calm', 'relaxed', 'hopeful', 'excited', 'content', 'peaceful', 'grateful', 'thankful', 'optimistic',
+            'accomplished', 'accepted', 'amazed', 'appreciated', 'brave', 'comfortable', 'confident', 'delighted',
+            'eager', 'encouraged', 'energetic', 'enthusiastic', 'focused', 'friendly', 'fulfilled', 'glad',
+            'glowing', 'inspired', 'interested', 'loved', 'motivated', 'proud', 'refreshed', 'relieved',
+            'satisfied', 'secure', 'strong', 'supported', 'thrilled', 'valued', 'welcome', 'worthy'
+        ];
+        
+        this.negativeWords = [
+            'sad', 'bad', 'awful', 'terrible', 'worse', 'negative', 'anxious', 'stressed', 
+            'depressed', 'upset', 'worried', 'scared', 'afraid', 'angry', 'frustrated', 'overwhelmed', 'lonely', 
+            'hopeless', 'exhausted', 'tired', 'panic', 'distressed', 'pain', 'hurt', 'suicidal', 'cry', 'crying', 'miserable',
+            'abandoned', 'abused', 'afraid', 'agitated', 'alarmed', 'alienated', 'annoyed', 'apprehensive',
+            'ashamed', 'betrayed', 'bitter', 'bored', 'broken', 'burdened', 'confused', 'crushed',
+            'defeated', 'defensive', 'dejected', 'desperate', 'disappointed', 'discouraged', 'disgusted', 'disheartened',
+            'disturbed', 'doubtful', 'drained', 'embarrassed', 'empty', 'enraged', 'fearful', 'fragile',
+            'frightened', 'grieving', 'guilty', 'helpless', 'hesitant', 'horrified', 'humiliated', 'hurt',
+            'ignored', 'impatient', 'inadequate', 'incompetent', 'indecisive', 'inferior', 'insecure', 'insignificant',
+            'invalidated', 'irritated', 'isolated', 'jealous', 'lost', 'neglected', 'nervous', 'numb',
+            'offended', 'oppressed', 'outraged', 'overwhelmed', 'panicked', 'paralyzed', 'perplexed', 'powerless',
+            'pressured', 'rejected', 'remorseful', 'resentful', 'restless', 'self-conscious', 'shaken', 'shamed',
+            'shocked', 'small', 'sorrowful', 'stuck', 'tense', 'terrified', 'threatened', 'traumatized',
+            'troubled', 'uncomfortable', 'unheard', 'unloved', 'unseen', 'unsettled', 'unsupported', 'unwanted',
+            'vulnerable', 'weak', 'worthless', 'wounded'
+        ];
+        
+        // ========= MENTAL HEALTH TAXONOMY =========
+        // Comprehensive mental health terminology organized by condition/topic
+        this.mentalHealthKeywords = {
+            // Anxiety disorders
+            'anxiety': [
+                'anxiety', 'anxious', 'worry', 'worried', 'panic', 'nervous', 'stress', 'stressed', 'overthinking', 
+                'fear', 'scared', 'afraid', 'uneasy', 'apprehensive', 'dread', 'phobia', 'agoraphobia', 'social anxiety',
+                'performance anxiety', 'nervousness', 'restless', 'on edge', 'tense', 'panicky', 'hyperventilate',
+                'racing heart', 'sweating', 'trembling', 'shaking', 'nausea', 'dizzy', 'lightheaded', 'chest pain',
+                'shortness of breath', 'cant breathe', 'breathing', 'cant relax', 'gad', 'generalized anxiety disorder',
+                'anticipation', 'impending doom', 'fight or flight', 'freeze', 'avoidance', 'safety behaviors',
+                'reassurance seeking', 'health anxiety', 'hypochondria', 'rumination', 'obsessing', 'perfectionism'
+            ],
+
+            // Mood disorders
+            'depression': [
+                'depression', 'depressed', 'sad', 'unhappy', 'hopeless', 'empty', 'numb', 'worthless', 'guilt', 
+                'suicidal', 'unmotivated', 'tired', 'exhausted', 'alone', 'lonely', 'despair', 'melancholy', 
+                'apathy', 'disinterest', 'anhedonia', 'cant enjoy', 'no pleasure', 'mdd', 'major depressive disorder',
+                'low mood', 'blue', 'down', 'grief', 'loss', 'crying', 'tearful', 'irritable', 'angry', 'agitated',
+                'weight loss', 'weight gain', 'appetite changes', 'suicide', 'kill myself', 'end my life', 'self-harm',
+                'cutting', 'hurting myself', 'not worth living', 'burden', 'better off without me', 'pointless',
+                'meaningless', 'no future', 'cant see a way out', 'trapped', 'seasonal affective disorder', 'sad',
+                'bipolar', 'mania', 'manic', 'hypomania', 'hypomanic', 'mood swings', 'mood disorder', 'cyclothymia',
+                'euphoria', 'grandiosity', 'racing thoughts', 'impulsivity', 'reckless', 'irritability'
+            ],
+
+            // Sleep issues
+            'sleep': [
+                'sleep', 'insomnia', 'nightmares', 'tired', 'exhausted', 'rest', 'fatigue', 'bed', 'nap', 'drowsy', 
+                'awake', 'midnight', 'cant sleep', 'trouble sleeping', 'difficulty sleeping', 'staying asleep',
+                'falling asleep', 'early waking', 'sleep hygiene', 'sleep quality', 'rem', 'deep sleep', 'light sleep',
+                'sleep cycle', 'circadian rhythm', 'night terrors', 'sleep paralysis', 'sleep walking', 'sleep talking',
+                'snoring', 'sleep apnea', 'restless legs', 'groggy', 'oversleeping', 'undersleeping', 'irregular sleep',
+                'melatonin', 'sleep aids', 'sleeping pills', 'narcolepsy', 'hypersomnia', 'jet lag', 'shift work',
+                'bedtime routine', 'blue light', 'screens', 'caffeine', 'sleep environment', 'tossing and turning',
+                'uncomfortable', 'noisy', 'too hot', 'too cold', 'dreams', 'vivid dreams', 'lucid dreams'
+            ],
+
+            // Stress-related issues
+            'stress': [
+                'stress', 'stressed', 'overwhelmed', 'pressure', 'burnout', 'overworked', 'tension', 'workload',
+                'burden', 'strain', 'demand', 'pressure', 'deadline', 'time management', 'work-life balance',
+                'juggling', 'multitasking', 'busy', 'hectic', 'chaotic', 'crisis', 'emergency', 'unexpected',
+                'change', 'adaptation', 'adjustment', 'transition', 'life event', 'stressor', 'chronic stress',
+                'acute stress', 'fight-or-flight', 'adrenaline', 'cortisol', 'stress hormones', 'stress response',
+                'allostatic load', 'wear and tear', 'exhaustion', 'fatigue', 'burnout', 'compassion fatigue',
+                'vicarious trauma', 'secondary traumatic stress', 'stress management', 'stress reduction',
+                'coping mechanisms', 'coping skills', 'stress relief', 'relaxation'
+            ],
+
+            // Trauma and PTSD
+            'trauma': [
+                'trauma', 'ptsd', 'post traumatic stress', 'flashback', 'abuse', 'assault', 'victim', 'accident', 
+                'grief', 'loss', 'death', 'traumatic', 'childhood trauma', 'adverse childhood experiences', 'aces',
+                'neglect', 'abandonment', 'violence', 'domestic violence', 'sexual assault', 'rape', 'combat',
+                'war', 'veteran', 'disaster', 'emergency', 'first responder', 'witness', 'crime', 'accident',
+                'medical trauma', 'birth trauma', 'intergenerational trauma', 'collective trauma', 'complex ptsd',
+                'cptsd', 'developmental trauma', 'attachment trauma', 'traumatic brain injury', 'tbi',
+                'reexperiencing', 'intrusive thoughts', 'intrusive memories', 'flashbacks', 'nightmares',
+                'triggers', 'triggered', 'hypervigilance', 'startle', 'jumpy', 'hyperarousal', 'emotional numbing',
+                'dissociation', 'detachment', 'derealization', 'depersonalization', 'avoidance', 'trauma anniversary',
+                'survivor', 'survivors guilt'
+            ],
+
+            // Mindfulness and meditation
+            'mindfulness': [
+                'mindful', 'meditation', 'breathing', 'present', 'awareness', 'grounding', 'calm', 'peace', 'relax',
+                'centering', 'focused attention', 'open awareness', 'non-judgmental', 'acceptance', 'equanimity',
+                'compassion', 'self-compassion', 'loving-kindness', 'metta', 'body scan', 'progressive relaxation',
+                'guided meditation', 'visualization', 'mantra', 'mindfulness-based stress reduction', 'mbsr',
+                'mindfulness-based cognitive therapy', 'mbct', 'insight meditation', 'vipassana', 'zen',
+                'contemplative practice', 'sitting practice', 'walking meditation', 'movement meditation',
+                'yoga', 'tai chi', 'qigong', 'breath work', 'breathwork', 'attention training', 'concentration',
+                'distraction', 'rumination', 'monkey mind', 'present moment', 'here and now', 'being mode',
+                'doing mode', 'informal practice', 'formal practice', 'daily practice', 'meditation cushion',
+                'meditation timer', 'meditation app'
+            ],
+
+            // Self-care
+            'selfcare': [
+                'self-care', 'selfcare', 'routine', 'exercise', 'nutrition', 'hobby', 'boundaries', 'break',
+                'rest', 'relaxation', 'pleasure', 'enjoyment', 'fun', 'leisure', 'recreation', 'play',
+                'movement', 'physical activity', 'walking', 'running', 'swimming', 'cycling', 'yoga', 'stretching',
+                'healthy eating', 'balanced diet', 'hydration', 'water', 'sleep hygiene', 'bedtime routine',
+                'social connection', 'relationships', 'friends', 'family', 'community', 'support network',
+                'creative expression', 'art', 'music', 'writing', 'dancing', 'singing', 'nature', 'outdoors',
+                'sunlight', 'fresh air', 'digital detox', 'screen time', 'social media break', 'saying no',
+                'setting limits', 'personal time', 'me time', 'self-compassion', 'self-kindness', 'gratitude',
+                'journaling', 'reflection', 'spa', 'massage', 'bath', 'shower', 'grooming', 'personal hygiene',
+                'clean environment', 'decluttering', 'organizing'
+            ],
+            
+            // OCD and obsessive disorders
+            'ocd': [
+                'ocd', 'obsessive compulsive', 'obsession', 'obsessive', 'compulsion', 'compulsive', 'intrusive thoughts',
+                'unwanted thoughts', 'disturbing thoughts', 'checking', 'counting', 'ordering', 'arranging', 'hoarding',
+                'contamination', 'germs', 'cleanliness', 'washing', 'cleaning', 'symmetry', 'exactness', 'precision',
+                'just right', 'magical thinking', 'superstition', 'scrupulosity', 'religious obsessions', 'harm ocd',
+                'sexual orientation ocd', 'hocd', 'relationship ocd', 'rocd', 'pedophilia ocd', 'pocd', 'pure o',
+                'primarily obsessional', 'reassurance seeking', 'avoidance', 'mental rituals', 'rumination',
+                'stuck thoughts', 'looping thoughts', 'uncertainty', 'doubt', 'fear of making mistakes'
+            ],
+            
+            // Eating disorders and body image
+            'eating_disorders': [
+                'eating disorder', 'anorexia', 'bulimia', 'binge eating', 'ed', 'disordered eating', 'body image',
+                'body dysmorphia', 'bdd', 'weight', 'diet', 'calories', 'fat', 'thin', 'skinny', 'overweight',
+                'obese', 'restriction', 'purge', 'purging', 'laxatives', 'fasting', 'starving', 'hunger',
+                'fullness', 'orthorexia', 'clean eating', 'healthy eating', 'chew and spit', 'exercise addiction',
+                'compulsive exercise', 'body checking', 'weigh', 'scale', 'mirror', 'comparison', 'arfid',
+                'avoidant restrictive food intake disorder', 'pica', 'rumination disorder', 'night eating syndrome',
+                'ednos', 'osfed', 'recovery', 'relapse', 'meal plan', 'nutritionist', 'dietitian'
+            ],
+            
+            // Addiction and substance use
+            'addiction': [
+                'addiction', 'addict', 'substance use', 'substance abuse', 'drug', 'alcohol', 'alcoholic', 'drinking',
+                'smoking', 'cigarettes', 'nicotine', 'marijuana', 'cannabis', 'weed', 'cocaine', 'heroin', 'meth',
+                'opioids', 'painkillers', 'pills', 'prescription', 'benzodiazepines', 'stimulants', 'hallucinogens',
+                'inhalants', 'solvents', 'withdrawal', 'detox', 'rehab', 'recovery', 'sober', 'sobriety', 'clean',
+                'relapse', 'trigger', 'craving', 'urge', 'tolerance', 'dependence', 'compulsion', 'habit',
+                'gambling', 'gaming', 'internet', 'porn', 'sex addiction', 'shopping addiction', 'work addiction',
+                'codependence', 'enabling', '12 steps', 'aa', 'na', 'anonymous', 'sponsor', 'higher power',
+                'harm reduction', 'moderation management', 'smart recovery'
+            ],
+            
+            // Personality disorders
+            'personality_disorders': [
+                'personality disorder', 'borderline', 'bpd', 'narcissistic', 'npd', 'antisocial', 'aspd', 'histrionic',
+                'avoidant', 'dependent', 'obsessive-compulsive personality', 'ocpd', 'schizoid', 'schizotypal',
+                'paranoid', 'cluster a', 'cluster b', 'cluster c', 'splitting', 'black and white thinking',
+                'idealization', 'devaluation', 'manipulation', 'emotional dysregulation', 'impulsivity',
+                'self-harm', 'identity disturbance', 'emptiness', 'abandonment', 'rejection sensitivity',
+                'grandiosity', 'entitlement', 'lack of empathy', 'need for admiration', 'validation', 'attention',
+                'social isolation', 'interpersonal difficulties', 'relationship problems', 'fear of criticism',
+                'perfectionism', 'rigidity', 'control', 'dialectical behavior therapy', 'dbt', 'schema therapy',
+                'mentalization-based therapy', 'mbt', 'transference focused psychotherapy', 'tfp'
+            ],
+            
+            // Psychotic disorders
+            'psychotic_disorders': [
+                'psychosis', 'psychotic', 'schizophrenia', 'schizoaffective', 'delusion', 'delusional', 'hallucination',
+                'hallucinating', 'hearing voices', 'seeing things', 'paranoia', 'paranoid', 'thought disorder',
+                'disorganized thinking', 'disorganized speech', 'word salad', 'tangential', 'loose associations',
+                'flight of ideas', 'neologisms', 'catatonia', 'catatonic', 'negative symptoms', 'flat affect',
+                'lack of motivation', 'anhedonia', 'social withdrawal', 'cognitive symptoms', 'memory problems',
+                'concentration difficulties', 'reality testing', 'lack of insight', 'antipsychotics', 'neuroleptics',
+                'first episode psychosis', 'prodromal', 'acute psychosis', 'chronic psychosis', 'command hallucinations'
+            ],
+            
+            // Neurodevelopmental disorders
+            'neurodevelopmental': [
+                'adhd', 'add', 'attention deficit', 'hyperactive', 'hyperactivity', 'impulsive', 'impulsivity',
+                'inattentive', 'inattention', 'distractible', 'focus', 'concentration', 'fidgety', 'restless',
+                'autism', 'asd', 'autistic', 'aspergers', 'stimming', 'sensory', 'special interest', 'routine',
+                'social communication', 'literal', 'concrete thinking', 'eye contact', 'learning disability',
+                'learning difficulty', 'dyslexia', 'reading', 'writing', 'spelling', 'dyscalculia', 'math',
+                'dysgraphia', 'handwriting', 'dyspraxia', 'coordination', 'motor skills', 'tourette', 'tics',
+                'developmental delay', 'intellectual disability', 'neurodivergent', 'neurodiversity'
+            ],
+            
+            // Relationship issues
+            'relationships': [
+                'relationship', 'marriage', 'couple', 'partner', 'spouse', 'boyfriend', 'girlfriend', 'husband', 'wife',
+                'dating', 'breakup', 'divorce', 'separation', 'communication', 'conflict', 'argument', 'fighting',
+                'trust', 'betrayal', 'cheating', 'infidelity', 'jealousy', 'insecurity', 'attachment', 'anxious attachment',
+                'avoidant attachment', 'secure attachment', 'disorganized attachment', 'codependency', 'boundaries',
+                'intimacy', 'emotional intimacy', 'physical intimacy', 'sexual intimacy', 'sexual problems',
+                'sexless', 'libido', 'desire', 'love language', 'compatibility', 'compromise', 'commitment',
+                'family', 'parents', 'children', 'siblings', 'in-laws', 'blended family', 'estrangement',
+                'no contact', 'toxic relationships', 'abuse', 'domestic violence', 'coercive control',
+                'friendship', 'social circle', 'loneliness', 'isolation'
+            ],
+            
+            // Professional support and treatment
+            'professional_help': [
+                'therapy', 'therapist', 'counseling', 'counselor', 'psychologist', 'psychiatrist', 'mental health professional',
+                'mental health provider', 'treatment', 'intervention', 'cbt', 'cognitive behavioral therapy',
+                'dbt', 'dialectical behavior therapy', 'act', 'acceptance and commitment therapy', 'psychodynamic',
+                'psychoanalysis', 'emdr', 'eye movement desensitization and reprocessing', 'exposure therapy',
+                'group therapy', 'support group', 'family therapy', 'couples therapy', 'marriage counseling',
+                'medication', 'antidepressant', 'ssri', 'snri', 'antipsychotic', 'mood stabilizer', 'anxiolytic',
+                'benzodiazepine', 'stimulant', 'psychiatric medication', 'side effects', 'inpatient', 'hospitalization',
+                'psychiatric hospital', 'outpatient', 'partial hospitalization', 'intensive outpatient', 'iop',
+                'residential treatment', 'rehab', 'detox', 'crisis intervention', 'crisis services', 'hotline',
+                'warmline', 'teletherapy', 'online therapy', 'assessment', 'diagnosis', 'treatment plan',
+                'recovery', 'remission', 'relapse', 'insurance', 'coverage', 'cost', 'affordable', 'sliding scale'
+            ],
+            
+            // Coping skills and strategies
+            'coping_skills': [
+                'coping', 'cope', 'skill', 'strategy', 'technique', 'tool', 'resource', 'self-help', 'self help',
+                'grounding', '5-4-3-2-1', 'deep breathing', 'box breathing', '4-7-8', 'progressive muscle relaxation',
+                'pmr', 'guided imagery', 'visualization', 'positive affirmation', 'positive self-talk', 'distraction',
+                'distract', 'behavioral activation', 'pleasant activities', 'self-soothing', 'comfort', 'calming',
+                'emotion regulation', 'emotional awareness', 'identifying feelings', 'naming emotions', 'journaling',
+                'writing', 'creative expression', 'art therapy', 'music therapy', 'physical activity', 'exercise',
+                'walking', 'yoga', 'meditation', 'mindfulness', 'prayer', 'spiritual practice', 'social support',
+                'reaching out', 'asking for help', 'problem-solving', 'decision-making', 'goal setting',
+                'time management', 'organization', 'prioritizing', 'pacing', 'energy conservation', 'self-advocacy',
+                'assertiveness', 'communication skills', 'conflict resolution', 'boundary setting'
+            ]
+        };
+        
+        // ========= INTENT RECOGNITION PATTERNS =========
+        // Comprehensive patterns for detecting user intent
+        this.intentPatterns = {
+            // Basic conversational intents
+            'greeting': [
+                'hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'greetings', 'howdy', 
+                'hiya', 'yo', 'what\'s up', 'sup', 'hola', 'ni hao', 'konnichiwa', 'namaste', 'salaam'
+            ],
+            'farewell': [
+                'bye', 'goodbye', 'see you', 'talk later', 'have to go', 'signing off', 'good night', 'later', 
+                'take care', 'farewell', 'adios', 'ciao', 'until next time', 'have a good day', 'have a nice day',
+                'im leaving', 'im done', 'thats all'
+            ],
+            'gratitude': [
+                'thank you', 'thanks', 'appreciate', 'grateful', 'thankful', 'thank', 'ty', 'thx', 'appreciate it',
+                'much appreciated', 'many thanks', 'thank you very much', 'thank you so much', 'i appreciate you',
+                'i appreciate your help', 'i appreciate your time', 'i appreciate your assistance', 'i appreciate your support'
+            ],
+            'help_request': [
+                'help', 'assist', 'support', 'guide', 'advice', 'suggestion', 'recommend', 'need help', 'how to', 
+                'how do i', 'what should i do', 'what can i do', 'what would you recommend', 'can you help me',
+                'can you assist me', 'can you guide me', 'can you advise me', 'can you suggest', 'can you recommend',
+                'i need help', 'i need advice', 'i need guidance', 'i need support', 'i need assistance',
+                'im looking for help', 'im looking for advice', 'im looking for guidance', 'im looking for support',
+                'im struggling with', 'im having trouble with', 'im having difficulty with', 'im finding it hard to'
+            ],
+            'information_request': [
+                'what is', 'what are', 'tell me about', 'explain', 'describe', 'define', 'information on', 'learn about', 
+                'understand', 'know more', 'what does', 'what do', 'how does', 'how do', 'why does', 'why do',
+                'when does', 'when do', 'where does', 'where do', 'who does', 'who do', 'which does', 'which do',
+                'can you tell me about', 'can you explain', 'can you describe', 'can you define', 'can you inform me about',
+                'i want to know about', 'i want to understand', 'i want to learn about', 'i want information on',
+                'i need information on', 'i need to know about', 'i would like to know about', 'give me information about'
+            ],
+            'confirmation': [
+                'yes', 'yeah', 'sure', 'okay', 'ok', 'alright', 'definitely', 'absolutely', 'correct', 'right', 'yep',
+                'yup', 'indeed', 'affirmative', 'i agree', 'i do', 'i will', 'i would', 'i can', 'i could', 'will do',
+                'can do', 'of course', 'certainly', 'for sure', 'exactly', 'precisely', 'thats right', 'that is correct'
+            ],
+            'negation': [
+                'no', 'nope', 'not', 'don\'t', 'never', 'disagree', 'not interested', 'not now', 'negative', 'nah',
+                'absolutely not', 'definitely not', 'certainly not', 'of course not', 'i dont think so', 'i disagree',
+                'i dont want to', 'i dont want', 'i dont need', 'i dont like', 'i dont agree', 'i cant', 'i wont',
+                'i shouldnt', 'thats wrong', 'thats incorrect', 'not true', 'not right', 'not correct'
+            ],
+            'emergency': [
+                'emergency', 'crisis', 'urgent', 'immediately', 'harm', 'hurt', 'kill', 'suicide', 'die', 'end my life', 
+                'want to die', 'no reason to live', 'suicidal', 'suicidal thoughts', 'suicidal ideation', 'self-harm',
+                'self harm', 'cutting', 'overdose', 'dangerous', 'unsafe', 'at risk', 'in danger', 'in crisis',
+                'need help now', 'need immediate help', 'cant go on', 'cant take it anymore', 'cant handle it',
+                'too much to bear', 'unbearable', 'desperate', 'hopeless', 'give up', 'giving up', 'no way out',
+                'no future', 'better off dead', 'plan to kill myself', 'going to kill myself', 'im going to end it all'
+            ],
+            'about_bot': [
+                'who are you', 'what are you', 'your name', 'about you', 'what can you do', 'how can you help', 
+                'what do you do', 'your purpose', 'what is your name', 'who is mindfulai', 'what is mindfulai',
+                'are you a bot', 'are you a chatbot', 'are you ai', 'are you artificial intelligence', 'are you human',
+                'are you a person', 'are you a therapist', 'are you a doctor', 'are you a counselor', 'are you real',
+                'how do you work', 'how were you made', 'who made you', 'who created you', 'tell me about yourself',
+                'tell me more about you', 'what are your capabilities', 'what are your limitations', 'what are your functions'
+            ],
+            
+            // Mental health assessment intents
+            'self_assessment': [
+                'i feel', 'i am feeling', 'i\'m feeling', 'im feeling', 'i am', 'i\'m', 'im', 'i have been feeling',
+                'i have been', 'i\'ve been feeling', 'ive been feeling', 'i\'ve been', 'ive been', 'lately i',
+                'today i', 'this week i', 'this month i', 'been feeling', 'feeling', 'experiencing', 'suffering from',
+                'struggling with', 'dealing with', 'coping with', 'living with', 'diagnosed with', 'have a history of',
+                'symptoms of', 'signs of', 'mental health', 'mental illness', 'mental wellbeing', 'emotional health',
+                'psychological health', 'psychiatric condition', 'mood', 'thoughts', 'behaviors', 'emotions', 'feelings'
+            ],
+            'symptom_report': [
+                'symptom', 'experiencing', 'having', 'feel', 'notice', 'noticing', 'bothering me', 'troubling me',
+                'concerned about', 'worried about', 'panic attack', 'anxiety attack', 'flashback', 'intrusive thought',
+                'unwanted thought', 'compulsion', 'urge', 'impulse', 'mood swing', 'low mood', 'high mood', 'irritable',
+                'angry', 'sad', 'down', 'blue', 'depressed', 'anxious', 'worried', 'scared', 'fearful', 'nervous',
+                'on edge', 'tense', 'restless', 'agitated', 'jittery', 'tired', 'fatigued', 'exhausted', 'no energy',
+                'low energy', 'sleep problem', 'insomnia', 'nightmare', 'appetite', 'eating', 'weight', 'concentration',
+                'focus', 'memory', 'distracted', 'forgetful', 'confused', 'disoriented', 'disconnected', 'detached',
+                'unreal', 'not real', 'dream-like', 'unreal', 'not real', 'dream-like', 'foggy', 'racing thoughts', 'intrusive thoughts', 'obsessive thoughts'
+            ],
+            'medication_inquiry': [
+                'medication', 'medicine', 'drug', 'prescription', 'pill', 'tablet', 'dose', 'dosage', 'antidepressant', 
+                'antianxiety', 'antipsychotic', 'mood stabilizer', 'stimulant', 'ssri', 'snri', 'benzodiazepine',
+                'benzo', 'side effect', 'withdrawal', 'titration', 'wean off', 'taper', 'starting', 'stopping',
+                'lexapro', 'prozac', 'zoloft', 'celexa', 'paxil', 'wellbutrin', 'effexor', 'cymbalta', 'pristiq',
+                'remeron', 'trazodone', 'seroquel', 'abilify', 'risperdal', 'zyprexa', 'latuda', 'lithium',
+                'lamictal', 'depakote', 'tegretol', 'trileptal', 'xanax', 'klonopin', 'ativan', 'valium',
+                'adderall', 'ritalin', 'concerta', 'vyvanse', 'strattera', 'intuniv', 'buspar', 'vistaril',
+                'hydroxyzine', 'gabapentin', 'lyrica', 'topamax', 'prazosin', 'propranolol', 'cannabis', 'marijuana',
+                'cbd', 'thc', 'prescribed', 'prescribe', 'doctor', 'psychiatrist', 'primary care', 'gp'
+            ],
+            'diagnosis_inquiry': [
+                'diagnosis', 'diagnosed', 'condition', 'disorder', 'do i have', 'might i have', 'could i have',
+                'test for', 'tested for', 'screening', 'assessment', 'evaluate', 'evaluation', 'criteria',
+                'dsm', 'symptoms of', 'signs of', 'characteristics of', 'features of', 'traits of', 'indicators of',
+                'what is', 'what are', 'tell me about', 'explain', 'describe', 'define', 'learn about', 'understand',
+                'information on', 'facts about', 'details about', 'knowledge about', 'self-diagnosis', 'self diagnosis',
+                'online test', 'questionnaire', 'quiz', 'self-assessment', 'self assessment', 'comorbid', 'comorbidity',
+                'dual diagnosis', 'differential diagnosis', 'misdiagnosis', 'undiagnosed', 'official diagnosis'
+            ],
+            'therapy_inquiry': [
+                'therapy', 'therapist', 'counseling', 'counselor', 'psychologist', 'psychiatrist', 'mental health professional',
+                'treatment', 'intervention', 'approach', 'method', 'modality', 'cbt', 'cognitive behavioral therapy',
+                'dbt', 'dialectical behavior therapy', 'act', 'acceptance and commitment therapy', 'psychodynamic',
+                'psychoanalysis', 'emdr', 'eye movement desensitization and reprocessing', 'exposure therapy',
+                'group therapy', 'support group', 'family therapy', 'couples therapy', 'marriage counseling',
+                'art therapy', 'music therapy', 'play therapy', 'neurofeedback', 'biofeedback', 'hypnotherapy',
+                'motivational interviewing', 'solution-focused', 'narrative therapy', 'gestalt therapy',
+                'find a therapist', 'good therapist', 'how to find', 'what to look for', 'qualities of',
+                'experience in', 'specializes in', 'expertise in', 'session', 'appointment', 'first session',
+                'intake', 'assessment', 'treatment plan', 'progress', 'therapeutic alliance', 'relationship',
+                'transference', 'countertransference', 'resistance', 'termination', 'ending therapy'
+            ],
+
+            // More specific query intents
+            'comparison_inquiry': [
+                'difference between', 'compare', 'versus', 'vs', 'or', 'better', 'worse', 'more effective',
+                'less effective', 'pros and cons', 'advantages and disadvantages', 'benefits and drawbacks',
+                'similar to', 'same as', 'different from', 'which is better', 'which is worse', 'which is more',
+                'which is less', 'which should i', 'should i choose', 'recommend', 'preference', 'preferable'
+            ],
+            'cause_inquiry': [
+                'why do i', 'why am i', 'why does', 'why is', 'what causes', 'cause of', 'caused by', 'reason for',
+                'reasons why', 'factors', 'contributing factors', 'risk factors', 'predisposition', 'predisposed',
+                'susceptible', 'vulnerable', 'genetics', 'genetic', 'hereditary', 'inherited', 'runs in family',
+                'family history', 'biological', 'psychological', 'social', 'environmental', 'trauma', 'stress',
+                'life events', 'childhood', 'development', 'personality', 'temperament', 'neurotransmitters',
+                'brain chemistry', 'brain structure', 'hormones', 'endocrine', 'immune system', 'inflammation'
+            ],
+            'duration_inquiry': [
+                'how long', 'how much time', 'duration', 'timeline', 'timeframe', 'chronic', 'acute', 'temporary',
+                'permanent', 'lifelong', 'episodic', 'recurrent', 'cyclical', 'relapse', 'remission', 'recovery',
+                'heal', 'cure', 'get better', 'improve', 'progress', 'regress', 'worsen', 'deteriorate', 'maintain',
+                'manage', 'days', 'weeks', 'months', 'years', 'short-term', 'long-term', 'forever', 'never'
+            ],
+            'severity_inquiry': [
+                'how bad', 'how serious', 'how severe', 'severity', 'mild', 'moderate', 'severe', 'extreme',
+                'clinical', 'subclinical', 'major', 'minor', 'significant', 'insignificant', 'normal', 'abnormal',
+                'pathological', 'healthy', 'unhealthy', 'functional', 'dysfunctional', 'impairment', 'disability',
+                'interference', 'impact', 'affect', 'effect', 'influence', 'quality of life', 'daily functioning',
+                'activities of daily living', 'adl', 'occupational functioning', 'social functioning', 'relationships',
+                'work', 'school', 'home', 'family', 'friendships'
+            ],
+            
+            // Self-help and coping questions
+            'coping_strategies_request': [
+                'how to cope', 'how to deal with', 'how to manage', 'how to handle', 'how to overcome', 'how to reduce',
+                'how to prevent', 'how to control', 'how to stop', 'coping strategies', 'coping skills', 'coping mechanisms',
+                'coping techniques', 'self-help', 'self help', 'help myself', 'techniques', 'strategies', 'skills',
+                'tools', 'resources', 'practices', 'exercises', 'activities', 'habits', 'routines', 'lifestyle',
+                'tips', 'advice', 'guidance', 'suggestions', 'recommendations', 'ways to', 'methods to', 'approaches to',
+                'what works for', 'what helps with', 'what can i do about', 'what should i do about', 'how can i handle',
+                'how can i manage', 'how can i deal with', 'how can i cope with', 'how can i overcome'
+            ],
+            'exercise_request': [
+                'exercise', 'technique', 'practice', 'activity', 'meditation', 'mindfulness', 'breathing', 'relaxation',
+                'grounding', 'visualization', 'imagery', 'progressive muscle relaxation', 'pmr', 'body scan',
+                'guided meditation', 'loving-kindness', 'compassion', 'self-compassion', 'thought record',
+                'cognitive restructuring', 'behavioral activation', 'exposure', 'habituation', 'desensitization',
+                'distress tolerance', 'emotion regulation', 'interpersonal effectiveness', 'assertiveness',
+                'communication', 'problem-solving', 'decision-making', 'goal-setting', 'time management',
+                'stress management', 'anger management', 'anxiety management', 'mood management', 'sleep hygiene',
+                'guide me through', 'walk me through', 'lead me through', 'help me with', 'teach me', 'show me',
+                'demonstrate', 'explain how to', 'instructions for', 'steps for', 'method for'
+            ],
+            'resource_request': [
+                'resource', 'resources', 'tool', 'tools', 'app', 'apps', 'application', 'applications', 'website',
+                'websites', 'online', 'digital', 'book', 'books', 'reading', 'article', 'articles', 'blog', 'blogs',
+                'podcast', 'podcasts', 'video', 'videos', 'course', 'courses', 'program', 'programs', 'class', 'classes',
+                'workshop', 'workshops', 'seminar', 'seminars', 'support group', 'support groups', 'community',
+                'communities', 'forum', 'forums', 'hotline', 'hotlines', 'crisis line', 'crisis lines', 'warmline',
+                'warmlines', 'helpline', 'helplines', 'service', 'services', 'organization', 'organizations',
+                'association', 'associations', 'foundation', 'foundations', 'institute', 'institutes', 'center', 'centers',
+                'clinic', 'clinics', 'hospital', 'hospitals', 'program', 'programs', 'recommend', 'suggestion'
+            ],
+            
+            // Feedback and interactive intents
+            'positive_feedback': [
+                'helpful', 'useful', 'good', 'great', 'excellent', 'amazing', 'wonderful', 'fantastic', 'terrific',
+                'outstanding', 'superb', 'brilliant', 'incredible', 'remarkable', 'exceptional', 'marvelous',
+                'spectacular', 'phenomenal', 'impressive', 'admirable', 'praiseworthy', 'commendable', 'like',
+                'appreciate', 'value', 'enjoy', 'impressed', 'satisfied', 'happy with', 'pleased with', 'content with',
+                'delighted with', 'grateful for', 'thankful for', 'well done', 'nice job', 'good job', 'great job',
+                'excellent job', 'amazing job', 'wonderful job', 'fantastic job', 'keep it up', 'keep up the good work'
+            ],
+            'negative_feedback': [
+                'unhelpful', 'useless', 'bad', 'terrible', 'awful', 'horrible', 'dreadful', 'poor', 'inadequate',
+                'insufficient', 'disappointing', 'frustrating', 'annoying', 'irritating', 'aggravating', 'vexing',
+                'unsatisfactory', 'subpar', 'inferior', 'mediocre', 'dislike', 'hate', 'despise', 'detest', 'loathe',
+                'abhor', 'resent', 'unimpressed', 'dissatisfied', 'unhappy with', 'displeased with', 'discontent with',
+                'disappointed with', 'frustrated with', 'annoyed with', 'irritated with', 'wrong', 'incorrect',
+                'inaccurate', 'mistaken', 'erroneous', 'false', 'untrue', 'not right', 'not correct', 'not accurate',
+                'not helpful', 'not useful', 'not good', 'not working', 'doesnt work', 'didnt work', 'wont work'
+            ],
+            'clarification_request': [
+                'what do you mean', 'what does that mean', 'what is that', 'what are you talking about', 'what are you saying',
+                'could you explain', 'can you explain', 'please explain', 'explain to me', 'i dont understand',
+                'i dont get it', 'im confused', 'confused about', 'unclear', 'not clear', 'clarify', 'elaborate',
+                'more information', 'more details', 'be more specific', 'be clearer', 'simple terms', 'laymans terms',
+                'example', 'for example', 'for instance', 'such as', 'like what', 'what kind of', 'what type of',
+                'which ones', 'which kind', 'which type', 'repeat', 'say again', 'rephrase', 'reword', 'restate',
+                'in other words', 'meaning', 'definition', 'define', 'means'
+            ],
+            'preference_expression': [
+                'i prefer', 'i would prefer', 'i would rather', 'i want', 'i would like', 'i need', 'i wish',
+                'i hope', 'i desire', 'i would appreciate', 'i would love', 'i favor', 'i fancy', 'i opt for',
+                'i choose', 'i select', 'i pick', 'i go with', 'i gravitate toward', 'i tend toward', 'i lean toward',
+                'i incline toward', 'i am partial to', 'i have a preference for', 'i have a liking for',
+                'i have a fondness for', 'my preference is', 'my choice is', 'my selection is', 'my pick is',
+                'my favorite is', 'more interested in', 'less interested in', 'not interested in', 'focused on',
+                'concerned with', 'bothered about', 'worried about', 'anxious about', 'curious about', 'intrigued by'
+            ]
+        };
+
+        // ========= RESPONSES DATABASE =========
+        // Comprehensive responses organized by categories
+        this.responses = {
+            // General responses
+            'greeting': [
+                "Hello! I'm MindfulAI. How are you feeling today?",
+                "Hi there! I'm here to support your mental wellbeing. How are you doing?",
+                "Welcome! I'm MindfulAI, your mental health companion. How are you feeling right now?",
+                "Hello and welcome. I'm MindfulAI, designed to provide mental health support. How are you today?",
+                "Hi there! I'm MindfulAI, a supportive companion for your mental health journey. How are you feeling at the moment?"
+            ],
+            'farewell': [
+                "Take care! Remember, I'm here whenever you need to talk.",
+                "Goodbye for now. Remember to be kind to yourself today.",
+                "I'll be here when you need me next. Take good care of yourself.",
+                "Farewell for now. Remember that self-care is an ongoing journey, and I'm here to support you whenever you return.",
+                "Goodbye. I hope our conversation has been helpful. I'll be here if you need support in the future."
+            ],
+            'gratitude': [
+                "You're very welcome. I'm here to support you.",
+                "I'm glad I could help. Remember, supporting your mental health is an ongoing journey.",
+                "It's my purpose to be here for you. I'm happy I could help in some way.",
+                "You're welcome. Your mental wellbeing matters, and I'm here to assist however I can.",
+                "I'm pleased our conversation has been helpful. Remember that seeking support is a sign of strength."
+            ],
+            'about_bot': [
+                "I'm MindfulAI, a mental health support chatbot designed to provide resources, coping strategies, and a space to reflect on your mental wellbeing. While I'm not a replacement for professional help, I can offer support and guidance for common mental health concerns.",
+                "I'm an AI assistant focused on mental health support. I can help with anxiety management, stress reduction, sleep improvement suggestions, and more. I'm here to listen and provide resources, though I'm not a substitute for professional mental health care.",
+                "I'm MindfulAI, created to provide mental health support, resources, and coping strategies. I can help with anxiety, stress, sleep issues, and other common mental health concerns. How can I assist you today?",
+                "I'm MindfulAI, designed to be a supportive companion for your mental health journey. I can provide information, suggest coping strategies, and offer a safe space to express your feelings. While I'm not a human therapist, I'm here to support your wellbeing.",
+                "I'm MindfulAI, an AI assistant specialized in mental health support. I can provide evidence-based information, suggest coping techniques, and help you explore resources for various mental health concerns. Remember that while I can offer support, I'm not a substitute for professional care."
+            ],
+            
+            // Mental health condition specific responses
+            'anxiety': [
+                "Anxiety can feel overwhelming. Some helpful techniques include deep breathing, grounding exercises, and challenging anxious thoughts. Would you like to try a quick breathing exercise?",
+                "When anxiety strikes, it can be helpful to focus on what's within your control. Would you like some specific strategies to manage anxious thoughts?",
+                "Anxiety is your body's natural response to stress. Let's work on some techniques to help you manage these feelings. Would you like to try something for immediate relief or learn long-term strategies?",
+                "Living with anxiety can be challenging. Remember that your anxious thoughts aren't facts—they're just thoughts. Would you like to explore some anxiety management techniques together?",
+                "Anxiety often involves worry about the future. Bringing your attention to the present moment can help. Would you like to try a simple mindfulness exercise to help ground yourself?"
+            ],
+            'depression': [
+                "Depression can make even small tasks feel enormous. Remember to be gentle with yourself. Small steps like brief walks, reaching out to a friend, or even just getting out of bed are victories worth celebrating. Would you like some gentle self-care suggestions?",
+                "When experiencing depression, it's important to remember it's not your fault and you're not alone. Simple self-care activities and social connections can help. Would you like some ideas for small, manageable steps you could take?",
+                "Living with depression is challenging. Remember that seeking professional support is a sign of strength. In the meantime, would you like some strategies that might help you navigate your daily life?",
+                "Depression often distorts our thinking, making everything seem darker than it is. Would you like to explore some techniques for recognizing and challenging depressive thoughts?",
+                "With depression, it's important to acknowledge your feelings while not letting them define you. Would you like some suggestions for gentle activities that might help lift your mood, even if just a little?"
+            ],
+            'sleep': [
+                "Improving sleep starts with good sleep hygiene. This includes a consistent sleep schedule, a relaxing bedtime routine, and a comfortable sleep environment. Would you like some specific tips for better sleep?",
+                "Sleep troubles can significantly impact mental health. Creating a calming bedtime routine and avoiding screens before bed can help. Would you like to know more about techniques for better sleep?",
+                "Sleep difficulties are common with many mental health conditions. Establishing regular sleep patterns and creating a relaxing pre-sleep routine can make a big difference. Would you like some relaxation techniques to try before bed?",
+                "Quality sleep is essential for mental wellbeing. Factors like light exposure, exercise timing, and evening activities can all impact sleep. Would you like to explore specific sleep strategies based on what you're experiencing?",
+                "Sleep and mental health are closely connected. Poor sleep can worsen mental health symptoms, and mental health conditions can disrupt sleep. Breaking this cycle starts with small changes to your sleep routine. Would you like some suggestions?"
+            ],
+            'stress': [
+                "Managing stress effectively involves both immediate techniques and long-term lifestyle adjustments. Deep breathing, physical activity, and setting boundaries can all help. What aspect of stress management would you like to focus on?",
+                "Stress is your body's response to demands and pressures. While some stress is normal, too much can impact your wellbeing. Would you like to learn about quick stress relief techniques or long-term stress management strategies?",
+                "When stress feels overwhelming, taking a moment to focus on your breathing can help reset your nervous system. Would you like a quick stress-reduction exercise or some tips for ongoing stress management?",
+                "Chronic stress can affect both your mental and physical health. Finding ways to incorporate regular stress relief into your routine is important. Would you like some ideas for daily stress management practices?",
+                "Everyone experiences stress differently, and what works for stress relief varies from person to person. Would you like to explore different stress management techniques to find what might work best for you?"
+            ],
+            'trauma': [
+                "Processing trauma takes time and professional support is often beneficial. In the meantime, grounding techniques can help during difficult moments. Would you like to learn about some grounding exercises?",
+                "Trauma responses are your brain's way of trying to protect you. Working with a trauma-informed therapist is often the most effective approach. Would you like some resources for finding professional support?",
+                "Coping with trauma can be overwhelming. Remember that healing isn't linear, and it's okay to have difficult days. Would you like some strategies for managing trauma symptoms in the moment?",
+                "Trauma can affect people in many different ways, and recovery is a personal journey. Safety and stability are important foundations for healing. Would you like some information about trauma recovery approaches?",
+                "Living with trauma can make you feel isolated, but many people have similar experiences. Connecting with others who understand, either through support groups or therapy, can be healing. Would you like some information about trauma support resources?"
+            ],
+            'mindfulness': [
+                "Mindfulness helps us stay present rather than worrying about the past or future. A simple way to practice is focusing on your breath for a few minutes. Would you like to try a brief mindfulness exercise?",
+                "Mindfulness practices can help reduce anxiety and improve overall wellbeing. Even just a few minutes daily can make a difference. Would you like to learn a simple mindfulness technique you can use anywhere?",
+                "Mindfulness involves bringing your attention to the present moment without judgment. This can help reduce overthinking and worry. Would you like some guidance on incorporating mindfulness into your daily routine?",
+                "One of the benefits of mindfulness is learning to observe your thoughts and feelings without being overwhelmed by them. Would you like to try a short mindfulness practice that focuses on this skill?",
+                "Mindfulness doesn't have to involve formal meditation. You can practice mindful awareness during everyday activities like eating, walking, or even washing dishes. Would you like some ideas for informal mindfulness practices?"
+            ],
+            'selfcare': [
+                "Self-care looks different for everyone, but the basics include sleep, nutrition, physical activity, social connection, and activities that bring you joy. Which area of self-care would you like to focus on?",
+                "Self-care isn't selfish—it's necessary for your wellbeing. Even small acts of self-care can make a difference. Would you like some ideas for simple self-care activities you could try today?",
+                "Effective self-care addresses your physical, emotional, and social needs. What aspect of self-care feels most challenging for you right now?",
+                "Creating a sustainable self-care routine means finding activities that genuinely replenish you, not just what others say should work. Would you like to explore what meaningful self-care might look like for you?",
+                "Sometimes self-care means saying no to additional commitments or setting boundaries with others. This can be challenging but is essential for your wellbeing. Would you like some support with identifying where you might need better boundaries?"
+            ],
+            'ocd': [
+                "OCD involves intrusive thoughts, images, or urges (obsessions) and repetitive behaviors or mental acts (compulsions) aimed at reducing distress. Exposure and Response Prevention therapy is considered most effective. Would you like some information about OCD management strategies?",
+                "Living with OCD can be exhausting as the cycle of obsessions and compulsions takes up time and energy. Remember that the thoughts themselves aren't the problem—it's the significance we attach to them. Would you like to learn about some approaches to managing OCD symptoms?",
+                "OCD often involves excessive responsibility and intolerance of uncertainty. Learning to sit with uncertainty and resist compulsions, ideally with professional support, is key to recovery. Would you like some information about OCD treatment?",
+                "With OCD, our brains send false alarm signals that something is dangerous or wrong. The goal of treatment is not to eliminate intrusive thoughts but to change our relationship with them. Would you like some resources for understanding and managing OCD?",
+                "OCD can latch onto anything we care about, which is why the content of obsessions often focuses on things that matter deeply to us. Would you like to know more about how OCD works and approaches that can help?"
+            ],
+            'eating_disorders': [
+                "Eating disorders are serious mental health conditions that involve disturbances in eating behaviors and related thoughts and emotions. Recovery is possible with appropriate treatment. Would you like information about eating disorder resources?",
+                "Eating disorders affect people of all genders, ages, and body types. They're not just about food but often involve complex feelings about control, self-worth, and identity. Would you like to know more about eating disorder support options?",
+                "Recovery from an eating disorder typically requires professional support, including psychological and nutritional components. Family involvement can also be beneficial. Would you like some guidance on finding eating disorder treatment?",
+                "Living with an eating disorder can be isolating, but you're not alone. Many people recover and develop a healthier relationship with food and their bodies. Would you like some information about eating disorder recovery?",
+                "Diet culture and societal messages about bodies can contribute to disordered eating. Developing media literacy and surrounding yourself with body-positive influences can support recovery. Would you like some resources for building a healthier relationship with your body?"
+            ],
+            'addiction': [
+                "Addiction is a complex condition involving compulsive substance use or behavior despite harmful consequences. Recovery approaches include professional treatment, medication, support groups, and addressing underlying issues. Would you like information about addiction recovery resources?",
+                "Recovery from addiction is possible, though it often involves setbacks along the way. Having support—whether from professionals, peers in recovery, or understanding loved ones—can make a significant difference. Would you like some guidance on addiction support options?",
+                "Many people with addiction also experience other mental health conditions like anxiety or depression. Treating both simultaneously (known as dual diagnosis treatment) is often most effective. Would you like information about comprehensive addiction treatment?",
+                "Harm reduction approaches focus on minimizing negative consequences of substance use, whether or not someone is ready for abstinence. This might include safer use strategies, overdose prevention, or medication treatments. Would you like to know more about harm reduction?",
+                "Stigma around addiction can prevent people from seeking help. Remember that addiction is a health condition, not a moral failing, and seeking support is a sign of strength. Would you like some resources for addiction recovery?"
+            ],
+            'personality_disorders': [
+                "Personality disorders involve long-term patterns of thoughts and behaviors that cause distress and problems functioning. With appropriate treatment, many people experience significant improvement. Would you like information about personality disorder treatment approaches?",
+                "Dialectical Behavior Therapy (DBT) was originally developed for Borderline Personality Disorder but can help with various conditions involving emotional regulation difficulties. Would you like to know more about DBT or other therapy approaches?",
+                "People with personality disorders often have experienced invalidating environments or trauma. Developing self-compassion and building a support network of people who understand your experiences can be helpful. Would you like some resources for support?",
+                "Many effective treatments for personality disorders focus on improving interpersonal effectiveness, emotional regulation, distress tolerance, and mindfulness skills. Would you like information about developing these skills?",
+                "Living with a personality disorder can be challenging, but many people learn to manage symptoms effectively and build fulfilling lives. Would you like some information about recovery and management strategies?"
+            ],
+            'psychotic_disorders': [
+                "Psychotic disorders involve disruptions in thinking that affect a person's perception of reality, such as hallucinations or delusions. With proper treatment, many people experience significant improvement in symptoms. Would you like information about treatment approaches?",
+                "Early intervention for psychosis is associated with better outcomes. If you or someone you know is experiencing symptoms like hearing voices or having unusual beliefs, seeking professional evaluation promptly is important. Would you like resources for finding help?",
+                "Treatment for psychotic disorders typically includes medication, therapy, and support services. A combination approach often works better than any single treatment alone. Would you like to know more about comprehensive treatment options?",
+                "Many people with psychotic disorders lead fulfilling lives with the right support. Recovery-oriented approaches focus not just on symptom management but on helping people achieve meaningful goals and quality of life. Would you like information about recovery support?",
+                "Psychosis exists on a spectrum, and many people experience milder forms or temporary psychotic symptoms during times of extreme stress. Would you like to learn more about the range of psychotic experiences and when to seek help?"
+            ],
+            'neurodevelopmental': [
+                "Neurodevelopmental conditions like ADHD and autism involve differences in brain development that affect how people think, learn, and interact. With appropriate support, people with these conditions can thrive. Would you like information about specific neurodevelopmental conditions?",
+                "Many people with conditions like ADHD or autism have unique strengths along with their challenges. Finding environments and approaches that work with rather than against your brain can make a big difference. Would you like some strategies for working with your neurodevelopmental differences?",
+                "Getting a diagnosis as an adult for conditions like ADHD or autism can be life-changing, helping explain long-standing difficulties and opening doors to appropriate support. Would you like resources for adult assessment of neurodevelopmental conditions?",
+                "Accommodations at school or work can make a significant difference for people with neurodevelopmental conditions. These might include extra time, different presentation formats, or environmental adjustments. Would you like information about seeking accommodations?",
+                "The neurodiversity movement views conditions like ADHD and autism as natural variations in the human brain rather than deficits to be fixed. This perspective emphasizes acceptance, support, and accommodations rather than trying to make people 'normal.' Would you like to learn more about neurodiversity?"
+            ],
+            'relationships': [
+                "Healthy relationships involve mutual respect, trust, good communication, and boundaries. If you're experiencing relationship difficulties, understanding patterns and developing relationship skills can help. What aspect of relationships would you like to explore?",
+                "Attachment styles developed in childhood can influence our adult relationships. Understanding your attachment pattern can help you recognize and change unhelpful relationship behaviors. Would you like to learn more about attachment and relationships?",
+                "Communication issues are at the heart of many relationship problems. Learning skills like active listening, 'I' statements, and non-violent communication can significantly improve relationship quality. Would you like some communication tips?",
+                "Setting healthy boundaries—limits that define what you're comfortable with and how you want to be treated—is essential for healthy relationships. Would you like some guidance on identifying and communicating your boundaries?",
+                "Conflict is normal in relationships, but how it's handled makes a big difference. Approaching disagreements with respect, staying focused on the issue rather than attacking the person, and looking for win-win solutions can help. Would you like some conflict resolution strategies?"
+            ],
+            
+            // Emergency responses
+            'emergency': [
+                "I'm concerned about what you've shared. If you're in crisis or having thoughts of harming yourself, please reach out to a crisis helpline immediately. In the US, you can text HOME to 741741 to reach the Crisis Text Line, or call the National Suicide Prevention Lifeline at 988. Would you like more crisis resources?",
+                "This sounds serious, and I want to make sure you get the support you need. If you're experiencing a mental health emergency, please contact emergency services (911 in the US) or a crisis helpline like the National Suicide Prevention Lifeline at 988. Is there someone nearby who could support you right now?",
+                "I'm concerned about your safety based on what you've shared. If you're in immediate danger, please call emergency services (911 in the US) right away. The National Suicide Prevention Lifeline is also available 24/7 at 988. Would it be possible for you to reach out to a trusted friend or family member right now?",
+                "Your safety is the top priority right now. If you're having thoughts of suicide or self-harm, please call the National Suicide Prevention Lifeline at 988 (US) or emergency services. These trained professionals can provide immediate support. Would you like me to provide additional crisis resources for your region?",
+                "I'm really concerned about what you're describing. If you're considering harming yourself, please reach out to crisis services immediately—call 988 in the US for the Suicide and Crisis Lifeline or go to your nearest emergency room. You deserve support during this difficult time. Is there a trusted person you could contact right now?"
+            ],
+            
+            // Default responses
+            'default': [
+                "Thank you for sharing that with me. Could you tell me more about how you've been feeling?",
+                "I'm here to listen and support you. Would you like to tell me more about what's on your mind?",
+                "I appreciate you opening up. What kind of support would be most helpful for you right now?",
+                "I'm here to help with whatever you're going through. Could you share a bit more about your current situation?",
+                "Thank you for reaching out. Everyone deserves support for their mental wellbeing. What specifically brings you here today?"
+            ],
+            
+            // Additional specific Q&A pairs for common mental health questions
+            'what_is_anxiety': [
+                "Anxiety is your body's natural response to stress. It's a feeling of fear or apprehension about what's to come. Everyone experiences anxiety at times, but when it's persistent, overwhelming, and interferes with daily activities, it might be an anxiety disorder. Would you like to know about some common anxiety symptoms?"
+            ],
+            'anxiety_symptoms': [
+                "Common anxiety symptoms include excessive worry, restlessness, feeling on edge, fatigue, difficulty concentrating, irritability, muscle tension, and sleep problems. Physical symptoms can include increased heart rate, rapid breathing, sweating, trembling, and gastrointestinal issues. Are you experiencing any of these symptoms?"
+            ],
+            'what_is_depression': [
+                "Depression is more than just feeling sad or going through a rough patch. It's a serious mental health condition that requires understanding and treatment. Depression can affect how you feel, think, and handle daily activities. Common symptoms include persistent sadness, loss of interest in activities you once enjoyed, changes in appetite or sleep patterns, lack of energy, and feelings of worthlessness or hopelessness. Would you like to know more about depression or how it's treated?"
+            ],
+            'how_to_help_depression': [
+                "Managing depression often involves a combination of professional treatment and self-care. Professional treatments may include therapy, medication, or a combination of both. Self-care strategies can include regular physical activity, maintaining social connections, setting small achievable goals, practicing stress reduction, and ensuring adequate sleep. Would you like more specific information about any of these approaches?"
+            ],
+            'therapy_types': [
+                "There are several types of therapy that can be effective for different mental health conditions. Cognitive Behavioral Therapy (CBT) helps identify and change negative thought patterns. Dialectical Behavior Therapy (DBT) combines CBT with mindfulness and emotional regulation skills. Interpersonal Therapy focuses on improving relationships and communication. Psychodynamic therapy explores how your past experiences influence your current behavior. Would you like more information about a specific type of therapy?"
+            ],
+            'meditation_guide': [
+                "Here's a simple meditation to try: Find a comfortable position and close your eyes. Focus on your breath, noticing the sensation of air moving in and out of your body. When your mind wanders (which is completely normal), gently bring your attention back to your breath. Start with just 2-3 minutes and gradually increase the time. Would you like more specific meditation guidance for a particular concern?"
+            ],
+            'panic_attack_help': [
+                "If you're experiencing a panic attack, try this: Focus on your breathing—inhale slowly through your nose for 4 counts, hold for 1, then exhale through your mouth for 5 counts. Acknowledge that you're having a panic attack and that it will pass. Engage your senses by naming 5 things you can see, 4 things you can touch, 3 things you can hear, 2 things you can smell, and 1 thing you can taste. This grounding technique can help bring you back to the present moment. Would you like more strategies for managing panic attacks?"
+            ],
+            'sleep_tips': [
+                "For better sleep, try establishing a consistent sleep schedule, creating a relaxing bedtime routine, making your bedroom comfortable and free from distractions, limiting screen time before bed, avoiding caffeine and large meals in the evening, and getting regular physical activity (but not too close to bedtime). Would you like more specific advice for any particular sleep challenge?"
+            ],
+            'mindfulness_exercise': [
+                "Here's a quick mindfulness exercise called the 5-4-3-2-1 technique: Notice 5 things you can see, 4 things you can physically feel, 3 things you can hear, 2 things you can smell, and 1 thing you can taste. This helps ground you in the present moment and can reduce anxiety. Would you like to try a different mindfulness exercise?"
+            ],
+            'breathing_exercise': [
+                "Let's try a simple breathing exercise called 4-7-8 breathing: Inhale quietly through your nose for 4 seconds, hold your breath for 7 seconds, then exhale completely through your mouth for 8 seconds. This helps activate your parasympathetic nervous system, which controls relaxation. Would you like to try a different breathing technique?"
+            ],
+            'professional_help': [
+                "Seeking professional help is a sign of strength. Consider talking to a primary care doctor for a referral to a mental health professional, contacting your insurance provider for covered therapists, using online therapy services, or checking with local community mental health centers for resources. Would you like more specific information about finding mental health support?"
+            ],
+            
+            // New detailed responses for expanded topics
+            'ocd_treatment': [
+                "The gold standard treatment for OCD is Exposure and Response Prevention (ERP), a type of Cognitive Behavioral Therapy. In ERP, you gradually confront your fears (exposure) while resisting the urge to perform compulsions (response prevention). This helps your brain learn that anxiety will naturally decrease over time without compulsions, and that feared outcomes are unlikely. Medication, particularly SSRIs, can also be helpful, especially in combination with therapy. Would you like more information about OCD treatment options?"
+            ],
+            'adhd_management': [
+                "ADHD management typically involves a multimodal approach. This may include medication (stimulants like methylphenidate or amphetamine-based medications, or non-stimulants like atomoxetine), behavioral strategies, environmental modifications, and skill development. Cognitive Behavioral Therapy can help develop skills in organization, time management, and emotional regulation. Creating structured routines, using visual reminders, breaking tasks into smaller steps, and minimizing distractions can also be helpful. Would you like specific strategies for a particular ADHD challenge?"
+            ],
+            'trauma_recovery': [
+                "Trauma recovery often follows a phased approach: First, establishing safety and stability in your body, relationships, and environment. Second, processing traumatic memories using approaches like EMDR, trauma-focused CBT, or narrative exposure therapy. Third, reconnecting with others and creating meaning from your experiences. Throughout recovery, developing skills in emotional regulation, distress tolerance, and self-compassion is important. Would you like information about specific trauma treatment approaches?"
+            ],
+            'grief_support': [
+                "Grief is a natural response to loss that can involve a wide range of emotions and experiences. While everyone grieves differently, common experiences include shock, sadness, anger, guilt, and eventually, finding ways to carry the loss while moving forward. Modern understanding of grief recognizes that you don't 'get over' significant losses but instead learn to integrate them into your life story. Supportive strategies include allowing yourself to feel your emotions, maintaining connections with others, taking care of basic needs, finding ways to honor what you've lost, and seeking professional support if grief becomes overwhelming. Would you like more specific guidance about coping with grief?"
+            ],
+            'relationship_communication': [
+                "Effective communication in relationships involves both expressing yourself clearly and listening attentively. Try using 'I' statements to express feelings without blame (e.g., 'I feel worried when...' rather than 'You always...'). Practice active listening by giving full attention, asking clarifying questions, and reflecting back what you've heard. Set aside time for important conversations when both people are calm and not distracted. Remember that non-verbal communication matters too—tone of voice, facial expressions, and body language all convey meaning. Would you like more specific communication strategies for relationship challenges?"
+            ],
+            'self_compassion': [
+                "Self-compassion involves treating yourself with the same kindness and understanding you'd offer a good friend. It has three components: mindfulness (acknowledging your feelings without judgment), common humanity (recognizing everyone struggles), and self-kindness (offering yourself warmth and support). Research shows self-compassion is linked to greater wellbeing and resilience than self-criticism. Try noticing your self-talk and asking, 'Would I say this to someone I care about?' If not, consider what a more compassionate response might be. Would you like a guided self-compassion exercise?"
+            ],
+            'addiction_recovery': [
+                "Recovery from addiction is a personal journey that can involve multiple pathways. These may include professional treatment (detox, inpatient or outpatient programs), medication support, mutual aid groups (like 12-step programs or SMART Recovery), addressing co-occurring mental health conditions, building recovery capital (supportive relationships, meaningful activities, stable housing, etc.), and developing skills to manage triggers and cravings. Many people find that combining approaches works best. Recovery isn't just about abstinence but about creating a fulfilling life where substances or addictive behaviors are no longer needed. Would you like more information about specific recovery resources?"
+            ],
+            'chronic_pain_mental_health': [
+                "Chronic pain and mental health are deeply interconnected. Pain can contribute to depression, anxiety, and sleep problems, while these conditions can worsen pain perception—creating a cycle that's difficult to break. Approaches that address both physical and psychological aspects often work best, including pain management techniques, addressing mental health symptoms, pacing activities to avoid flare-ups, mindfulness practices that change your relationship with pain, movement adapted to your abilities, and connecting with others who understand your experience. Would you like more information about specific strategies for living well with chronic pain?"
+            ],
+            'stress_management_techniques': [
+                "Effective stress management involves a combination of quick relief techniques for acute stress and lifestyle practices for long-term resilience. Quick relief techniques include deep breathing, progressive muscle relaxation, grounding exercises, and brief mindfulness practices. For building stress resilience, consider regular physical activity, adequate sleep, social connection, time in nature, creative expression, setting boundaries, time management strategies, and addressing unhelpful thinking patterns. Different techniques work for different people, so it's worth experimenting to find what works best for you. Would you like to explore a specific stress management approach in more detail?"
+            ]
+        };
+
+        // ========= CONVERSATION FLOW PATTERNS =========
+        // Predefined conversation flows for common topics
+        this.conversationFlows = {
+            // Basic support flows
+            'anxiety_management': ['anxiety_symptoms', 'breathing_exercise', 'mindfulness_exercise', 'professional_help'],
+            'depression_support': ['what_is_depression', 'how_to_help_depression', 'selfcare', 'professional_help'],
+            'sleep_improvement': ['sleep_tips', 'meditation_guide', 'breathing_exercise'],
+            'stress_management': ['stress', 'breathing_exercise', 'mindfulness_exercise', 'selfcare'],
+            'crisis_support': ['emergency', 'professional_help', 'breathing_exercise'],
+            
+            // More specialized support flows
+            'ocd_support': ['ocd', 'ocd_treatment', 'mindfulness_exercise', 'professional_help'],
+            'trauma_support': ['trauma', 'trauma_recovery', 'grounding_techniques', 'professional_help'],
+            'addiction_support': ['addiction', 'addiction_recovery', 'coping_skills', 'professional_help'],
+            'grief_support': ['grief_support', 'emotion_regulation', 'selfcare', 'professional_help'],
+            'relationship_help': ['relationship_communication', 'boundaries', 'self_compassion', 'professional_help'],
+            'adhd_support': ['adhd_management', 'organization_strategies', 'stress_management', 'professional_help'],
+            'chronic_pain_support': ['chronic_pain_mental_health', 'mindfulness_exercise', 'selfcare', 'professional_help']
+        };
+
+        // ========= CONVERSATION CONTEXT =========
+        // Variables to track user context throughout conversation
+        this.userContext = {
+            currentTopic: null,
+            detectedConditions: [],
+            conversationHistory: [],
+            followUpQuestions: [],
+            userConcerns: new Set(),
+            userGoals: new Set(),
+            userPreferences: {
+                responseStyle: 'balanced', // 'practical', 'empathetic', 'informational', 'balanced'
+                responseLength: 'medium', // 'brief', 'medium', 'detailed'
+                previouslyDeclinedSuggestions: new Set()
+            },
+            sessionMetrics: {
+                startTime: new Date(),
+                messageCount: 0,
+                topicsDiscussed: new Set(),
+                exercisesCompleted: new Set(),
+                resourcesProvided: new Set()
+            }
+        };
+        
+        // ========= ADVANCED NLP FEATURES =========
+        // Advanced features for better natural language understanding
+        this.advancedFeatures = {
+            // Thresholds for analysis
+            sentimentThresholds: {
+                stronglyNegative: -3,
+                negative: -1,
+                neutral: 1,
+                positive: 3,
+                stronglyPositive: 5
+            },
+            
+            // Contextual understanding enhancers
+            negationTerms: ['not', 'no', 'never', 'don\'t', 'doesn\'t', 'didn\'t', 'won\'t', 'wouldn\'t', 'couldn\'t', 'can\'t', 'isn\'t', 'aren\'t', 'wasn\'t', 'weren\'t'],
+            intensifierTerms: ['very', 'extremely', 'really', 'so', 'too', 'quite', 'rather', 'somewhat', 'pretty', 'fairly', 'unusually', 'incredibly', 'absolutely', 'completely', 'totally', 'utterly', 'highly', 'greatly', 'entirely', 'fully', 'especially'],
+            uncertaintyTerms: ['maybe', 'perhaps', 'possibly', 'probably', 'might', 'may', 'could', 'would', 'seem', 'appears', 'think', 'guess', 'assume', 'believe', 'suppose', 'wonder', 'not sure', 'uncertain', 'unclear', 'doubtful'],
+            
+            // Complex pattern recognition
+            questionPatterns: {
+                yesNo: /^(do|does|did|is|are|was|were|have|has|had|can|could|will|would|should|shall|may|might|must)(\s+\w+)+\??$/i,
+                whatIs: /^what(\s+is|\s+are|\s+was|\s+were)(\s+\w+)+\??$/i,
+                howTo: /^how(\s+to|\s+do|\s+does|\s+can|\s+could|\s+should|\s+would)(\s+\w+)+\??$/i,
+                why: /^why(\s+is|\s+are|\s+was|\s+were|\s+do|\s+does|\s+did|\s+have|\s+has|\s+had|\s+should|\s+would|\s+could|\s+can)(\s+\w+)+\??$/i,
+                when: /^when(\s+is|\s+are|\s+was|\s+were|\s+do|\s+does|\s+did|\s+have|\s+has|\s+had|\s+should|\s+would|\s+could|\s+can)(\s+\w+)+\??$/i,
+                where: /^where(\s+is|\s+are|\s+was|\s+were|\s+do|\s+does|\s+did|\s+have|\s+has|\s+had|\s+should|\s+would|\s+could|\s+can)(\s+\w+)+\??$/i,
+                who: /^who(\s+is|\s+are|\s+was|\s+were|\s+do|\s+does|\s+did|\s+have|\s+has|\s+had|\s+should|\s+would|\s+could|\s+can)(\s+\w+)+\??$/i,
+                which: /^which(\s+is|\s+are|\s+was|\s+were|\s+do|\s+does|\s+did|\s+have|\s+has|\s+had|\s+should|\s+would|\s+could|\s+can)(\s+\w+)+\??$/i
+            },
+            
+            // Sentiment modification based on context
+            modifySentiment(baseScore, text) {
+                const words = text.toLowerCase().split(/\W+/);
+                let score = baseScore;
+                
+                // Check for negation terms that would flip sentiment
+                for (let i = 0; i < words.length - 1; i++) {
+                    if (this.negationTerms.includes(words[i])) {
+                        // Negation usually applies to the next few words
+                        score = -score;
+                        break;
+                    }
+                }
+                
+                // Check for intensifiers
+                const intensifierCount = words.filter(word => this.intensifierTerms.includes(word)).length;
+                if (intensifierCount > 0) {
+                    // Amplify the sentiment in its current direction
+                    const multiplier = 1 + (intensifierCount * 0.5);
+                    score = score * multiplier;
+                }
+                
+                // Check for uncertainty which can dampen sentiment
+                const uncertaintyCount = words.filter(word => this.uncertaintyTerms.includes(word)).length;
+                if (uncertaintyCount > 0) {
+                    // Reduce the sentiment intensity
+                    const dampener = 1 - (uncertaintyCount * 0.3);
+                    score = score * dampener;
+                }
+                
+                return score;
+            }
+        };
+    }
+
+    // ========= ANALYSIS METHODS =========
+    
+    /**
+     * Main analysis method for processing user input
+     * @param {string} text - The user's message text
+     * @returns {object} Comprehensive analysis results
+     */
+    analyzeText(text) {
+        // Basic pre-processing
+        const normalizedText = text.toLowerCase().trim();
+        
+        // Run all analysis components
+        const result = {
+            sentiment: this.analyzeSentiment(normalizedText),
+            keywords: this.extractKeywords(normalizedText),
+            intent: this.detectIntent(normalizedText),
+            entities: this.extractEntities(normalizedText),
+            questionType: this.identifyQuestionType(normalizedText),
+            complexity: this.assessComplexity(normalizedText),
+            topicContinuity: this.checkTopicContinuity(normalizedText),
+            urgency: this.assessUrgency(normalizedText)
+        };
+
+        // Update user context based on analysis
+        this.updateUserContext(result, text);
+        
+        return result;
+    }
+    /**
+     * Enhanced sentiment analysis with contextual understanding
+     * @param {string} text - Normalized user text
+     * @returns {object} Sentiment analysis results
+     */
+     analyzeSentiment(text) {
+        // Enhanced sentiment analysis
+        let score = 0;
+        let intensity = 0;
+        let emotionCounts = {
+            positive: 0,
+            negative: 0,
+            neutral: 0
+        };
+        
+        // Split into words and analyze
+        const words = text.split(/\W+/).filter(word => word.length > 0);
+        
+        // Count positive and negative words, considering intensity markers
+        let hasIntensifier = false;
+        
+        for (let i = 0; i < words.length; i++) {
+            const word = words[i];
+            
+            // Check for intensifiers
+            if (this.advancedFeatures.intensifierTerms.includes(word)) {
+                hasIntensifier = true;
+                intensity += 1;
+                continue;
+            }
+            
+            // Check sentiment words
+            if (this.positiveWords.includes(word)) {
+                const wordScore = hasIntensifier ? 2 : 1;
+                score += wordScore;
+                emotionCounts.positive += 1;
+                hasIntensifier = false;
+            } else if (this.negativeWords.includes(word)) {
+                const wordScore = hasIntensifier ? 2 : 1;
+                score -= wordScore;
+                emotionCounts.negative += 1;
+                hasIntensifier = false;
+            } else {
+                emotionCounts.neutral += 1;
+            }
+        }
+        
+        // Apply contextual modifications
+        score = this.advancedFeatures.modifySentiment(score, text);
+        
+        // Determine sentiment category and intensity
+        let sentiment = 'neutral';
+        if (score > this.advancedFeatures.sentimentThresholds.positive) {
+            sentiment = score > this.advancedFeatures.sentimentThresholds.stronglyPositive ? 'very positive' : 'positive';
+        } else if (score < this.advancedFeatures.sentimentThresholds.negative) {
+            sentiment = score < this.advancedFeatures.sentimentThresholds.stronglyNegative ? 'very negative' : 'negative';
+        }
+        
+        // Determine dominant emotion if present
+        let dominantEmotion = null;
+        const maxEmotionCount = Math.max(emotionCounts.positive, emotionCounts.negative);
+        if (maxEmotionCount > 0) {
+            if (emotionCounts.positive === maxEmotionCount && emotionCounts.positive > emotionCounts.negative) {
+                dominantEmotion = 'positive';
+            } else if (emotionCounts.negative === maxEmotionCount && emotionCounts.negative > emotionCounts.positive) {
+                dominantEmotion = 'negative';
+            }
+        }
+        
+        return {
+            category: sentiment,
+            score: score,
+            intensity: intensity,
+            emotionCounts: emotionCounts,
+            dominantEmotion: dominantEmotion
+        };
+    }
+
+    /**
+     * Extract mental health keywords from text
+     * @param {string} text - Normalized user text
+     * @returns {array} Array of identified keywords/topics
+     */
+    extractKeywords(text) {
+        const keywords = new Set();
+        
+        // Check for keywords across all categories
+        for (const [category, categoryKeywords] of Object.entries(this.mentalHealthKeywords)) {
+            for (const keyword of categoryKeywords) {
+                // Use word boundary for more accurate matching
+                const regex = new RegExp(`\\b${keyword}\\b`, 'i');
+                if (regex.test(text)) {
+                    keywords.add(category);
+                    break; // Once we find a keyword in a category, move to next category
+                }
+            }
+        }
+        
+        // Convert to array for easier handling
+        return Array.from(keywords);
+    }
+
+    /**
+     * Detect user intent from message
+     * @param {string} text - Normalized user text
+     * @returns {string} Most likely intent
+     */
+    detectIntent(text) {
+        // Create a scoring system for intents
+        const intentScores = {};
+        
+        // Check for intents based on pattern matching
+        for (const [intent, patterns] of Object.entries(this.intentPatterns)) {
+            intentScores[intent] = 0;
+            
+            for (const pattern of patterns) {
+                // Use word boundary for more accurate matching
+                const regex = new RegExp(`\\b${pattern}\\b`, 'i');
+                if (regex.test(text)) {
+                    intentScores[intent] += 1;
+                }
+            }
+        }
+        
+        // Check for emergency intent as highest priority
+        if (intentScores['emergency'] > 0) {
+            return 'emergency';
+        }
+        
+        // Find the intent with the highest score
+        let maxScore = 0;
+        let primaryIntent = 'general_inquiry';  // Default
+        
+        for (const [intent, score] of Object.entries(intentScores)) {
+            if (score > maxScore) {
+                maxScore = score;
+                primaryIntent = intent;
+            }
+        }
+        
+        // Check for specific questions if no strong intent was found
+        if (maxScore < 2 && text.includes('?')) {
+            // Check specific question types
+            if (this.advancedFeatures.questionPatterns.whatIs.test(text)) {
+                for (const responseKey in this.responses) {
+                    if (responseKey.startsWith('what_is_') && text.includes(responseKey.replace('what_is_', ''))) {
+                        return responseKey;
+                    }
+                }
+            } else if (this.advancedFeatures.questionPatterns.howTo.test(text)) {
+                for (const responseKey in this.responses) {
+                    if (responseKey.startsWith('how_to_') && text.includes(responseKey.replace('how_to_', ''))) {
+                        return responseKey;
+                    }
+                }
+            }
+        }
+        
+        return primaryIntent;
+    }
+
+    /**
+     * Extract entities (time, severity, frequency, etc.) from text
+     * @param {string} text - Normalized user text
+     * @returns {object} Extracted entities
+     */
+    extractEntities(text) {
+        // Enhanced entity extraction
+        const entities = {};
+        
+        // Extract time references
+        const timePatterns = {
+            'morning': ['morning', 'am', 'breakfast', 'wake up', 'early'],
+            'afternoon': ['afternoon', 'lunch', 'noon', 'midday'],
+            'evening': ['night', 'evening', 'dinner', 'pm', 'late'],
+            'duration_short': ['minutes', 'seconds', 'moment', 'instant', 'shortly', 'briefly'],
+            'duration_medium': ['hours', 'today', 'tonight', 'day', 'daily'],
+            'duration_long': ['days', 'weeks', 'months', 'years', 'long time', 'always', 'constantly', 'continuously'],
+            'past': ['yesterday', 'last week', 'last month', 'last year', 'previously', 'before', 'used to', 'once', 'in the past'],
+            'present': ['now', 'currently', 'at the moment', 'these days', 'lately', 'recently', 'this week', 'this month'],
+            'future': ['tomorrow', 'next week', 'next month', 'next year', 'soon', 'later', 'in the future', 'upcoming']
+        };
+        
+        for (const [timeType, patterns] of Object.entries(timePatterns)) {
+            for (const pattern of patterns) {
+                if (text.includes(pattern)) {
+                    entities.time = entities.time || [];
+                    if (!entities.time.includes(timeType)) {
+                        entities.time.push(timeType);
+                    }
+                }
+            }
+        }
+        
+        // Extract symptom severity
+        const severityPatterns = {
+            'mild': ['mild', 'slightly', 'a bit', 'somewhat', 'a little', 'minor', 'not too bad', 'not very', 'sort of'],
+            'moderate': ['moderate', 'medium', 'average', 'sometimes', 'periodically', 'occasionally', 'on and off', 'comes and goes'],
+            'severe': ['severe', 'extreme', 'intense', 'terrible', 'horrible', 'unbearable', 'excruciating', 'debilitating', 
+                      'always', 'constantly', 'overwhelming', 'too much', 'can\'t stand', 'can\'t handle', 'can\'t cope',
+                      'worst', 'very', 'really', 'so', 'too', 'greatly', 'seriously']
+        };
+        
+        for (const [severity, patterns] of Object.entries(severityPatterns)) {
+            for (const pattern of patterns) {
+                const regex = new RegExp(`\\b${pattern}\\b`, 'i');
+                if (regex.test(text)) {
+                    entities.severity = severity;
+                    break;
+                }
+            }
+            if (entities.severity) break;
+        }
+        
+        // Extract frequency
+        const frequencyPatterns = {
+            'rare': ['rarely', 'occasionally', 'sometimes', 'every now and then', 'once in a while', 'not often', 'seldom', 'infrequently', 'sporadically'],
+            'frequent': ['often', 'frequently', 'regularly', 'usually', 'commonly', 'most of the time', 'many times', 'again and again', 'repeatedly'],
+            'constant': ['always', 'constantly', 'continuously', 'every day', 'all the time', 'never stops', 'persistent', 'perpetual', 'ongoing', 'non-stop', 'ever-present']
+        };
+        
+        for (const [frequency, patterns] of Object.entries(frequencyPatterns)) {
+            for (const pattern of patterns) {
+                if (text.includes(pattern)) {
+                    entities.frequency = frequency;
+                    break;
+                }
+            }
+            if (entities.frequency) break;
+        }
+        
+        // Extract duration (how long they've experienced something)
+        const durationPatterns = {
+            'acute': ['just started', 'began recently', 'new', 'recent', 'since yesterday', 'since last week', 'started this', 'first time'],
+            'subacute': ['few weeks', 'couple of weeks', 'several weeks', 'about a month', 'for weeks', 'this month'],
+            'chronic': ['months', 'years', 'long time', 'chronic', 'always been', 'all my life', 'since childhood', 'as long as I can remember', 'for years']
+        };
+        
+        for (const [duration, patterns] of Object.entries(durationPatterns)) {
+            for (const pattern of patterns) {
+                if (text.includes(pattern)) {
+                    entities.duration = duration;
+                    break;
+                }
+            }
+            if (entities.duration) break;
+        }
+        
+        // Extract relationships
+        const relationshipPatterns = {
+            'family': ['family', 'parent', 'mother', 'father', 'mom', 'dad', 'sibling', 'brother', 'sister', 'child', 'son', 'daughter', 'spouse', 'husband', 'wife', 'partner'],
+            'romantic': ['relationship', 'partner', 'boyfriend', 'girlfriend', 'husband', 'wife', 'spouse', 'significant other', 'fiance', 'ex', 'dating', 'marriage'],
+            'friendship': ['friend', 'friendship', 'buddy', 'pal', 'companion', 'acquaintance', 'peer', 'social circle'],
+            'professional': ['work', 'job', 'career', 'coworker', 'colleague', 'boss', 'supervisor', 'manager', 'employee', 'workplace', 'profession']
+        };
+        
+        for (const [relationType, patterns] of Object.entries(relationshipPatterns)) {
+            for (const pattern of patterns) {
+                const regex = new RegExp(`\\b${pattern}\\b`, 'i');
+                if (regex.test(text)) {
+                    entities.relationships = entities.relationships || [];
+                    if (!entities.relationships.includes(relationType)) {
+                        entities.relationships.push(relationType);
+                    }
+                }
+            }
+        }
+        
+        // Extract treatment modalities mentioned
+        const treatmentPatterns = {
+            'medication': ['medication', 'medicine', 'drug', 'prescription', 'pill', 'tablet', 'dose', 'pharmacy', 'antidepressant', 'anti-anxiety','psychiatrist'],
+            'therapy': ['therapy', 'therapist', 'counseling', 'counselor', 'psychologist', 'session', 'cbt', 'dbt', 'psychotherapy', 'treatment'],
+            'lifestyle': ['exercise', 'diet', 'nutrition', 'sleep', 'meditation', 'mindfulness', 'yoga', 'physical activity', 'self-care', 'lifestyle change', 'habit'],
+            'support': ['support group', 'community', 'family', 'friends', 'social', 'peer', 'online forum', 'helpline', 'sponsor', '12 step', 'meeting']
+        };
+        
+        for (const [treatmentType, patterns] of Object.entries(treatmentPatterns)) {
+            for (const pattern of patterns) {
+                const regex = new RegExp(`\\b${pattern}\\b`, 'i');
+                if (regex.test(text)) {
+                    entities.treatments = entities.treatments || [];
+                    if (!entities.treatments.includes(treatmentType)) {
+                        entities.treatments.push(treatmentType);
+                    }
+                }
+            }
+        }
+        
+        return entities;
+    }
+
+    /**
+     * Identify the type of question being asked
+     * @param {string} text - Normalized user text
+     * @returns {string|null} Question type or null if not a question
+     */
+    identifyQuestionType(text) {
+        // Check if text is a question
+        if (!text.includes('?') && !text.match(/^(what|who|when|where|why|how|is|are|do|does|can|could|would|should|will)/i)) {
+            return null;
+        }
+        
+        // Identify question type
+        for (const [type, pattern] of Object.entries(this.advancedFeatures.questionPatterns)) {
+            if (pattern.test(text)) {
+                return type;
+            }
+        }
+        
+        // If text ends with question mark but doesn't match patterns
+        if (text.endsWith('?')) {
+            return 'general_question';
+        }
+        
+        return null;
+    }
+
+    /**
+     * Assess the complexity of the user's message
+     * @param {string} text - User message
+     * @returns {object} Complexity metrics
+     */
+    assessComplexity(text) {
+        // Split text into sentences and words
+        const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+        const words = text.split(/\s+/).filter(w => w.length > 0);
+        
+        // Calculate metrics
+        const averageWordsPerSentence = sentences.length > 0 ? words.length / sentences.length : 0;
+        const longWords = words.filter(w => w.length > 6).length;
+        const longWordPercentage = words.length > 0 ? (longWords / words.length) * 100 : 0;
+        
+        // Determine complexity level
+        let complexityLevel = 'medium';
+        if (averageWordsPerSentence > 20 || longWordPercentage > 30) {
+            complexityLevel = 'high';
+        } else if (averageWordsPerSentence < 8 && longWordPercentage < 15) {
+            complexityLevel = 'low';
+        }
+        
+        return {
+            sentenceCount: sentences.length,
+            wordCount: words.length,
+            averageWordsPerSentence,
+            longWordPercentage,
+            complexityLevel
+        };
+    }
+
+    /**
+     * Check if the current message continues previous topics
+     * @param {string} text - Current user message
+     * @returns {object} Topic continuity information
+     */
+    checkTopicContinuity(text) {
+        let continuesToPreviousTopic = false;
+        let topicShift = false;
+        
+        // Can't determine continuity if no history
+        if (this.userContext.conversationHistory.length === 0) {
+            return { continuesToPreviousTopic, topicShift };
+        }
+        
+        // Get previous topics from history
+        const previousTopics = new Set();
+        for (let i = Math.max(0, this.userContext.conversationHistory.length - 3); i < this.userContext.conversationHistory.length; i++) {
+            const entry = this.userContext.conversationHistory[i];
+            if (entry.analysis && entry.analysis.keywords) {
+                entry.analysis.keywords.forEach(keyword => previousTopics.add(keyword));
+            }
+        }
+        
+        // Extract current topics
+        const currentKeywords = this.extractKeywords(text);
+        
+        // Check for continuity
+        if (currentKeywords.some(keyword => previousTopics.has(keyword))) {
+            continuesToPreviousTopic = true;
+        }
+        
+        // Check for topic shifts
+        if (currentKeywords.length > 0 && !continuesToPreviousTopic) {
+            topicShift = true;
+        }
+        
+        return { continuesToPreviousTopic, topicShift, currentKeywords, previousTopics: Array.from(previousTopics) };
+    }
+
+    /**
+     * Assess the urgency of the user's message
+     * @param {string} text - User message
+     * @returns {object} Urgency assessment
+     */
+    assessUrgency(text) {
+        const urgentTerms = [
+            'emergency', 'urgent', 'crisis', 'help', 'immediately', 'now', 'dying', 'kill', 'suicide', 'hurt',
+            'emergency', 'danger', 'unsafe', 'scared', 'terrified', 'desperate', 'hopeless', 'end it all', 
+            'can\'t go on', 'give up', 'no point', 'no reason to live', 'better off dead', 'want to die',
+            'plan to', 'going to', 'will kill', 'will hurt', 'will harm', 'tonight', 'soon', 'about to'
+        ];
+        
+        // Calculate an urgency score
+        let urgencyScore = 0;
+        const words = text.toLowerCase().split(/\W+/);
+        
+        // Check for urgent terms
+        for (const term of urgentTerms) {
+            if (text.includes(term)) {
+                urgencyScore += 1;
+                
+                // Higher weight for suicide/harm-related terms
+                if (['suicide', 'kill', 'die', 'hurt', 'harm', 'end it all', 'better off dead', 'no reason to live'].some(t => term.includes(t))) {
+                    urgencyScore += 2;
+                }
+            }
+        }
+        
+        // Check for immediate timeframe
+        if (text.match(/right now|immediately|about to|going to|tonight|soon/)) {
+            urgencyScore += 2;
+        }
+        
+        // Determine urgency level
+        let urgencyLevel = 'low';
+        if (urgencyScore >= 5) {
+            urgencyLevel = 'high';
+        } else if (urgencyScore >= 2) {
+            urgencyLevel = 'medium';
+        }
+        
+        // Emergency flag for critical situations
+        const isEmergency = urgencyLevel === 'high' || 
+                           (text.includes('suicide') && text.includes('plan')) ||
+                           (text.includes('kill') && text.includes('myself')) ||
+                           (text.includes('end') && text.includes('life'));
+        
+        return {
+            score: urgencyScore,
+            level: urgencyLevel,
+            isEmergency
+        };
+    }
+
+    /**
+     * Update user context based on analysis results
+     * @param {object} analysisResult - Results from text analysis
+     * @param {string} originalText - Original user message
+     */
+    updateUserContext(analysisResult, originalText) {
+        // Add to conversation history
+        this.userContext.conversationHistory.push({
+            message: originalText,
+            analysis: analysisResult,
+            timestamp: new Date()
+        });
+        
+        // Update session metrics
+        this.userContext.sessionMetrics.messageCount++;
+        
+        // Update current topic if keywords are found
+        if (analysisResult.keywords.length > 0) {
+            this.userContext.currentTopic = analysisResult.keywords[0];
+            
+            // Add to topics discussed in this session
+            analysisResult.keywords.forEach(keyword => {
+                this.userContext.sessionMetrics.topicsDiscussed.add(keyword);
+            });
+            
+            // Add to detected conditions if not already present
+            for (const keyword of analysisResult.keywords) {
+                if (!this.userContext.detectedConditions.includes(keyword)) {
+                    this.userContext.detectedConditions.push(keyword);
+                }
+                
+                // Add to user concerns
+                this.userContext.userConcerns.add(keyword);
+            }
+        }
+        
+        // Update user preferences based on message content
+        this.updateUserPreferences(originalText, analysisResult);
+        
+        // Generate appropriate follow-up questions based on context
+        this.generateFollowUpQuestions();
+    }
+
+    /**
+     * Update user preferences based on message content and analysis
+     * @param {string} text - Original user message
+     * @param {object} analysis - Analysis results
+     */
+    updateUserPreferences(text, analysis) {
+        // Check for explicit preference statements
+        if (text.match(/(?:prefer|want|like)\s+(?:brief|short|quick|concise)/i)) {
+            this.userContext.userPreferences.responseLength = 'brief';
+        } else if (text.match(/(?:prefer|want|like)\s+(?:detailed|thorough|comprehensive|complete|full)/i)) {
+            this.userContext.userPreferences.responseLength = 'detailed';
+        }
+        
+        // Infer preferences from message complexity
+        if (analysis.complexity && analysis.complexity.complexityLevel === 'high') {
+            // Users who write complex messages often want more detailed responses
+            if (this.userContext.userPreferences.responseLength === 'medium') {
+                this.userContext.userPreferences.responseLength = 'detailed';
+            }
+        } else if (analysis.complexity && analysis.complexity.complexityLevel === 'low') {
+            // Users who write very simple messages might prefer more concise responses
+            if (this.userContext.userPreferences.responseLength === 'medium' && analysis.complexity.wordCount < 15) {
+                this.userContext.userPreferences.responseLength = 'brief';
+            }
+        }
+        
+        // Adjust response style based on user's apparent needs
+        if (analysis.keywords.includes('emergency') || analysis.urgency.isEmergency) {
+            // Emergencies need clear, practical guidance
+            this.userContext.userPreferences.responseStyle = 'practical';
+        } else if (analysis.sentiment.category.includes('negative')) {
+            // Negative emotions often benefit from empathetic responses
+            this.userContext.userPreferences.responseStyle = 'empathetic';
+        } else if (analysis.intent === 'information_request' || analysis.questionType === 'whatIs' || analysis.questionType === 'howTo') {
+            // Information requests benefit from informational responses
+            this.userContext.userPreferences.responseStyle = 'informational';
+        }
+    }
+
+
+
+/**
+     * Generate follow-up questions based on conversation context
+     */
+     generateFollowUpQuestions() {
+        this.userContext.followUpQuestions = [];
+        
+        if (this.userContext.currentTopic) {
+            switch (this.userContext.currentTopic) {
+                case 'anxiety':
+                    this.userContext.followUpQuestions.push(
+                        "Would you like to try a breathing exercise to help with anxiety?",
+                        "Are there specific situations that trigger your anxiety?",
+                        "Have you tried any relaxation techniques for your anxiety before?",
+                        "How long have you been experiencing these anxiety symptoms?",
+                        "Is your anxiety affecting your daily activities or sleep?",
+                        "Have you spoken with a healthcare provider about your anxiety?"
+                    );
+                    break;
+                case 'depression':
+                    this.userContext.followUpQuestions.push(
+                        "How long have you been feeling this way?",
+                        "Would you like some simple self-care suggestions that might help?",
+                        "Have you spoken to a healthcare provider about how you're feeling?",
+                        "Are you having trouble with sleep or appetite?",
+                        "Have you noticed changes in your energy level or interest in activities?",
+                        "Do you have supportive people in your life you can talk to?"
+                    );
+                    break;
+                case 'sleep':
+                    this.userContext.followUpQuestions.push(
+                        "Do you have trouble falling asleep or staying asleep?",
+                        "Would you like to learn about sleep hygiene practices?",
+                        "Have you tried relaxation techniques before bed?",
+                        "Is stress or anxiety contributing to your sleep difficulties?",
+                        "Do you have a consistent sleep schedule?",
+                        "Have you spoken with a healthcare provider about your sleep issues?"
+                    );
+                    break;
+                case 'stress':
+                    this.userContext.followUpQuestions.push(
+                        "What are your main sources of stress right now?",
+                        "Would you like to try a quick stress reduction technique?",
+                        "Have you been able to take breaks and practice self-care?",
+                        "How is stress affecting your physical health?",
+                        "Are there stressors in your life that could be reduced or eliminated?",
+                        "What strategies have helped you manage stress in the past?"
+                    );
+                    break;
+                case 'trauma':
+                    this.userContext.followUpQuestions.push(
+                        "Would you like some resources for trauma support?",
+                        "Have you worked with a trauma-informed therapist before?",
+                        "Would learning some grounding techniques be helpful?",
+                        "Are there particular situations or triggers that are especially difficult?",
+                        "Are you currently feeling safe?",
+                        "Have you found any coping strategies that help when trauma symptoms arise?"
+                    );
+                    break;
+                case 'mindfulness':
+                    this.userContext.followUpQuestions.push(
+                        "Would you like to try a short mindfulness exercise?",
+                        "Have you practiced mindfulness before?",
+                        "Are you interested in learning how to incorporate mindfulness into daily activities?",
+                        "What aspects of mindfulness are you most interested in?",
+                        "Have you found particular mindfulness practices helpful in the past?",
+                        "Would you prefer a guided practice or something you can do independently?"
+                    );
+                    break;
+                case 'selfcare':
+                    this.userContext.followUpQuestions.push(
+                        "Which aspect of self-care would you like to focus on?",
+                        "What self-care activities have worked for you in the past?",
+                        "Would you like some ideas for quick self-care practices you can do today?",
+                        "Are there particular barriers to self-care in your life right now?",
+                        "How do you typically know when you need more self-care?",
+                        "Would it be helpful to think about a self-care plan or routine?"
+                    );
+                    break;
+                case 'ocd':
+                    this.userContext.followUpQuestions.push(
+                        "Are you experiencing intrusive thoughts or compulsive behaviors?",
+                        "Have you received any treatment specifically for OCD?",
+                        "Would you like information about evidence-based approaches for OCD?",
+                        "How are these symptoms affecting your daily life?",
+                        "Have you tried any strategies to manage your OCD symptoms?",
+                        "Would you like to learn about resources for OCD support?"
+                    );
+                    break;
+                case 'eating_disorders':
+                    this.userContext.followUpQuestions.push(
+                        "Have you spoken with a healthcare provider about your eating concerns?",
+                        "Would you like information about eating disorder support resources?",
+                        "How are these eating patterns affecting other aspects of your life?",
+                        "Are you experiencing physical symptoms related to your eating patterns?",
+                        "What aspects of recovery feel most challenging?",
+                        "Would you like to learn about approaches for developing a healthier relationship with food?"
+                    );
+                    break;
+                case 'addiction':
+                    this.userContext.followUpQuestions.push(
+                        "Where are you in your journey with addiction?",
+                        "Would you like information about different recovery approaches?",
+                        "Have you reached out for professional support?",
+                        "What aspects of addiction or recovery are most challenging for you?",
+                        "Are there specific triggers you're struggling with?",
+                        "Would you like to learn about resources for support?"
+                    );
+                    break;
+                case 'relationships':
+                    this.userContext.followUpQuestions.push(
+                        "What specific aspects of relationships are you finding challenging?",
+                        "Would you like some communication strategies that might help?",
+                        "Have you noticed any patterns in your relationship difficulties?",
+                        "Are there specific boundaries you're finding hard to establish?",
+                        "Would information about attachment styles be helpful?",
+                        "Have you considered relationship counseling or therapy?"
+                    );
+                    break;
+                case 'neurodevelopmental':
+                    this.userContext.followUpQuestions.push(
+                        "Do you have a diagnosis, or are you exploring whether you might have a neurodevelopmental condition?",
+                        "What aspects of your condition impact you most?",
+                        "Would you like information about strengths associated with your neurotype?",
+                        "Are you looking for strategies related to specific challenges?",
+                        "Have you found accommodations or approaches that work well for you?",
+                        "Would you like to learn about support resources?"
+                    );
+                    break;
+                default:
+                    this.userContext.followUpQuestions.push(
+                        "Could you tell me more about how you've been feeling?",
+                        "What kind of support would be most helpful right now?",
+                        "Is there a specific aspect of your mental health you'd like to discuss?",
+                        "Have you noticed any patterns or triggers related to how you're feeling?",
+                        "What strategies have been helpful for you in the past?",
+                        "Would you like some resources or information about a particular topic?"
+                    );
+            }
+        } else {
+            // Default follow-up questions if no specific topic is detected
+            this.userContext.followUpQuestions.push(
+                "Could you tell me more about what's on your mind?",
+                "How have you been feeling lately?",
+                "Is there something specific you'd like support with today?",
+                "What brings you here today?",
+                "How can I best support you right now?",
+                "Are there particular mental health concerns you'd like to discuss?"
+            );
+        }
+    }
+
+    // ========= RESPONSE GENERATION METHODS =========
+
+    /**
+     * Generate a response based on user message and analysis
+     * @param {string} userMessage - The user's message
+     * @returns {string} Generated response
+     */
+    generateResponse(userMessage) {
+        // Analyze the message
+        const analysis = this.analyzeText(userMessage);
+        
+        // High priority: Check for emergency intent first
+        if (analysis.intent === 'emergency' || analysis.urgency.isEmergency) {
+            return this.getRandomResponse('emergency');
+        }
+        
+        let response;
+        
+        // Check for specific intents
+        if (this.responses[analysis.intent]) {
+            response = this.getRandomResponse(analysis.intent);
+        } 
+        // Check for specific mental health keywords
+        else if (analysis.keywords.length > 0 && this.responses[analysis.keywords[0]]) {
+            response = this.getRandomResponse(analysis.keywords[0]);
+        }
+        // Check for specific question types
+        else if (analysis.questionType) {
+            // Handle specific question types
+            const questionTopic = this.identifyQuestionTopic(userMessage, analysis);
+            if (questionTopic && this.responses[questionTopic]) {
+                response = this.getRandomResponse(questionTopic);
+            } else {
+                // General response for unidentified questions
+                response = this.getRandomResponse('default');
+            }
+        }
+        // Default response if no specific intent or keywords are matched
+        else {
+            response = this.getRandomResponse('default');
+        }
+        
+        // Add a follow-up question if available
+        if (this.userContext.followUpQuestions.length > 0) {
+            const followUpQuestion = this.userContext.followUpQuestions[Math.floor(Math.random() * this.userContext.followUpQuestions.length)];
+            
+            // Only add follow-up if response doesn't already end with a question
+            if (!response.trim().endsWith('?')) {
+                response += ' ' + followUpQuestion;
+            }
+        }
+        
+        // Adjust response based on user preferences
+        response = this.adjustResponseStyle(response);
+        
+        return response;
+    }
+
+    /**
+     * Identify the topic of a question
+     * @param {string} text - User message
+     * @param {object} analysis - Analysis results
+     * @returns {string|null} Question topic or null
+     */
+    identifyQuestionTopic(text, analysis) {
+        // Common question patterns
+        const whatIsPattern = /what\s+(?:is|are)\s+(?:the)?\s*(.*?)\??$/i;
+        const howToPattern = /how\s+(?:to|do|can|does|could|should|would)\s+(?:i|you|one|we|they)?\s*(.*?)\??$/i;
+        
+        // Try to extract topic from question patterns
+        let match;
+        if (match = text.match(whatIsPattern)) {
+            const topic = match[1].trim().toLowerCase();
+            
+            // Check if we have a direct response for this topic
+            if (this.responses[`what_is_${topic.replace(/\s+/g, '_')}`]) {
+                return `what_is_${topic.replace(/\s+/g, '_')}`;
+            }
+            
+            // Check for topic in mental health keywords
+            for (const [category, keywords] of Object.entries(this.mentalHealthKeywords)) {
+                if (keywords.some(keyword => topic.includes(keyword))) {
+                    if (this.responses[`what_is_${category}`]) {
+                        return `what_is_${category}`;
+                    } else if (this.responses[category]) {
+                        return category;
+                    }
+                }
+            }
+        } else if (match = text.match(howToPattern)) {
+            const topic = match[1].trim().toLowerCase();
+            
+            // Check if we have a direct response for this topic
+            if (this.responses[`how_to_${topic.replace(/\s+/g, '_')}`]) {
+                return `how_to_${topic.replace(/\s+/g, '_')}`;
+            }
+            
+            // Try to find a general topic match
+            if (topic.includes('cope') || topic.includes('deal with') || topic.includes('manage')) {
+                // Extract what they're trying to cope with
+                const copingPattern = /(?:cope|deal|manage)(?:\s+with)?\s+(.*?)(?:\??|$)/i;
+                const copingMatch = topic.match(copingPattern);
+                
+                if (copingMatch) {
+                    const copingTopic = copingMatch[1].trim().toLowerCase();
+                    
+                    // Check for topic in mental health keywords
+                    for (const [category, keywords] of Object.entries(this.mentalHealthKeywords)) {
+                        if (keywords.some(keyword => copingTopic.includes(keyword))) {
+                            return category;
+                        }
+                    }
+                }
+            }
+            
+            // Check for specific coping or management questions
+            if (topic.includes('anxiety')) return 'anxiety';
+            if (topic.includes('depress')) return 'depression';
+            if (topic.includes('sleep') || topic.includes('insomnia')) return 'sleep';
+            if (topic.includes('stress')) return 'stress';
+            if (topic.includes('trauma')) return 'trauma';
+            if (topic.includes('mind') || topic.includes('meditat')) return 'mindfulness';
+            if (topic.includes('self') && topic.includes('care')) return 'selfcare';
+        }
+        
+        // If no specific question topic found, use keywords from analysis
+        if (analysis.keywords.length > 0) {
+            return analysis.keywords[0];
+        }
+        
+        return null;
+    }
+
+    /**
+     * Get a random response from a category
+     * @param {string} category - Response category
+     * @returns {string} A random response from the category
+     */
+    getRandomResponse(category) {
+        const responses = this.responses[category];
+        if (!responses || responses.length === 0) {
+            return this.getRandomResponse('default');
+        }
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    /**
+     * Adjust response style based on user preferences
+     * @param {string} response - Original response
+     * @returns {string} Adjusted response
+     */
+    adjustResponseStyle(response) {
+        // Apply length preference
+        let adjustedResponse = response;
+        
+        if (this.userContext.userPreferences.responseLength === 'brief') {
+            // Simplify and shorten
+            adjustedResponse = this.shortenResponse(adjustedResponse);
+        } else if (this.userContext.userPreferences.responseLength === 'detailed') {
+            // Already detailed, no need to adjust
+        }
+        
+        // Apply style preference
+        switch (this.userContext.userPreferences.responseStyle) {
+            case 'practical':
+                adjustedResponse = this.makePractical(adjustedResponse);
+                break;
+            case 'empathetic':
+                adjustedResponse = this.makeEmpathetic(adjustedResponse);
+                break;
+            case 'informational':
+                adjustedResponse = this.makeInformational(adjustedResponse);
+                break;
+            // 'balanced' is the default style, no adjustment needed
+            default:
+                break;
+        }
+        
+        return adjustedResponse;
+    }
+
+    /**
+     * Shorten a response for brevity
+     * @param {string} response - Original response
+     * @returns {string} Shortened response
+     */
+    shortenResponse(response) {
+        // Split into sentences
+        const sentences = response.match(/[^.!?]+[.!?]+/g) || [response];
+        
+        // If already short, return as is
+        if (sentences.length <= 2) return response;
+        
+        // Keep first and last sentence for context
+        const shortened = sentences[0] + (sentences.length > 2 ? ' ' + sentences[sentences.length - 1] : '');
+        
+        return shortened;
+    }
+
+    /**
+     * Make response more practical and action-oriented
+     * @param {string} response - Original response
+     * @returns {string} Practical response
+     */
+    makePractical(response) {
+        // Already practical responses don't need adjustment
+        if (response.includes('try this') || response.includes('steps') || response.includes('technique')) {
+            return response;
+        }
+        
+        // Add a practical framing to the response
+        return response.replace(/Would you like to (try|learn|know) about/, 'Here\'s how you can').replace(/\?$/, '.');
+    }
+
+    /**
+     * Make response more empathetic
+     * @param {string} response - Original response
+     * @returns {string} Empathetic response
+     */
+    makeEmpathetic(response) {
+        // Add empathetic prefix if not already empathetic
+        if (!response.includes('understand') && !response.includes('challenging') && !response.includes('difficult')) {
+            const empathyPrefixes = [
+                "I understand this can be really difficult. ",
+                "It sounds like you're going through a lot. ",
+                "That must be really challenging to experience. ",
+                "I appreciate you sharing this. ",
+                "I can hear how much this affects you. "
+            ];
+            
+            return empathyPrefixes[Math.floor(Math.random() * empathyPrefixes.length)] + response;
+        }
+        
+        return response;
+    }
+
+    /**
+     * Make response more informational
+     * @param {string} response - Original response
+     * @returns {string} Informational response
+     */
+    makeInformational(response) {
+        // If response is already informational, return as is
+        if (response.includes('research shows') || response.includes('studies indicate')) {
+            return response;
+        }
+        
+        // Add informational framing
+        const infoFraming = [
+            "Research suggests that ",
+            "Evidence indicates that ",
+            "Mental health professionals generally recommend ",
+            "From a psychological perspective, ",
+            "Clinical practice suggests "
+        ];
+        
+        // Find a good place to insert the informational framing
+        const sentences = response.match(/[^.!?]+[.!?]+/g) || [response];
+        if (sentences.length > 1) {
+            // Add to second sentence for better flow
+            return sentences[0] + ' ' + infoFraming[Math.floor(Math.random() * infoFraming.length)] + sentences[1].trim().toLowerCase() + (sentences.length > 2 ? ' ' + sentences.slice(2).join(' ') : '');
+        }
+        
+        return response;
+    }
+
+    /**
+     * Generate contextually relevant suggestions based on conversation
+     * @param {string} userMessage - The user's message
+     * @returns {string[]} Array of suggestion texts
+     */
+    generateSuggestions(userMessage) {
+        // Generate contextual suggestions based on the current conversation
+        const analysis = this.analyzeText(userMessage);
+        let suggestions = [];
+        
+        // Add suggestions based on detected keywords
+        if (analysis.keywords.length > 0) {
+            const primaryTopic = analysis.keywords[0];
+            
+            switch (primaryTopic) {
+                case 'anxiety':
+                    suggestions = [
+                        "Tell me about breathing techniques",
+                        "How can I stop anxious thoughts?",
+                        "What causes anxiety?",
+                        "Grounding techniques for anxiety",
+                        "Medication for anxiety",
+                        "Physical symptoms of anxiety",
+                        "Anxiety triggers",
+                        "How to help someone with anxiety"
+                    ];
+                    break;
+                case 'depression':
+                    suggestions = [
+                        "Activities to boost mood",
+                        "Should I talk to a therapist?",
+                        "How to deal with negative thoughts",
+                        "Self-care for depression",
+                        "Signs of depression",
+                        "Depression treatment options",
+                        "Helping a loved one with depression",
+                        "Depression vs sadness"
+                    ];
+                    break;
+                case 'sleep':
+                    suggestions = [
+                        "Sleep hygiene tips",
+                        "How to fall asleep faster",
+                        "Meditation for sleep",
+                        "Why do I wake up during the night?",
+                        "Natural sleep aids",
+                        "Sleep and mental health",
+                        "Insomnia help",
+                        "Sleep schedule reset"
+                    ];
+                    break;
+                case 'stress':
+                    suggestions = [
+                        "Quick stress relief techniques",
+                        "How to reduce work stress",
+                        "Physical symptoms of stress",
+                        "Time management for stress",
+                        "Stress vs anxiety",
+                        "Chronic stress management",
+                        "Stress and physical health",
+                        "Breathing techniques for stress"
+                    ];
+                    break;
+                case 'trauma':
+                    suggestions = [
+                        "Grounding techniques for flashbacks",
+                        "How to find a trauma therapist",
+                        "PTSD symptoms",
+                        "Coping with traumatic memories",
+                        "Trauma recovery timeline",
+                        "Types of trauma therapy",
+                        "Complex PTSD vs PTSD",
+                        "Supporting someone with trauma"
+                    ];
+                    break;
+                case 'mindfulness':
+                    suggestions = [
+                        "Simple mindfulness exercises",
+                        "Benefits of meditation",
+                        "Mindfulness for beginners",
+                        "How to be more present",
+                        "Mindfulness apps recommendation",
+                        "Mindfulness for anxiety",
+                        "Body scan meditation",
+                        "Mindful breathing technique"
+                    ];
+                    break;
+                case 'selfcare':
+                    suggestions = [
+                        "Self-care ideas for busy people",
+                        "How to create a self-care routine",
+                        "Physical self-care activities",
+                        "Emotional self-care practices",
+                        "Self-care on a budget",
+                        "Setting boundaries as self-care",
+                        "Self-care for caregivers",
+                        "Quick self-care activities"
+                    ];
+                    break;
+                case 'ocd':
+                    suggestions = [
+                        "What is exposure response prevention?",
+                        "Coping with intrusive thoughts",
+                        "OCD treatment options",
+                        "Differences between OCD and anxiety",
+                        "How to help someone with OCD",
+                        "Pure O OCD explained",
+                        "Mindfulness for OCD",
+                        "Common OCD themes"
+                    ];
+                    break;
+                case 'eating_disorders':
+                    suggestions = [
+                        "Signs of an eating disorder",
+                        "How to find ED treatment",
+                        "Supporting someone with an eating disorder",
+                        "Recovery from an eating disorder",
+                        "Body image improvement",
+                        "Intuitive eating explained",
+                        "Eating disorders and exercise",
+                        "Different types of eating disorders"
+                    ];
+                    break;
+                case 'addiction':
+                    suggestions = [
+                        "Signs of addiction",
+                        "How to support someone in recovery",
+                        "Addiction treatment options",
+                        "Understanding withdrawal",
+                        "Relapse prevention strategies",
+                        "Harm reduction approaches",
+                        "Recovery resources",
+                        "Addiction and mental health"
+                    ];
+                    break;
+                case 'personality_disorders':
+                    suggestions = [
+                        "What is DBT therapy?",
+                        "Understanding BPD symptoms",
+                        "How to set healthy boundaries",
+                        "Communication strategies",
+                        "Therapy options for personality disorders",
+                        "Self-care with a personality disorder",
+                        "Managing emotional intensity",
+                        "Supporting someone with a personality disorder"
+                    ];
+                    break;
+                case 'relationships':
+                    suggestions = [
+                        "Healthy communication techniques",
+                        "Setting boundaries in relationships",
+                        "Signs of a healthy relationship",
+                        "Working through relationship conflict",
+                        "Attachment styles explained",
+                        "Building trust in relationships",
+                        "Recovering from relationship trauma",
+                        "When to seek couples therapy"
+                    ];
+                    break;
+                case 'neurodevelopmental':
+                    suggestions = [
+                        "ADHD coping strategies",
+                        "Autism self-advocacy tips",
+                        "Executive function improvement",
+                        "Sensory regulation techniques",
+                        "Neurodiversity-affirming approach",
+                        "Organization strategies for ADHD",
+                        "Social skills development",
+                        "Accommodations at work or school"
+                    ];
+                    break;
+                default:
+                    suggestions = [
+                        "Tell me about mindfulness",
+                        "How to improve mental health",
+                        "Stress management techniques",
+                        "Self-care practices",
+                        "Sleep improvement tips",
+                        "Anxiety coping strategies",
+                        "Depression support resources",
+                        "When to seek professional help"
+                    ];
+            }
+        } else if (analysis.intent === 'greeting') {
+            // Suggestions for beginning conversations
+            suggestions = [
+                "How can you help with anxiety?",
+                "I'm feeling stressed",
+                "Tell me about depression",
+                "Sleep improvement tips",
+                "What is mindfulness?",
+                "Self-care strategies",
+                "Mental health resources",
+                "How does this work?"
+            ];
+        } else if (analysis.intent === 'help_request') {
+            // General help suggestions
+            suggestions = [
+                "Anxiety management",
+                "Depression support",
+                "Stress reduction",
+                "Sleep improvement",
+                "Mindfulness practices",
+                "Emotion regulation",
+                "Self-care ideas",
+                "Professional help options"
+            ];
+        } else {
+            // Default suggestions if no specific keywords are detected
+            suggestions = [
+                "What is anxiety?",
+                "How to improve sleep",
+                "Quick stress relief techniques",
+                "Self-care ideas",
+                "Mindfulness exercises",
+                "Managing difficult emotions",
+                "Mental health resources",
+                "When to seek professional help"
+            ];
+        }
+        
+        // Filter out any previously declined suggestions
+        suggestions = suggestions.filter(suggestion => 
+            !this.userContext.userPreferences.previouslyDeclinedSuggestions.has(suggestion)
+        );
+        
+        // If we have too few suggestions after filtering, add some defaults
+        if (suggestions.length < 4) {
+            const defaultSuggestions = [
+                "Mental health resources",
+                "Self-care strategies",
+                "Stress management",
+                "Sleep improvement",
+                "Mindfulness practices",
+                "Communication skills",
+                "Emotional regulation",
+                "Building resilience"
+            ];
+            
+            // Add defaults until we have at least 4 suggestions
+            for (const suggestion of defaultSuggestions) {
+                if (suggestions.length >= 4) break;
+                if (!suggestions.includes(suggestion) && 
+                    !this.userContext.userPreferences.previouslyDeclinedSuggestions.has(suggestion)) {
+                    suggestions.push(suggestion);
+                }
+            }
+        }
+        
+        // Randomize the order
+        return this.shuffleArray(suggestions).slice(0, 4);
+    }
+    
+    /**
+     * Shuffle an array randomly
+     * @param {array} array - Array to shuffle
+     * @returns {array} Shuffled array
+     */
+    shuffleArray(array) {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
+    }
+    
+    /**
+     * Track suggestion decline to avoid repeating unwanted suggestions
+     * @param {string} suggestion - The declined suggestion
+     */
+    trackDeclinedSuggestion(suggestion) {
+        this.userContext.userPreferences.previouslyDeclinedSuggestions.add(suggestion);
+    }
+
+    /**
+     * Track when a suggested exercise or resource is used
+     * @param {string} type - Type of completion ('exercise' or 'resource')
+     * @param {string} name - Name of the completed item
+     */
+    trackCompletion(type, name) {
+        if (type === 'exercise') {
+            this.userContext.sessionMetrics.exercisesCompleted.add(name);
+        } else if (type === 'resource') {
+            this.userContext.sessionMetrics.resourcesProvided.add(name);
+        }
+    }
+
+    /**
+     * Generate session summary for user
+     * @returns {string} Session summary text
+     */
+    generateSessionSummary() {
+        // Calculate session duration
+        const sessionDuration = Math.round((new Date() - this.userContext.sessionMetrics.startTime) / 60000);
+        
+        // Compile topics discussed
+        const topicsDiscussed = Array.from(this.userContext.sessionMetrics.topicsDiscussed);
+        
+        // Compile exercises completed
+        const exercisesCompleted = Array.from(this.userContext.sessionMetrics.exercisesCompleted);
+        
+        // Compile resources provided
+        const resourcesProvided = Array.from(this.userContext.sessionMetrics.resourcesProvided);
+        
+        // Generate summary text
+        let summary = `Session Summary:\n`;
+        summary += `Duration: ${sessionDuration} minutes\n`;
+        summary += `Messages exchanged: ${this.userContext.sessionMetrics.messageCount}\n\n`;
+        
+        if (topicsDiscussed.length > 0) {
+            summary += `Topics discussed: ${topicsDiscussed.join(', ')}\n\n`;
+        }
+        
+        if (exercisesCompleted.length > 0) {
+            summary += `Exercises completed: ${exercisesCompleted.join(', ')}\n\n`;
+        }
+        
+        if (resourcesProvided.length > 0) {
+            summary += `Resources provided: ${resourcesProvided.join(', ')}\n\n`;
+        }
+        
+        // Add suggested next steps
+        summary += `Suggested next steps:\n`;
+        
+        if (this.userContext.detectedConditions.length > 0) {
+            const primaryCondition = this.userContext.detectedConditions[0];
+            switch (primaryCondition) {
+                case 'anxiety':
+                    summary += `- Continue practicing breathing exercises and grounding techniques\n`;
+                    summary += `- Consider exploring the connection between physical sensations and anxiety\n`;
+                    break;
+                case 'depression':
+                    summary += `- Focus on small, achievable daily goals\n`;
+                    summary += `- Practice self-compassion and challenge negative thoughts\n`;
+                    break;
+                case 'sleep':
+                    summary += `- Maintain a consistent sleep schedule\n`;
+                    summary += `- Implement the sleep hygiene practices we discussed\n`;
+                    break;
+                case 'stress':
+                    summary += `- Schedule regular breaks for stress management\n`;
+                    summary += `- Practice the stress reduction techniques that resonated with you\n`;
+                    break;
+                default:
+                    summary += `- Continue exploring resources related to your concerns\n`;
+                    summary += `- Consider implementing one small self-care practice daily\n`;
+            }
+        } else {
+            summary += `- Consider implementing one small self-care practice daily\n`;
+            summary += `- Explore additional resources on topics that interest you\n`;
+        }
+        
+        summary += `- Return any time you need support or have questions\n`;
+        
+        if (exercisesCompleted.length === 0) {
+            summary += `- Try a mindfulness or breathing exercise next time\n`;
+        }
+        
+        return summary;
+    }
+}
+
+// Initialize the Enhanced NLP Engine
+const enhancedNlpEngine = new EnhancedNLPEngine();
+
+// Chat Functionality
+class MindfulAIChat {
+    constructor(nlpEngine) {
+        this.nlpEngine = nlpEngine;
+        this.isTyping = false;
+        this.messageQueue = [];
+        this.processingQueue = false;
+    }
+    
+    /**
+     * Initialize the chat interface and event listeners
+     */
+    init() {
+        // Get DOM elements
+        this.chatInput = document.getElementById('chat-input');
+        this.sendButton = document.getElementById('send-button');
+        this.voiceButton = document.getElementById('voice-button');
+        this.chatMessages = document.getElementById('chat-messages');
+        this.sentimentIndicator = document.getElementById('sentiment-indicator');
+        this.suggestionsContainer = document.getElementById('suggestions-container');
+        
+        // Set up event listeners
+        this.sendButton.addEventListener('click', () => this.sendMessage());
+        
+        this.chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.sendMessage();
+            }
+        });
+        
+        this.chatInput.addEventListener('input', () => this.handleInputChange());
+        
+        this.voiceButton.addEventListener('click', () => this.toggleVoiceInput());
+        
+        // Initialize suggestion chips click handlers
+        document.querySelectorAll('.suggestion-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                this.chatInput.value = chip.textContent;
+                this.sendMessage();
+            });
+        });
+        
+        // Add ripple effect to buttons
+        const buttons = document.querySelectorAll('.chat-button, .nav-button');
+        buttons.forEach(button => {
+            button.addEventListener('click', (e) => this.createRippleEffect(e, button));
+        });
+        
+        // Initialize mood slider
+        const moodSlider = document.getElementById('mood-slider');
+        if (moodSlider) {
+            moodSlider.addEventListener('input', function() {
+                updateMoodVisualization(this.value);
+            });
+        }
+        
+        // Handle resource items clicks
+        document.querySelectorAll('.resource-item').forEach(item => {
+            item.addEventListener('click', () => this.handleResourceClick(item));
+        });
+        
+        // Settings button functionality
+        const settingsButton = document.querySelector('.chat-settings-button');
+        if (settingsButton) {
+            settingsButton.addEventListener('click', () => this.showSettings());
+        }
+        
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            });
+        }
+        
+        // Log initialization
+        console.log('MindfulAI chat interface initialized');
+    }
+    
+    /**
+     * Handle user input changes (typing)
+     */
+    handleInputChange() {
+        const message = this.chatInput.value.trim();
+        
+        // Show sentiment analysis if message is long enough
+        if (message.length > 10) {
+            // Analyze sentiment
+            const analysis = this.nlpEngine.analyzeText(message);
+            this.sentimentIndicator.textContent = `${analysis.sentiment.category} tone detected`;
+            this.sentimentIndicator.classList.add('visible');
+            
+            setTimeout(() => {
+                this.sentimentIndicator.classList.remove('visible');
+            }, 3000);
+        }
+    }
+    
+    /**
+     * Send user message and get bot response
+     */
+    sendMessage() {
+        const message = this.chatInput.value.trim();
+        if (message === '') return;
+        
+        // Add user message to chat
+        this.addMessage(message, true);
+        this.chatInput.value = '';
+        
+        // Queue the bot response
+        this.messageQueue.push(message);
+        this.processMessageQueue();
+    }
+    
+    /**
+     * Process message queue to handle multiple messages
+     */
+    async processMessageQueue() {
+        if (this.processingQueue || this.messageQueue.length === 0) return;
+        
+        this.processingQueue = true;
+        
+        while (this.messageQueue.length > 0) {
+            const message = this.messageQueue.shift();
+            await this.getBotResponse(message);
+        }
+        
+        this.processingQueue = false;
+    }
+    
+    /**
+     * Get and display bot response for a user message
+     * @param {string} userMessage - User's message
+     */
+    async getBotResponse(userMessage) {
+        // Show typing indicator
+        const typingIndicator = this.showTypingIndicator();
+        
+        // Simulate processing time
+        await this.delay(1000 + Math.random() * 1000);
+        
+        // Generate response
+        const response = this.nlpEngine.generateResponse(userMessage);
+        
+        // Hide typing indicator
+        this.hideTypingIndicator(typingIndicator);
+        
+        // Add bot message to chat
+        this.addMessage(response, false);
+        
+        // Update suggestion chips based on context
+        this.updateSuggestionChips(userMessage);
+    }
+    
+    /**
+     * Add a message to the chat display
+     * @param {string} text - Message text
+     * @param {boolean} isUser - Whether the message is from the user
+     */
+    addMessage(text, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        messageDiv.classList.add(isUser ? 'user' : 'bot');
+        
+        const messagePara = document.createElement('p');
+        messagePara.textContent = text;
+        messageDiv.appendChild(messagePara);
+        
+        const timeSpan = document.createElement('span');
+        timeSpan.classList.add('message-time');
+        const now = new Date();
+        timeSpan.textContent = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+        messageDiv.appendChild(timeSpan);
+        
+        this.chatMessages.appendChild(messageDiv);
+        this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        
+        // Animate message appearance
+        setTimeout(() => {
+            messageDiv.style.opacity = '1';
+            messageDiv.style.transform = 'translateY(0)';
+        }, 100);
+    }
+    
+    /**
+     * Show typing indicator
+     * @returns {HTMLElement} The typing indicator element
+     */
+    showTypingIndicator() {
+        const typingDiv = document.createElement('div');
+        typingDiv.classList.add('typing-indicator');
+        typingDiv.id = 'typing-indicator';
+        
+        for (let i = 0; i < 3; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('typing-dot');
+            typingDiv.appendChild(dot);
+        }
+        
+        this.chatMessages.appendChild(typingDiv);
+        this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        this.isTyping = true;
+        
+        return typingDiv;
+    }
+    
+    /**
+     * Hide the typing indicator
+     * @param {HTMLElement} typingIndicator - Typing indicator element
+     */
+    hideTypingIndicator(typingIndicator) {
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
+        this.isTyping = false;
+    }
+    
+    /**
+     * Update suggestion chips based on conversation context
+     * @param {string} userMessage - The user's message
+     */
+    updateSuggestionChips(userMessage) {
+        this.suggestionsContainer.innerHTML = '';
+        
+        const suggestions = this.nlpEngine.generateSuggestions(userMessage);
+        
+        suggestions.forEach((text, index) => {
+            const chip = document.createElement('div');
+            chip.classList.add('suggestion-chip');
+            chip.textContent = text;
+            chip.style.animationDelay = `${index * 0.1}s`;
+            
+            chip.addEventListener('click', () => {
+                this.chatInput.value = text;
+                this.sendMessage();
+            });
+            
+            // Make suggestion chips keyboard accessible
+            chip.setAttribute('tabindex', '0');
+            chip.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.chatInput.value = text;
+                    this.sendMessage();
+                }
+            });
+            
+            this.suggestionsContainer.appendChild(chip);
+        });
+    }
+    
+    /**
+     * Handle clicks on resource items
+     * @param {HTMLElement} item - Clicked resource item
+     */
+    handleResourceClick(item) {
+        // Add highlight effect
+        item.classList.add('highlight');
+        
+        // Determine resource type from text
+        const resourceType = item.textContent.toLowerCase();
+        let resourcePrompt;
+        
+        switch(true) {
+            case resourceType.includes('anxiety'):
+                resourcePrompt = "I'd like to learn about anxiety management techniques";
+                break;
+            case resourceType.includes('depression'):
+                resourcePrompt = "Can you tell me about depression support?";
+                break;
+            case resourceType.includes('sleep'):
+                resourcePrompt = "I need help with sleep improvement";
+                break;
+            case resourceType.includes('meditation'):
+                resourcePrompt = "Can you guide me through a meditation?";
+                break;
+            case resourceType.includes('crisis'):
+                resourcePrompt = "What are some crisis support resources?";
+                break;
+            case resourceType.includes('self-care'):
+            case resourceType.includes('selfcare'):
+                resourcePrompt = "I need some self-care tips";
+                break;
+            case resourceType.includes('stress'):
+                resourcePrompt = "How can I reduce stress?";
+                break;
+            // For previous session dates
+            case /\w+ \d+, \d{4}/.test(resourceType):
+                resourcePrompt = "Show me my session from " + resourceType;
+                break;
+            default:
+                resourcePrompt = "Tell me about " + resourceType;
+        }
+        
+        // Set the input value to the resource prompt
+        this.chatInput.value = resourcePrompt;
+        
+        // Track resource access
+        this.nlpEngine.trackCompletion('resource', resourceType);
+        
+        // Remove highlight after a delay
+        setTimeout(() => {
+            item.classList.remove('highlight');
+        }, 1000);
+    }
+    
+    /**
+     * Toggle voice input functionality
+     */
+    toggleVoiceInput() {
+        // Check if browser supports SpeechRecognition
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            
+            // Change button appearance to indicate recording
+            this.voiceButton.textContent = '🔴';
+            this.voiceButton.classList.add('recording');
+            
+            recognition.start();
+            
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                this.chatInput.value = transcript;
+                
+                // Reset button appearance
+                this.voiceButton.textContent = '🎤';
+                this.voiceButton.classList.remove('recording');
+                
+                // Automatically send the message after a brief delay
+                setTimeout(() => {
+                    this.sendMessage();
+                }, 500);
+            };
+            
+            recognition.onerror = () => {
+                // Reset button appearance on error
+                this.voiceButton.textContent = '🎤';
+                this.voiceButton.classList.remove('recording');
+                
+                // Optionally notify user of error
+                this.sentimentIndicator.textContent = 'Voice recognition error';
+                this.sentimentIndicator.classList.add('visible');
+                
+                setTimeout(() => {
+                    this.sentimentIndicator.classList.remove('visible');
+                }, 3000);
+            };
+            
+            recognition.onend = () => {
+                // Reset button appearance when recognition ends
+                this.voiceButton.textContent = '🎤';
+                this.voiceButton.classList.remove('recording');
+            };
+        } else {
+            // Notify user if speech recognition is not supported
+            this.sentimentIndicator.textContent = 'Voice recognition not supported in this browser';
+            this.sentimentIndicator.classList.add('visible');
+            
+            setTimeout(() => {
+                this.sentimentIndicator.classList.remove('visible');
+            }, 3000);
+        }
+    }
+    
+    /**
+     * Show settings popup
+     */
+    showSettings() {
+        // Create a simple settings popup
+        const settingsPopup = document.createElement('div');
+        settingsPopup.style.position = 'absolute';
+        settingsPopup.style.top = '60px';
+        settingsPopup.style.right = '20px';
+        settingsPopup.style.background = 'white';
+        settingsPopup.style.boxShadow = 'var(--shadow)';
+        settingsPopup.style.borderRadius = '10px';
+        settingsPopup.style.padding = '15px';
+        settingsPopup.style.zIndex = '100';
+        
+        // Add settings options
+        settingsPopup.innerHTML = `
+            <h3 style="margin-bottom: 10px; color: var(--primary-color);">Chat Settings</h3>
+            <div style="margin-bottom: 10px;">
+                <label style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <input type="checkbox" id="notification-toggle" checked>
+                    <span style="margin-left: 8px;">Enable notifications</span>
+                </label>
+                <label style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <input type="checkbox" id="sound-toggle" checked>
+                    <span style="margin-left: 8px;">Enable sound</span>
+                </label>
+                <label style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <input type="checkbox" id="suggestions-toggle" checked>
+                    <span style="margin-left: 8px;">Show suggestions</span>
+                </label>
+                <div style="margin-top: 15px;">
+                    <label for="response-style" style="display: block; margin-bottom: 5px;">Response Style:</label>
+                    <select id="response-style" style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                        <option value="balanced">Balanced</option>
+                        <option value="practical">Practical</option>
+                        <option value="empathetic">Empathetic</option>
+                        <option value="informational">Informational</option>
+                    </select>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label for="response-length" style="display: block; margin-bottom: 5px;">Response Length:</label>
+                    <select id="response-length" style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                        <option value="medium">Medium</option>
+                        <option value="brief">Brief</option>
+                        <option value="detailed">Detailed</option>
+                    </select>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+                <button id="close-settings" style="background: var(--primary-color); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer;">Close</button>
+            </div>
+        `;
+        
+        // Add the popup to the chat container
+        document.querySelector('.chat-container').appendChild(settingsPopup);
+        
+        // Handle close button
+        document.getElementById('close-settings').addEventListener('click', () => {
+            settingsPopup.remove();
+        });
+        
+        // Handle settings toggles
+        document.getElementById('suggestions-toggle').addEventListener('change', (e) => {
+            this.suggestionsContainer.style.display = e.target.checked ? 'flex' : 'none';
+        });
+        
+        // Handle response style settings
+        document.getElementById('response-style').addEventListener('change', (e) => {
+            this.nlpEngine.userContext.userPreferences.responseStyle = e.target.value;
+        });
+        
+        // Handle response length settings
+        document.getElementById('response-length').addEventListener('change', (e) => {
+            this.nlpEngine.userContext.userPreferences.responseLength = e.target.value;
+        });
+        
+        // Set current values
+        document.getElementById('response-style').value = this.nlpEngine.userContext.userPreferences.responseStyle;
+        document.getElementById('response-length').value = this.nlpEngine.userContext.userPreferences.responseLength;
+        
+        // Close when clicking outside
+        document.addEventListener('click', function closeSettings(e) {
+            if (!settingsPopup.contains(e.target) && !e.target.classList.contains('chat-settings-button')) {
+                settingsPopup.remove();
+                document.removeEventListener('click', closeSettings);
+            }
+        });
+    }
+    
+    /**
+     * Create ripple effect for buttons
+     * @param {Event} e - Click event
+     * @param {HTMLElement} button - Button element
+     */
+    createRippleEffect(e, button) {
+        const x = e.clientX - button.getBoundingClientRect().left;
+        const y = e.clientY - button.getBoundingClientRect().top;
+        
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        
+        button.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    }
+    
+    /**
+     * Utility function to create a delay
+     * @param {number} ms - Milliseconds to delay
+     * @returns {Promise} Promise that resolves after the delay
+     */
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
+    /**
+     * Generate and display session summary
+     */
+    showSessionSummary() {
+        const summary = this.nlpEngine.generateSessionSummary();
+        this.addMessage(summary, false);
+    }
+}
+
+// Initialize the chat functionality
+const mindfulAIChat = new MindfulAIChat(enhancedNlpEngine);
+document.addEventListener('DOMContentLoaded', () => {
+    mindfulAIChat.init();
+});
+
+// Function to update mood visualization (used by mood slider)
+function updateMoodVisualization(moodValue) {
+    // Update mood chart
+    const latestMoodBar = document.querySelector('.mood-chart .mood-bar:last-child');
+    if (latestMoodBar) {
+        latestMoodBar.style.height = `${moodValue * 10}%`;
+    }
+    
+    // Update insights based on mood
+    const insightValue = document.querySelector('.insight-value');
+    if (insightValue) {
+        if (moodValue >= 8) {
+            insightValue.textContent = "Your mood has been consistently positive recently. Keep up the good work with your mental wellbeing practices!";
+        } else if (moodValue >= 5) {
+            insightValue.textContent = "Your mood appears stable with some fluctuations. Regular self-care can help maintain this balance.";
+        } else {
+            insightValue.textContent = "Your mood seems lower today. Consider trying some of the recommended activities to help boost your wellbeing.";
+        }
+    }
+}
+
+// Additional advanced features
+
+// Periodic check-ins for extended sessions
+let lastActivityTime = new Date();
+
+function updateActivityTime() {
+    lastActivityTime = new Date();
+}
+
+// Listen for user activity
+document.addEventListener('click', updateActivityTime);
+document.addEventListener('keypress', updateActivityTime);
+
+// Check for inactivity every 5 minutes
+setInterval(() => {
+    const now = new Date();
+    const inactiveTime = (now - lastActivityTime) / 1000 / 60; // in minutes
+    
+    // If inactive for more than 10 minutes and there's been at least 5 messages
+    if (inactiveTime > 10 && enhancedNlpEngine.userContext.sessionMetrics.messageCount >= 5 && !mindfulAIChat.isTyping) {
+        // Show check-in message
+        const checkInMessages = [
+            "Just checking in. How are you feeling now?",
+            "Is there anything else on your mind?",
+            "Remember, I'm here to support you. Is there something specific you'd like to talk about?",
+            "Taking time for your mental health is important. Is there something I can help with?"
+        ];
+        
+        // Get a random check-in message
+        const message = checkInMessages[Math.floor(Math.random() * checkInMessages.length)];
+        
+        // Add the message to the chat
+        mindfulAIChat.addMessage(message, false);
+        
+        // Reset activity time to prevent multiple check-ins
+        updateActivityTime();
+    }
+}, 300000); // Check every 5 minutes
+
+// Export the chat session functionality
+function exportChatSession() {
+    // Create a text version of the chat
+    let chatText = "MindfulAI Chat Session\n";
+    chatText += `Date: ${new Date().toLocaleString()}\n\n`;
+    
+    // Add chat messages
+    const messages = document.querySelectorAll('.message');
+    messages.forEach(message => {
+        const isBot = message.classList.contains('bot');
+        const text = message.querySelector('p').textContent;
+        const time = message.querySelector('.message-time').textContent;
+        chatText += `[${time}] ${isBot ? 'MindfulAI' : 'You'}: ${text}\n`;
+    });
+    
+    // Add session summary
+    chatText += "\n" + enhancedNlpEngine.generateSessionSummary();
+    
+    // Create download link
+    const blob = new Blob([chatText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create and trigger download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `mindfulai-chat-${new Date().toISOString().slice(0, 10)}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// Console message to confirm script loaded
+console.log('MindfulAI chatbot interface initialized with enhanced NLP capabilities');
+
+        
+    </script>
+</body>
+</html>
+

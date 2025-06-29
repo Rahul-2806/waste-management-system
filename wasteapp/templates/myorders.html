@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Tracking System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary: #6b48ff;
+            --secondary: #00ddeb;
+            --accent: #ff6b81;
+            --dark: #1a1b2e;
+            --light: #f5f7fa;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+            background: linear-gradient(45deg, #f5f7fa 0%, #e4e9f0 100%);
+            padding: 80px 2rem 2rem;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            left: 0;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-logo i {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .nav-logo span {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .nav-back {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-back:hover {
+            color: var(--primary);
+            transform: translateX(-3px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            animation: floatIn 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .search-container {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto 1.5rem;
+            gap: 0.5rem;
+        }
+
+        .search-box {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid #f1f5f9;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--dark);
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(107, 72, 255, 0.1);
+            background-color: white;
+        }
+
+        .search-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(107, 72, 255, 0.2);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(107, 72, 255, 0.3);
+        }
+
+        .search-result-info {
+            margin-bottom: 1rem;
+            padding: 1rem 1.5rem;
+            background-color: white;
+            border-radius: 12px;
+            display: none;
+            color: var(--dark);
+            font-size: 0.9rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            animation: slideUp 0.5s ease;
+        }
+
+        .clear-search {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .clear-search:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            animation: floatIn 1s ease-out 0.2s both;
+        }
+
+        .orders-table th {
+            background: var(--gradient);
+            color: white;
+            padding: 1.2rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            position: relative;
+        }
+
+        .orders-table td {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+            transition: all 0.3s ease;
+        }
+
+        .orders-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .orders-table tr {
+            transition: all 0.3s ease;
+        }
+
+        .orders-table tr:hover {
+            background-color: rgba(107, 72, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .product-cell {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .product-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .orders-table tr:hover .product-img {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .status-badge {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .status-processing {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: #ffa000;
+        }
+
+        .status-shipped {
+            background-color: rgba(33, 150, 243, 0.15);
+            color: #1976d2;
+        }
+
+        .status-delivered {
+            background-color: rgba(76, 175, 80, 0.15);
+            color: #388e3c;
+        }
+
+        .status-canceled {
+            background-color: rgba(244, 67, 54, 0.15);
+            color: #d32f2f;
+        }
+
+        .payment-badge {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .payment-paid {
+            background-color: rgba(76, 175, 80, 0.15);
+            color: #388e3c;
+        }
+
+        .payment-pending {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: #ffa000;
+        }
+
+        .action-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.4rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(107, 72, 255, 0.2);
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(107, 72, 255, 0.3);
+        }
+
+        .action-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.7rem 1.4rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .action-link:hover {
+            color: #e11d48;
+            transform: translateY(-2px);
+        }
+
+        .empty-state, .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--dark);
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            animation: floatIn 1s ease-out both;
+        }
+
+        .empty-state i, .no-results i {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            opacity: 0.5;
+        }
+
+        .empty-state p, .no-results p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .tracking-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: scaleIn 0.4s ease both;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-btn:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+            background: rgba(107, 72, 255, 0.1);
+        }
+
+        .tracking-info {
+            margin-top: 2rem;
+        }
+
+        .tracking-steps {
+            position: relative;
+            margin-top: 2rem;
+        }
+
+        .step {
+            display: flex;
+            padding-bottom: 2.5rem;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .step:last-child {
+            padding-bottom: 0;
+        }
+
+        .step-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #f1f5f9;
+            color: var(--dark);
+            opacity: 0.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-right: 1.5rem;
+            position: relative;
+            z-index: 2;
+            transition: all 0.5s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .step-completed .step-icon {
+            background: var(--gradient);
+            color: white;
+            opacity: 1;
+            box-shadow: 0 8px 20px rgba(107, 72, 255, 0.2);
+        }
+
+        .step-current .step-icon {
+            background: var(--gradient);
+            color: white;
+            opacity: 1;
+            transform: scale(1.2);
+            box-shadow: 0 8px 25px rgba(107, 72, 255, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        .step-content {
+            flex: 1;
+            transition: all 0.5s ease;
+        }
+
+        .step-completed .step-content,
+        .step-current .step-content {
+            transform: translateX(5px);
+        }
+
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .step-current .step-title {
+            color: var(--primary);
+            font-size: 1.15rem;
+        }
+
+        .step-date {
+            font-size: 0.9rem;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+
+        .step-current .step-date {
+            font-weight: 500;
+        }
+
+        .step-line {
+            position: absolute;
+            left: 23px;
+            top: 48px;
+            bottom: 0;
+            width: 2px;
+            background-color: #f1f5f9;
+            z-index: 1;
+            transition: all 0.8s ease;
+        }
+
+        .step:last-child .step-line {
+            display: none;
+        }
+
+        .step-completed .step-line {
+            background: var(--gradient);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes floatIn {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(107, 72, 255, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(107, 72, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(107, 72, 255, 0); }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 80px 1rem 1rem; }
+            .orders-table { display: block; overflow-x: auto; }
+            .product-cell { 
+                flex-direction: column; 
+                align-items: flex-start; 
+                gap: 1rem; 
+            }
+            .product-img { margin-bottom: 0; }
+            .search-container { flex-direction: column; }
+            .search-btn { padding: 0.8rem; }
+            .modal-content { width: 95%; padding: 1.5rem; }
+            .action-btn, .action-link {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+                display: block;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-logo">
+            <i class="fas fa-rocket"></i>
+            <span>Customer Dashboard</span>
+        </div>
+        <div class="nav-actions">
+            <a href="/customerhome" class="nav-back">
+                <i class="fas fa-chevron-left"></i>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <header>
+            <h1 class="page-title">My Orders</h1>
+        </header>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-box" placeholder="Search orders by order ID, product name or date...">
+            <button class="search-btn" id="searchBtn"><i class="fas fa-search"></i></button>
+        </div>
+        
+        <div id="searchResultInfo" class="search-result-info">
+            Showing results for "<span id="searchQuery"></span>". <span class="clear-search" id="clearSearch">Clear search</span>
+        </div>
+        
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Order Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+                {% if tt %}
+                    {% for t in tt %}
+                    <tr data-order-id="{{ t.id }}" class="order-row" data-product="{{ t.Item | lower }}" data-date="{{ t.Odate | lower }}" data-status="{{ t.Status | lower }}">
+                        <td>{{ t.Oid }}</td>
+                        <td class="product-cell">
+                            <img src="/Uploads/{{ t.Img }}" class="product-img" alt="{{ t.Item }}">
+                            <span class="product-name">{{ t.Item }}</span>
+                        </td>
+                        <td>{{ t.Qnty }}</td>
+                        <td>₹{{ t.Tamnt }}</td>
+                        <td>
+                            {% if t.Status == 'Processing' %}
+                                <span class="status-badge status-processing">{{ t.Status }}</span>
+                            {% elif t.Status == 'Shipped' %}
+                                <span class="status-badge status-shipped">{{ t.Status }}</span>
+                            {% elif t.Status == 'Delivered' %}
+                                <span class="status-badge status-delivered">{{ t.Status }}</span>
+                            {% elif t.Status == 'Canceled' %}
+                                <span class="status-badge status-canceled">{{ t.Status }}</span>
+                            {% else %}
+                                <span class="status-badge">{{ t.Status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if t.Pstatus == 'Paid' %}
+                                <span class="payment-badge payment-paid">{{ t.Pstatus }}</span>
+                            {% else %}
+                                <span class="payment-badge payment-pending">{{ t.Pstatus }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ t.Odate }}</td>
+                        {% if t.Status == 'ordered' %}
+                        <td>
+                            <button class="action-btn track-btn" onclick="openTrackingModal('{{ t.id }}', '{{ t.Odate }}', '{{ t.Status }}')"><i class="fas fa-map-marker-alt"></i> Track Order</button>
+                            <a href="#" class="action-link" onclick="confirmCancel('{{ t.Oid }}'); return false;"><i class="fas fa-times"></i> Cancel</a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr id="emptyState">
+                        <td colspan="8" class="empty-state">
+                            <i class="fas fa-box-open"></i>
+                            <p>You haven't placed any orders yet.</p>
+                            <a href="/viewcustpro" class="action-btn"><i class="fas fa-shopping-bag"></i> Start Shopping</a>
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr id="noResults" class="hidden">
+                    <td colspan="8" class="no-results">
+                        <i class="fas fa-search"></i>
+                        <p>No orders match your search criteria.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Cancel Confirmation Modal -->
+    <div id="cancelModal" class="tracking-modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-btn" onclick="closeCancelModal()">×</span>
+            <h2 style="color: var(--accent);">Confirm Cancellation</h2>
+            <p style="margin: 20px 0; line-height: 1.6;">Are you sure you want to cancel this order? This action cannot be undone.</p>
+            <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px;">
+                <button onclick="closeCancelModal()" style="background: #f1f5f9; color: var(--dark); border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-weight: 500;">No, Keep My Order</button>
+                <a id="confirmCancelLink" href="#" style="background: var(--accent); color: white; text-decoration: none; padding: 10px 20px; border-radius: 50px; font-weight: 500; box-shadow: 0 5px 15px rgba(255, 107, 129, 0.2);">Yes, Cancel Order</a>
+            </div>
+        </div>
+    </div>
+    
+    <div id="trackingModal" class="tracking-modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeTrackingModal()">×</span>
+            <h2>Order Tracking</h2>
+            <p>Order ID: <span id="modalOrderId"></span></p>
+            
+            <div class="tracking-info">
+                <div class="tracking-steps" id="trackingSteps">
+                    <div class="step" id="stepOrderPlaced">
+                        <div class="step-icon"><i class="fas fa-check"></i></div>
+                        <div class="step-content">
+                            <div class="step-title">Order Placed</div>
+                            <div class="step-date" id="stepOrderPlacedDate"></div>
+                        </div>
+                        <div class="step-line"></div>
+                    </div>
+                    
+                    <div class="step" id="stepPaymentConfirmed">
+                        <div class="step-icon"><i class="fas fa-check"></i></div>
+                        <div class="step-content">
+                            <div class="step-title">Payment Confirmed</div>
+                            <div class="step-date" id="stepPaymentConfirmedDate"></div>
+                        </div>
+                        <div class="step-line"></div>
+                    </div>
+                    
+                    <div class="step" id="stepProcessing">
+                        <div class="step-icon"><i class="fas fa-box"></i></div>
+                        <div class="step-content">
+                            <div class="step-title">Processing</div>
+                            <div class="step-date" id="stepProcessingDate"></div>
+                        </div>
+                        <div class="step-line"></div>
+                    </div>
+                    
+                    <div class="step" id="stepShipped">
+                        <div class="step-icon"><i class="fas fa-shipping-fast"></i></div>
+                        <div class="step-content">
+                            <div class="step-title">Shipped</div>
+                            <div class="step-date" id="stepShippedDate"></div>
+                        </div>
+                        <div class="step-line"></div>
+                    </div>
+                    
+                    <div class="step" id="stepDelivered">
+                        <div class="step-icon"><i class="fas fa-home"></i></div>
+                        <div class="step-content">
+                            <div class="step-title">Delivered</div>
+                            <div class="step-date" id="stepDeliveredDate"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const CURRENT_DATE = new Date('2025-03-16'); // Updated to match your current date
+
+        function updateTrackingDates(orderDate, status) {
+            const orderDateObj = new Date(orderDate);
+            const steps = document.querySelectorAll('.step');
+            
+            steps.forEach(step => {
+                step.classList.remove('step-completed', 'step-current');
+            });
+
+            const orderPlacedDate = orderDateObj.toLocaleDateString();
+            const paymentConfirmedDate = orderDateObj.toLocaleDateString();
+            const processingDate = new Date(orderDateObj);
+            processingDate.setDate(processingDate.getDate() + 1);
+            const shippedDate = new Date(orderDateObj);
+            shippedDate.setDate(shippedDate.getDate() + 2);
+            const deliveredDate = new Date(orderDateObj);
+            deliveredDate.setDate(deliveredDate.getDate() + 5);
+
+            document.getElementById('stepOrderPlacedDate').textContent = orderPlacedDate;
+            document.getElementById('stepPaymentConfirmedDate').textContent = paymentConfirmedDate;
+            document.getElementById('stepProcessingDate').textContent = processingDate.toLocaleDateString();
+            document.getElementById('stepShippedDate').textContent = shippedDate.toLocaleDateString();
+            document.getElementById('stepDeliveredDate').textContent = `Estimated: ${deliveredDate.toLocaleDateString()}`;
+
+            const daysSinceOrder = Math.floor((CURRENT_DATE - orderDateObj) / (1000 * 60 * 60 * 24));
+            const statusLower = status.toLowerCase();
+
+            document.getElementById('stepOrderPlaced').classList.add('step-completed');
+            document.getElementById('stepPaymentConfirmed').classList.add('step-completed');
+
+            if (statusLower === 'canceled') {
+                return; // Stop progression if canceled
+            }
+
+            if (daysSinceOrder >= 1 || statusLower === 'processing' || statusLower === 'shipped' || statusLower === 'delivered') {
+                document.getElementById('stepProcessing').classList.add('step-completed');
+            }
+            if (statusLower === 'processing' && daysSinceOrder < 2) {
+                document.getElementById('stepProcessing').classList.add('step-current');
+            }
+
+            if (daysSinceOrder >= 2 || statusLower === 'shipped' || statusLower === 'delivered') {
+                document.getElementById('stepShipped').classList.add('step-completed');
+            }
+            if (statusLower === 'shipped' && daysSinceOrder < 5) {
+                document.getElementById('stepShipped').classList.add('step-current');
+            }
+
+            if (statusLower === 'delivered') {
+                document.getElementById('stepDelivered').classList.add('step-completed');
+                document.getElementById('stepDeliveredDate').textContent = CURRENT_DATE.toLocaleDateString();
+            } else if (daysSinceOrder >= 5) {
+                document.getElementById('stepDelivered').classList.add('step-current');
+            }
+        }
+
+        function openTrackingModal(orderId, orderDate, status) {
+            document.getElementById('trackingModal').style.display = 'block';
+            document.getElementById('modalOrderId').textContent = orderId;
+            updateTrackingDates(orderDate, status);
+            
+            // Add animation to steps
+            const steps = document.querySelectorAll('.step');
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    step.style.opacity = '1';
+                }, 100 * index);
+            });
+        }
+
+        function closeTrackingModal() {
+            document.getElementById('trackingModal').style.display = 'none';
+        }
+        
+        function confirmCancel(orderId) {
+            document.getElementById('cancelModal').style.display = 'block';
+            document.getElementById('confirmCancelLink').href = '/rejectorder?id=' + orderId;
+        }
+        
+        function closeCancelModal() {
+            document.getElementById('cancelModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var trackingModal = document.getElementById('trackingModal');
+            var cancelModal = document.getElementById('cancelModal');
+            
+            if (event.target == trackingModal) {
+                closeTrackingModal();
+            }
+            
+            if (event.target == cancelModal) {
+                closeCancelModal();
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 2rem;
+                border-radius: 12px;
+                color: white;
+                background: var(--gradient);
+                z-index: 1001;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                animation: slideIn 0.5s ease forwards, slideOut 0.5s ease 2.5s forwards;
+            `;
+            
+            const icon = document.createElement('i');
+            icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+            
+            notification.appendChild(icon);
+            notification.appendChild(document.createTextNode(message));
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const clearSearch = document.getElementById('clearSearch');
+            const searchResultInfo = document.getElementById('searchResultInfo');
+            const searchQuery = document.getElementById('searchQuery');
+            const ordersTableBody = document.getElementById('ordersTableBody');
+            const orderRows = document.querySelectorAll('.order-row');
+            const noResults = document.getElementById('noResults');
+            const emptyState = document.getElementById('emptyState');
+            
+            function performSearch() {
+                const query = searchInput.value.trim().toLowerCase();
+                
+                if (query === '') {
+                    resetSearch();
+                    return;
+                }
+                
+                searchQuery.textContent = query;
+                searchResultInfo.style.display = 'block';
+                
+                let matches = [];
+                
+                orderRows.forEach(row => {
+                    const orderId = row.getAttribute('data-order-id').toLowerCase();
+                    const productName = row.getAttribute('data-product');
+                    const orderDate = row.getAttribute('data-date');
+                    const status = row.getAttribute('data-status');
+                    
+                    let priority = 0;
+                    
+                    if (productName.startsWith(query)) {
+                        priority = 3;
+                    } else if (productName.includes(query)) {
+                        priority = 2;
+                    } else if (orderId.includes(query) || orderDate.includes(query) || status.includes(query)) {
+                        priority = 1;
+                    }
+                    
+                    if (priority > 0) {
+                        matches.push({ row, priority });
+                    }
+                });
+                
+                matches.sort((a, b) => b.priority - a.priority);
+                
+                orderRows.forEach(row => row.classList.add('hidden'));
+                
+                matches.forEach(match => match.row.classList.remove('hidden'));
+                
+                if (matches.length === 0) {
+                    noResults.classList.remove('hidden');
+                    if (emptyState) emptyState.classList.add('hidden');
+                } else {
+                    noResults.classList.add('hidden');
+                    if (emptyState) emptyState.classList.add('hidden');
+                }
+            }
+            
+            function resetSearch() {
+                searchInput.value = '';
+                searchResultInfo.style.display = 'none';
+                
+                orderRows.forEach(row => row.classList.remove('hidden'));
+                
+                noResults.classList.add('hidden');
+                if (emptyState && orderRows.length === 0) {
+                    emptyState.classList.remove('hidden');
+                }
+            }
+            
+            searchBtn.addEventListener('click', performSearch);
+            
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+                performSearch();
+                
+                if (searchInput.value.trim() === '') {
+                    resetSearch();
+                }
+            });
+            
+            clearSearch.addEventListener('click', resetSearch);
+
+            // Add row animations on load
+            orderRows.forEach((row, index) => {
+                row.style.opacity = '0';
+                setTimeout(() => {
+                    row.style.opacity = '1';
+                    row.style.animation = `floatIn 0.5s ease forwards`;
+                }, 100 * index);
+            });
+        });
+
+        // Add style for animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

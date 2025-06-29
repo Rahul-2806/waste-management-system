@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Portal</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
+        :root {
+            --primary: #6b48ff;
+            --secondary: #00ddeb;
+            --accent: #ff6b81;
+            --dark: #1a1b2e;
+            --light: #f5f7fa;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --card-gradient: linear-gradient(45deg, #111e6c, #5a67d8);
+            --error: #ff4d4d;
+            --success: #4BB543;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+            background: linear-gradient(45deg, #f5f7fa 0%, #e4e9f0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-logo i {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .nav-logo span {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-icon {
+            position: relative;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-icon i {
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+
+        .nav-icon:hover {
+            transform: scale(1.1);
+            color: var(--primary);
+        }
+
+        .nav-logout {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1.2rem;
+            background: var(--gradient);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(107, 72, 255, 0.2);
+        }
+
+        .nav-logout i {
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .nav-logout:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(107, 72, 255, 0.3);
+        }
+
+        .badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            animation: pulse 2s infinite;
+        }
+
+        /* Payment Form Section */
+        .payment-container {
+            padding: 120px 5% 5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
+        }
+
+        .payment-header {
+            background: var(--gradient);
+            padding: 2rem;
+            color: white;
+            text-align: center;
+        }
+
+        .payment-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-header p {
+            opacity: 0.8;
+            font-size: 1rem;
+        }
+
+        .payment-body {
+            padding: 2rem;
+        }
+
+        .payment-form table {
+            width: 100%;
+        }
+
+        .payment-form td {
+            padding: 1rem 0.5rem;
+            font-weight: 500;
+        }
+
+        .payment-form input[type="text"],
+        .payment-form input[type="date"] {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .payment-form input[type="text"]:focus,
+        .payment-form input[type="date"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(107, 72, 255, 0.2);
+            outline: none;
+        }
+
+        .payment-form input[type="submit"] {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(107, 72, 255, 0.3);
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .payment-form input[type="submit"]:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(107, 72, 255, 0.4);
+        }
+
+        .payment-form input[type="submit"]:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .amount-display {
+            display: inline-block;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: rgba(107, 72, 255, 0.1);
+            padding: 0.5rem 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .input-icon .validation-icon {
+            right: 40px;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .input-icon .validation-icon.valid {
+            color: var(--success);
+            opacity: 1;
+        }
+
+        .input-icon .validation-icon.invalid {
+            color: var(--error);
+            opacity: 1;
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group.invalid input {
+            border-color: var(--error);
+        }
+
+        .input-group.valid input {
+            border-color: var(--success);
+        }
+
+        /* 3D Credit Card */
+        .credit-card-wrapper {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 400px;
+            height: 230px;
+            margin: 0 auto 2rem;
+        }
+
+        .credit-card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-front {
+            background: var(--card-gradient);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-back {
+            background: var(--card-gradient);
+            transform: rotateY(180deg);
+            padding: 1.5rem;
+        }
+
+        .card-logo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-chip {
+            width: 50px;
+            height: 40px;
+            background: linear-gradient(135deg, #f0c14b, #edb95f);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chip-line {
+            position: absolute;
+            width: 100%;
+            height: 20%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .chip-line:nth-child(1) { top: 20%; }
+        .chip-line:nth-child(2) { top: 50%; }
+        .chip-line:nth-child(3) { top: 80%; }
+
+        .card-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+
+        .card-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            text-align: center;
+            padding: 0.5rem 0;
+        }
+
+        .card-holder {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        .card-name {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .card-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .card-expiry {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .expiry-label {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            margin-bottom: 0.2rem;
+        }
+
+        .expiry-date {
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+        }
+
+        .card-black-strip {
+            height: 50px;
+            background: #000;
+            margin: 1rem -1.5rem;
+        }
+
+        .card-signature {
+            background: linear-gradient(45deg, #f1f5f9, #e2e8f0);
+            height: 40px;
+            border-radius: 4px;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-right: 1rem;
+        }
+
+        .card-cvv {
+            font-family: 'Space Mono', monospace;
+            background: #fff;
+            color: #1a1b2e;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 1rem;
+        }
+
+        .card-flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(15deg); }
+            50% { transform: translateY(-10px) rotate(15deg); }
+            100% { transform: translateY(0) rotate(15deg); }
+        }
+
+        @media (max-width: 768px) {
+            .payment-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .payment-body {
+                padding: 1.5rem;
+            }
+
+            .amount-display {
+                font-size: 2rem;
+            }
+
+            .nav-bar {
+                padding: 1rem;
+            }
+
+            .card-number {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-logo">
+            <i class="fas fa-credit-card"></i>
+            <span>Payment Portal</span>
+        </div>
+        <div class="nav-actions">
+            <!-- <div class="nav-icon">
+                <a href="/dashboard">
+                    <i class="fas fa-home"></i>
+                </a>
+            </div> -->
+            <a href="/customerhome" class="nav-logout">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <div class="payment-container">
+        {% if rate != 'null' %}
+        <div class="payment-card">
+            <div class="payment-header">
+                <h1>Make a Payment</h1>
+                <p>Secure payment processing</p>
+            </div>
+            <div class="payment-body">
+                <!-- 3D Credit Card Display -->
+                <div class="credit-card-wrapper">
+                    <div class="credit-card" id="credit-card">
+                        <!-- Front of card -->
+                        <div class="card-front">
+                            <div class="card-logo">
+                                <div class="card-chip">
+                                    <div class="chip-line"></div>
+                                    <div class="chip-line"></div>
+                                    <div class="chip-line"></div>
+                                </div>
+                                <div class="card-brand" id="card-brand">VISA</div>
+                            </div>
+                            <div class="card-number" id="card-number-display">
+                                •••• •••• •••• ••••
+                            </div>
+                            <div class="card-info">
+                                <div class="card-holder">
+                                    <div class="card-holder">Card Holder</div>
+                                    <div class="card-name" id="card-name-display">YOUR NAME</div>
+                                </div>
+                                <div class="card-expiry">
+                                    <div class="expiry-label">Valid Thru</div>
+                                    <div class="expiry-date" id="card-expiry-display">MM/YY</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Back of card -->
+                        <div class="card-back">
+                            <div class="card-black-strip"></div>
+                            <div class="card-signature">
+                                <div class="card-cvv" id="card-cvv-display">•••</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form action="/paybillAct/" method="POST" class="payment-form" id="payment-form">
+                    {% csrf_token %}
+                    <table cellpadding="5">
+                        <input type="hidden" name="apno" value="{{Appno}}">
+                        <tr>
+                            <td>AMOUNT:</td>
+                            <input type="hidden" name="amt" value="{{ rate }}"/>
+                            <td><div class="amount-display">{{ rate }}</div></td>
+                        </tr>
+
+                        <tr>
+                            <td>PAYMENT FOR:</td>
+                            <td class="input-icon">
+                                <input type="text" name="month_year" id="t1" value="{{ current_month_year }}" required="yes" readonly>
+                                <i class="far fa-calendar-alt"></i>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>CARD NUMBER:</td>
+                            <td class="input-group">
+                                <div class="input-icon">
+                                    <input type="text" name="card_number" id="t3" pattern="[0-9]{16}" maxlength="16" required="yes" placeholder="1234 5678 9012 3456">
+                                    <i class="fas fa-credit-card"></i>
+                                    <i class="fas fa-check validation-icon" id="card-validation-icon"></i>
+                                </div>
+                                <div class="error-message" id="card-error-message">Please enter a valid card number</div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>CARD HOLDER:</td>
+                            <td class="input-group">
+                                <div class="input-icon">
+                                    <input type="text" name="card_holder" id="card_holder" required="yes" placeholder="Your Name">
+                                    <i class="fas fa-user"></i>
+                                    <i class="fas fa-check validation-icon" id="name-validation-icon"></i>
+                                </div>
+                                <div class="error-message" id="name-error-message">Please enter a valid name (min 3 characters)</div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>CCV NUMBER:</td>
+                            <td class="input-group">
+                                <div class="input-icon">
+                                    <input type="text" name="ccv_number" id="t5" required="yes" pattern="[0-9]{3}" maxlength="3" placeholder="123">
+                                    <i class="fas fa-lock"></i>
+                                    <i class="fas fa-check validation-icon" id="cvv-validation-icon"></i>
+                                </div>
+                                <div class="error-message" id="cvv-error-message">Please enter a valid 3-digit security code</div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>EXPIRY DATE:</td>
+                            <td class="input-group">
+                                <div class="input-icon">
+                                    <input type="date" name="edate" id="t4" min="{{today}}" required="yes">
+                                    <i class="far fa-calendar-check"></i>
+                                    <i class="fas fa-check validation-icon" id="date-validation-icon"></i>
+                                </div>
+                                <div class="error-message" id="date-error-message">Please select a valid expiry date</div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2"><input type="submit" value="PAY NOW" id="submit-button" disabled></td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Card elements
+            const creditCard = document.getElementById('credit-card');
+            const cardNumberDisplay = document.getElementById('card-number-display');
+            const cardNameDisplay = document.getElementById('card-name-display');
+            const cardExpiryDisplay = document.getElementById('card-expiry-display');
+            const cardCvvDisplay = document.getElementById('card-cvv-display');
+            const cardBrand = document.getElementById('card-brand');
+            
+            // Form inputs
+            const cardNumberInput = document.getElementById('t3');
+            const cardHolderInput = document.getElementById('card_holder');
+            const cardExpiryInput = document.getElementById('t4');
+            const cardCvvInput = document.getElementById('t5');
+            const submitButton = document.getElementById('submit-button');
+            const paymentForm = document.getElementById('payment-form');
+            
+            // Validation elements
+            const cardValidationIcon = document.getElementById('card-validation-icon');
+            const nameValidationIcon = document.getElementById('name-validation-icon');
+            const cvvValidationIcon = document.getElementById('cvv-validation-icon');
+            const dateValidationIcon = document.getElementById('date-validation-icon');
+            
+            const cardErrorMessage = document.getElementById('card-error-message');
+            const nameErrorMessage = document.getElementById('name-error-message');
+            const cvvErrorMessage = document.getElementById('cvv-error-message');
+            const dateErrorMessage = document.getElementById('date-error-message');
+            
+            // Validation tracking
+            const validationState = {
+                cardNumber: false,
+                cardHolder: false,
+                cvv: false,
+                expiry: false
+            };
+            
+            // Update submit button state
+            function updateSubmitButton() {
+                const allValid = Object.values(validationState).every(value => value === true);
+                submitButton.disabled = !allValid;
+            }
+            
+            // Luhn algorithm for card validation
+            function luhnCheck(cardNumber) {
+                if (!cardNumber) return false;
+                
+                // Remove all non-digit characters
+                cardNumber = cardNumber.replace(/\D/g, '');
+                
+                if (cardNumber.length !== 16) return false;
+                
+                let sum = 0;
+                let shouldDouble = false;
+                
+                // Loop through values starting from the rightmost digit
+                for (let i = cardNumber.length - 1; i >= 0; i--) {
+                    let digit = parseInt(cardNumber.charAt(i));
+                    
+                    if (shouldDouble) {
+                        digit *= 2;
+                        if (digit > 9) digit -= 9;
+                    }
+                    
+                    sum += digit;
+                    shouldDouble = !shouldDouble;
+                }
+                
+                return (sum % 10) === 0;
+            }
+            
+            // Detect card type
+            function detectCardType(cardNumber) {
+                const patterns = {
+                    visa: /^4/,
+                    mastercard: /^5[1-5]/,
+                    amex: /^3[47]/,
+                    discover: /^6(?:011|5)/
+                };
+                
+                for (const card in patterns) {
+                    if (patterns[card].test(cardNumber)) {
+                        return card.toUpperCase();
+                    }
+                }
+                
+                return 'CARD';
+            }
+            
+            // Format and display card number
+            if (cardNumberInput) {
+                cardNumberInput.addEventListener('input', function(e) {
+                    // Remove any non-digits
+                    let value = this.value.replace(/\D/g, '');
+                    
+                    // Limit to 16 digits
+                    if (value.length > 16) {
+                        value = value.slice(0, 16);
+                    }
+                    
+                    // Format display with spaces
+                    let formattedDisplay = '';
+                    for (let i = 0; i < 16; i++) {
+                        if (i < value.length) {
+                            if (i > 0 && i % 4 === 0) {
+                                formattedDisplay += ' ';
+                            }
+                            formattedDisplay += value[i];
+                        } else {
+                            if (i > 0 && i % 4 === 0) {
+                                formattedDisplay += ' ';
+                            }
+                            formattedDisplay += '•';
+                        }
+                    }
+                    
+                    // Update card display
+                    cardNumberDisplay.textContent = formattedDisplay;
+                    
+                    // Update form value (without spaces)
+                    this.value = value;
+                    
+                    // Update card brand
+                    const detectedType = detectCardType(value);
+                    cardBrand.textContent = detectedType;
+                    
+                    // Validate card
+                    const isValid = value.length === 16 && luhnCheck(value);
+                    validationState.cardNumber = isValid;
+                    
+                    if (isValid) {
+                        cardValidationIcon.classList.remove('invalid');
+                        cardValidationIcon.classList.add('valid');
+                        cardValidationIcon.className = 'fas fa-check validation-icon valid';
+                        cardErrorMessage.style.display = 'none';
+                        this.parentElement.parentElement.classList.remove('invalid');
+                        this.parentElement.parentElement.classList.add('valid');
+                    } else if (value.length > 0) {
+                        cardValidationIcon.classList.remove('valid');
+                        cardValidationIcon.classList.add('invalid');
+                        cardValidationIcon.className = 'fas fa-times validation-icon invalid';
+                        cardErrorMessage.style.display = 'block';
+                        this.parentElement.parentElement.classList.remove('valid');
+                        this.parentElement.parentElement.classList.add('invalid');
+                    } else {
+                        cardValidationIcon.className = 'fas fa-check validation-icon';
+                        cardErrorMessage.style.display = 'none';
+                        this.parentElement.parentElement.classList.remove('valid');
+                        this.parentElement.parentElement.classList.remove('invalid');
+                    }
+                    
+                    updateSubmitButton();
+                });
+                
+                // Focus effect
+                cardNumberInput.addEventListener('focus', function() {
+                    if (creditCard.classList.contains('card-flipped')) {
+                        creditCard.classList.remove('card-flipped');
+                    }
+                });
+            }
+            
+            // Display card holder name
+            if (cardHolderInput) {
+                cardHolderInput.addEventListener('input', function() {
+                    const value = this.value.trim();
+                    cardNameDisplay.textContent = value.toUpperCase() || 'YOUR NAME';
+                    
+                    // Validate name (at least 3 characters, no special characters)
+                    const isValid = value.length >= 3 && /^[A-Za-z\s]+$/.test(value);
+                    validationState.cardHolder = isValid;
+                    
+                    if (isValid) {
+                        nameValidationIcon.className = 'fas fa-check validation-icon valid';
+                        nameErrorMessage.style.display = 'none';
+                        this.parentElement.parentElement.classList.remove('invalid');
+                        this.parentElement.parentElement.classList.add('valid');
+                    } else if (value.length > 0) {
+                        nameValidationIcon.className = 'fas fa-times validation-icon invalid';
+                        nameErrorMessage.style.display = 'block';
+                        this.parentElement.parentElement.classList.remove('valid');
+                        this.parentElement.parentElement.classList.add('invalid');
+                    } else {
+                        nameValidationIcon.className = 'fas fa-check validation-icon';
+                        nameErrorMessage.style.display = 'none';
+                        this.parentElement.parentElement.classList.remove('valid');
+                        this.parentElement.parentElement.classList.remove('invalid');
+                    }
+                    
+                    updateSubmitButton();
+                });
+                
+                // Focus effect
+                cardHolderInput.addEventListener('focus', function() {
+                    if (creditCard.classList.contains('card-flipped')) {
+                        creditCard.classList.remove('card-flipped');
+                    }
+                });
+            }
+            
+            // Format and display expiry date
+            if (cardExpiryInput) {
+                cardExpiryInput.addEventListener('input', function() {
+                    if (this.value) {
+                        const date = new Date(this.value);
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const year = date.getFullYear().toString().slice(2);
+                        cardExpiryDisplay.textContent = `${month}/${year}`;
+                        
+                        // Validate date (must be in future but not more than 10 years)
+                        const currentDate = new Date();
+                        const tenYearsFromNow = new Date();
+                        tenYearsFromNow.setFullYear(currentDate.getFullYear() + 10);
+                        
+                        const isValid = date > currentDate && date < tenYearsFromNow;
+                        validationState.expiry = isValid;
+                        
+                        if (isValid) {
+                            dateValidationIcon.className = 'fas fa-check validation-icon valid';
+                            dateErrorMessage.style.display = 'none';
+                            this.parentElement.parentElement.classList.remove('invalid');
+                            this.parentElement.parentElement.classList.add('valid');
+                        } else {
+                            dateValidationIcon.className = 'fas fa-times validation-icon invalid';
+                            dateErrorMessage.style.display = 'block';
+                            dateErrorMessage.textContent = date < currentDate ? 
+                                "Expiry date must be in the future" : 
+                                "Expiry date cannot be more than 10 years in the future";
+                            this.parentElement.parentElement.classList.remove('valid');
+                            this.parentElement.parentElement.classList.add('invalid');
+                        }
+                    } else {
+                        cardExpiryDisplay.textContent = 'MM/YY';
+                        dateValidationIcon.className = 'fas fa-check validation-icon';
+                        dateErrorMessage.style.display = 'none';
+                        this.parentElement.parentElement.classList.remove('valid');
+                        this.parentElement.parentElement.classList.remove('invalid');
+                        validationState.expiry = false;
+                    }
+                    
+                    updateSubmitButton();
+                });
+                
+                // Focus effect
+                cardExpiryInput.addEventListener('focus', function() {
+                    if (creditCard.classList.contains('card-flipped')) {
+                        creditCard.classList.remove('card-flipped');
+                    }
+                });
+            }
+            
+            // Display CVV and flip card
+            if (cardCvvInput) {
+                cardCvvInput.addEventListener('focus', function() {
+                    creditCard.classList.add('card-flipped');
+                });
+                
+                cardCvvInput.addEventListener('blur', function() {
+                    creditCard.classList.remove('card-flipped');
+                });
+                
+                cardCvvInput.addEventListener('input', function() {
+                    let value = this.value.replace(/\D/g, '');
+                    
+                    // Limit to 3 digits
+                    if (value.length > 3) {
+                        value = value.slice(0, 3);
+                    }
+                    
+                    // Display CVV or dots
+                    let displayValue = '';
+                    for (let i = 0; i < 3; i++) {
+                        displayValue += i < value.length ? value[i] : '•';
+                    }
+                    
+                    cardCvvDisplay.textContent = displayValue;
+                    this.value = value;
+                    
+                    // Validate CVV (must be 3 digits)
+                    const isValid = value.length === 3;
+                    validationState.cvv = isValid;
+                    
+                    if (isValid) {
+                        cvvValidationIcon.className = 'fas fa-check validation-icon valid';
+                        cvvErrorMessage.style.display = 'none';
+                        this.parentElement.parentElement.classList.remove('invalid');
+                        this.parentElement.parentElement.classList.add('valid');
+                    } else if (value.length > 0) {
+                        cvvValidationIcon.className = 'fas fa-times validation-icon invalid';
+                        cvvErrorMessage.style.display = 'block';
+                        this.parentElement.parentElement.classList.remove('valid');
+                        this.parentElement.parentElement.classList.add('invalid');
+                    } else {
+                        cvvValidationIcon.className = 'fas fa-check validation-icon';
+                        cvvErrorMessage.style.display = 'none';
+                        this.parentElement.parentElement.classList.remove('valid');
+                        this.parentElement.parentElement.classList.remove('invalid');
+                    }
+                    
+                    updateSubmitButton();
+                });
+            }
+            
+            // Form submission validation
+            if (paymentForm) {
+                paymentForm.addEventListener('submit', function(e) {
+                    // Final validation check
+                    const allValid = Object.values(validationState).every(value => value === true);
+                    
+                    if (!allValid) {
+                        e.preventDefault();
+                        showNotification('Please fix all errors before submitting', 'error');
+                        return false;
+                    }
+                    
+                    const submitBtn = this.querySelector('input[type="submit"]');
+                    submitBtn.value = "Processing...";
+                    submitBtn.style.background = "var(--dark)";
+                    
+                    // Show processing notification
+                    showNotification('Processing payment...', 'success');
+                });
+            }
+        });
+        
+        // Show notification function
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 2rem;
+                border-radius: 12px;
+                color: white;
+                background: ${type === 'success' ? 'var(--gradient)' : '#ff6b6b'};
+                z-index: 1001;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                animation: slideIn 0.5s ease forwards, slideOut 0.5s ease 2.5s forwards;
+            `;
+            
+            const icon = document.createElement('i');
+            icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+            
+            notification.appendChild(icon);
+            notification.appendChild(document.createTextNode(message));
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
